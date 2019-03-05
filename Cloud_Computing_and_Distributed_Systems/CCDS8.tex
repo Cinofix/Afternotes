@@ -1,0 +1,189 @@
+\section{Operating System Support}
+In the present section, we will examine the relationship between the middleware layer and the operating system (OS) layer. The task of any operating system is to provide problem-oriented abstractions of the underlying physical resources, it takes over the physical resources on a single node and manages them to present these resource abstractions through the system-call interface.
+
+\subsection{Operating system layer}
+Users will only be satisfied if their middleware-OS combination has good performance. Middleware runs on a variety of OS-hardware combinations (platforms) at the nodes of a distributed system. The OS running at a node provides its own flavor of abstractions of local hardware resources for processing, storage and communication. Middleware utilizes a combination of these local resources to implement its mechanisms for remote invocations between objects or processes at the nodes.\\
+The following image shows how the operating system layer at each of two nodes supports a common middleware layer in providing a distributed infrastructure for applications and services.
+\image{img/SystemLayers}{System layers.}{0.8}
+The below image instead shows the core OS functionality that we shall be concerned with: process and thread management, memory management and communication between processes on the same computer.
+\image{img/CoreOsFunctionality}{Core Os Functionality.}{0.8}
+The core OS components and their responsibilities are:
+\begin{itemize}
+	\item \textit{Process manager:} creation of operations upon processes. A process is a unit of resource management, including an address space and one or more threads.
+	\item \textit{Thread manager:} thread creation, synchronization and scheduling. Threads are scheduled activities attached to processes.
+	\item \textit{Communication manager:} communication between threads attached to different processes on the same computer.
+	\item \textit{Memory manager:} management of physical and virtual memory.
+	\item \textit{Supervisor:} dispatching of interrupts, system call traps and other exceptions, control of memory management unit and hardware caches.
+\end{itemize}
+
+\subsection{Processes and threads}
+A process consists of an execution environment together with one or more threads. A \textit{thread} is the operating system abstraction of an activity. An \textbf{execution environment} is the unit of resource management: a collection of local kernel-managed resources to which its threads have access. An execution environment primarily consists of:
+\begin{itemize}
+	\item an address space.
+	\item thread synchronization and communication resources such as semaphores and
+	communication interfaces (sockets).
+	\item higher-level resources such as open files and windows.
+\end{itemize}
+Execution environments are normally expensive to create and manage, but several threads can share them. Threads can be created and destroyed dynamically and the goal of having multiple threads of execution is to maximize the degree of concurrent execution between operations, thus enabling the overlap of computation with input and output, and enabling concurrent processing on multiprocessors.
+
+\subsubsection{Address space}
+An address space is a unit of management of a process’s virtual memory. It is large and consists of one or more \textit{regions}, separated by inaccessible areas of virtual memory. A region, that can be seen in the below image, is an area of contiguous virtual memory that is accessible by the threads of the owning process.
+\image{img/AddressSpace}{Address space}{0.25}
+Each region is specified by the following properties:
+\begin{itemize}
+	\item its dimension (lowest virtual address and size)
+	\item read/write/execute permissions for the process’s threads
+	\item whether it can be grown upwards or downwards
+\end{itemize}
+A \textbf{shared memory region} is one that is backed by the same physical memory as one or more regions belonging to other address spaces. Processes therefore access identical memory contents in the regions that are shared, while their non-shared regions remain protected. The uses of shared regions include the following:
+\begin{itemize}
+	\item \textit{Libraries:} library code can be very large and would waste considerable memory if it was loaded separately into every process that used it.
+	\item \textit{Kernel:} often the kernel code and data are mapped into every address space at the same location. When a process makes a system call or an exception occurs, there is no need to switch to a new set of address mappings.
+	\item \textit{Data sharing and communication:} two processes, or a process and the kernel, might need to share data in order to cooperate on some task.
+\end{itemize}
+
+\subsubsection{Creation of a new process}
+For a distributed system, the design of the process-creation mechanism has to take into account the utilization of multiple computers, consequently, the process-support infrastructure is divided into separate system services.\\
+The creation of a new process can be separated into two independent aspects:
+\begin{itemize}
+	\item the \textbf{choice of a target host}, for example, the host may be chosen from among the nodes in a cluster of computers acting as a compute server.
+	\item the \textbf{creation of an execution environment}.
+\end{itemize}
+\paragraph*{Choice of process host.} The choice of the node at which the new process will reside is a matter of policy.\\
+The \textit{transfer policy} determines whether to situate a new process locally or
+remotely. The \textit{location policy} determines which node should host a new process selected for transfer. Process location policies may be \textit{static} or \textit{adaptive}.
+
+\paragraph*{Creation of a new execution environment.} Once the host computer has been selected, a new process requires an execution environment consisting of an address space with initialized contents.\\
+There are two approaches to defining and initializing the address space of a newly created process. 
+\begin{enumerate}
+	\item The first approach is used where the address space is of a statically	defined format. In this case, the address space regions are created from a list specifying 	their extent. Address space regions are initialized from an executable file or filled with zeros as appropriate.
+	\item In the second approach, the address space can be defined with respect to an existing execution environment (\textit{copy-on-write}).
+\end{enumerate}
+\image{img/CopyOnWrite}{Copy-on-write}{0.8}
+
+\subsubsection{Threads}
+Another important aspect is to talk about the advantages of enabling client and server processes to possess more than one thread. They allow concurrency with I/O operation and computation in multiprocessor systems. Possible advantages of the multi-thread are:
+\begin{itemize}
+	\item Less expensive for creation and management.
+	\item Simpler to make resource sharing.
+\end{itemize} 
+Possible problems can be, instead, the mechanisms for concurrent programming.
+\image{img/ClientAndServerWithThreads}{Client and server with threads}{0.9}
+The previous image shows one of the possible threading architectures, the \textbf{worked pool architecture}. In its simplest form, the server creates a fixed pool of \textit{"worker"} threads to process the requests when it starts up. The module marked \textit{"receipt and queuing"} is typically implemented by an \textit{"I/O"} thread, which receives requests from a collection of sockets or ports and places them on a shared request queue for retrieval by the workers. We may handle varying \textit{request priorities} by introducing multiple queues into the worker pool architecture, so that the worker threads scan the queues in the order of decreasing priority.\\
+A \textit{disadvantage} of this architecture is its \textit{inflexibility}, the number of worker threads in the pool may be too few to deal adequately with the current rate of request arrival. Another disadvantage is the high level of switching between the I/O and worker threads as they manipulate the shared queue.\\
+Other types of architectures are:
+\begin{itemize}
+	\item \textbf{thread-per-request architecture:} the I/O thread spawns a new worker thread for each request, and that worker destroys itself when it has processed the 	request against its designated remote object. This architecture has the advantage that the threads do not contend for a shared queue, and throughput is potentially maximized because the I/O thread can create as many workers as there are outstanding requests. Its disadvantage is the overhead of the thread creation and destruction operations.
+	\item \textbf{thread-per-connection architecture:} associates a thread with
+	each connection. The server creates a new worker thread when a client makes a
+	connection and destroys the thread when the client closes the connection. In between,
+	the client may make many requests over the connection, targeted at one or more remote objects.
+	\item \textbf{thread-per-object architecture:} associates a thread with each
+	remote object. An I/O thread receives requests and queues them for the workers, but this time there is a per-object queue.
+\end{itemize}
+The representation of these different architectures can be seen in the following image.
+\image{img/AlternativeServerThreadingArchitectures}{Alternative server threading architectures.}{1}
+The thread's lifecycle can be seen in the below image.
+\image{img/ThreadLifecycle}{Thread's lifecycle.}{0.9}
+
+\subsection{Scheduler and Thread}
+Many kernels provide native support for multi-threaded processes, including Windows, Linux, Solaris, Mach and Mac OS X. These kernels provide thread-creation and -management system calls, and they schedule individual threads. Some other kernels have only a single-threaded process abstraction. Multi- threaded processes must then be implemented in a library of procedures linked to application programs. We can say that threads are implemented at application level. In such cases, the kernel has no knowledge of these user-level threads and therefore cannot schedule them independently. A threads runtime library organizes the scheduling of threads. A thread would block the process, and therefore all threads within it, if it made a blocking system call, so the asynchronous (non-blocking) I/O facilities of the underlying kernel are exploited.\\
+Using thread at application level we have some advantages like:
+
+\begin{itemize}
+	\item less cost to context change (without system call).
+	\item possible to implement scheduling ad hoc (adaptive).
+	\item possible to create and manage larger number of possible threads.
+\end{itemize}
+
+The drawbacks are:
+\begin{itemize}
+	\item kernel cannot make thread scheduling 
+	\item kernel cannot compare priorities of thread in different processes.
+	\item thread cannot use multiprocessor concurrency.
+	\item a thread error blocks the process and all its threads.
+\end{itemize}
+It is possible to combine the advantages of user-level and kernel-level threads implementations. One approach is to enable user-level code to provide scheduling hints to the kernel’s thread scheduler it is called \textbf{hybrid solution}. Another is a form of \textbf{hierarchical scheduling}. Each process creates one or more kernel-level threads. User-level threads are also supported. A user-level scheduler assigns each user-level thread to a kernel-level thread. This scheme can take advantage of multiprocessors, and also benefits because some thread-creation and thread-switching operations take place at user level. The scheme’s disadvantage is that it still lacks flexibility: if a thread blocks in the kernel, then all user-level threads assigned to it are also prevented from running, regardless of whether they are eligible to run.
+
+
+\subsection{Communication: invocation and call}
+Communication is part of invocation and it can be implemented using different approaches like: RPC, RMI, message passing, event notification, system call or group notification. It is important also to consider the transparency level given by this techniques, and a good proxy for providing that is a middleware. An important aspect of communication is the performance provided by the mechanism used. Fundamental aspects that can affect the performance are:
+\begin{itemize}
+	\item type of communication that can be synchronous or asynchronous.
+	\item address space to cross, it can be local or remote. Obviously crossing remote address space introduce some possible network delays that can have strong impact.
+	\item scheduling thread that affect context change.
+\end{itemize}
+Measures for the evaluation of the performance are \textit{delay time} and the \textit{throughput}, that can be affected by latency.
+\image{img/invocationAddressSpace.png}{Typology of address space}{0.5}
+\paragraph{Lightweight Remote procedure call}
+The previous image suggests that a cross-address-space invocation is implemented within a computer exactly as it is between computers, except that the underlying message passing happens to be local. Indeed Bershad developed a more efficient invocation mechanism for the case of two processes on the same machine called \textbf{lightweight RPC}. The LRPC design is based on optimizations concerning data copying and thread scheduling. Instead of RPC parameters being copied between the kernel and user address spaces involved, the client and server are able to pass arguments and return values directly via an A stack. The same stack is used by the client and server stubs. In LRPC, arguments are copied once: when they are marshalled onto the A stack. There may be several A stacks in a shared region, because several threads in the same client may call the server at the same time.
+\image{img/lrpc.png}{lightweight RPC}{0.7}
+A client thread enters the server’s execution environment by first trapping to the kernel and presenting it with a capability. The kernel checks this and only allows a context switch to a valid server procedure; if it is valid, the kernel switches the thread’s context to call the procedure in the server’s execution environment. When the procedure in the server returns, the thread returns to the kernel, which switches the thread back to the client execution environment. Note that clients and servers employ stub procedures to hide the details just described from application writers. There is little doubt that LRPC is more efficient than RPC for the local case, as long as enough invocations take place to offset the memory management costs.
+
+\paragraph{Asynchronous operations: serialized and concurrent invocation} With remote invocation we have some delays that have a strong impact on the final performance. The main goal of asynchronous operation is to try to limit as much as possible them. A solution is performing \textbf{concurrent invocation}, respect to \textbf{serialized one}. The following picture can give a simple idea of how they work:
+\image{img/serializedConcurrentInvocation.png}{Serial and Concurrent invocation}{0.5}
+With concurrent invocation client allocate multiple threads to perform blocking
+invocations concurrently. A clear example could be the browser web. We have seen the potential benefits of interleaving invocations between a client and a single server on a single-processor machine. In the serialized case, the client marshals the arguments, calls the \verb|Send| operation and then waits until the reply from the server arrives – whereupon it \verb|Receives|, unmarshals and then processes the results. After this it can make the second invocation. In the concurrent case, the first client thread marshals the arguments and calls the \verb|Send| operation. The second thread then immediately makes the second invocation. Each thread waits to receive its results.
+
+\subsection{Organization and distributed operating system architecture}
+In this section, we examine the architecture of a kernel suitable for a distributed system. An open distributed system should make it possible to:
+\begin{itemize}
+	\item run only that system software at each computer that is necessary for it to carry out its particular role in the system architecture – system software requirements can vary between, for example, mobile phones and server computers, and loading redundant modules wastes memory resources;
+	
+	\item allow the software (and the computer) implementing any particular service to be changed independently of other facilities;
+	
+	\item allow for alternatives of the same service to be provided, when this is required to suit different users or applications;
+	
+	\item introduce new services without harming the integrity of existing ones.
+\end{itemize}
+The separation of fixed resource management mechanisms from resource management policies, which vary from application to application and service to service, is the main principle in operating system design.\\
+The organization of the operating system can be: \textbf{monolithic} or \textbf{microkernel}.
+These designs differ primarily in the decision as to what functionality belongs in the kernel and what is to be left to server processes that can be dynamically loaded to run on top of it.
+
+\paragraph{Monolithic} it performs all basic operating system functions and takes up in the order of megabytes of code and data, it is coded in a non-modular way. In other words it is an operating system architecture where the entire set of functionalities is working in kernel space. The result is that to a large extent it is intractable: altering any individual software component to adapt it to changing requirements is difficult. The advantage is that it is relatively efficient.
+
+\paragraph{Microkernel} the kernel provides only the most basic abstractions, principally address spaces, threads and local interprocess communication; all other system services are provided by servers that are dynamically loaded at precisely those computers in the distributed system that require them. Clients access these system services using the kernel’s message-based invocation mechanism. The advantages are extensibility of the system, given by its modular organization, and it is simple to debug.
+
+\subsection{Scheduling: process allocation}
+Allocation of processes in centralized system has the advantage of using a unique process queue, in some sense we have the global knowledge. So the scheduler manages that queue and applies scheduling algorithm to decide which is the next process that must be executed. \textbf{Scheduling algorithms} are designed for system performance optimization, that essentially try to minimize the response time and maximize the system resources utilization (throughput, CPU utilization). There can be different properties of this scheduling algorithms like: fairness, efficiency, fault-tolerance etc.\\
+Under certain condition the theory provides an optimal algorithm for process scheduling. In \textbf{multiprocess systems} also we have a unique process queue, but now the system is composed by multiple processors. In that case caching can improve the performance, so a good scheduler should be consider also the past history for process assignment to the CPU already used.\\
+In distributed system process allocation is more complicated since there is not a unique process queue, processes must be allocated to different machines and migration of them can occur. There is not guarantee about process type, they can be identical or heterogeneous. Scheduling in distributed system introduce a new target to optimize which is \textbf{load balancing}. Load balancing consists on developing a solution/strategy that move processes between machines in order to assign the same load to the different machines. The algorithm can use state information, that could be local or coming from sub-system, it can use migration or some heuristics.\\
+
+Process allocation could be classified in this way:
+\begin{itemize}
+	\item \textbf{static/dynamic}, if allocation decision are prefixed or not. Dynamic algorithms are based on the state information.
+	\item\textbf{ deterministic/non-deterministic}, if next process requests are known 
+	\item \textbf{centralized/distributed/hierarchical}
+	\item \textbf{optimal/ approximated}
+	\item \textbf{with/without migration}, if a running process can be moved. 
+\end{itemize}
+
+%TODO: migration algorithms transfer policy vs location policy
+
+
+\subsection{Scheduling algorithms for distributed systems}
+We can have different scheduling algorithms:
+\begin{itemize}
+	\item \textbf{probes algorithm } 
+	\item \textbf{deterministic algorithm } 
+	\item \textbf{centralized algorithm } 
+	\item \textbf{bidding  algorithm} 
+	\item \textbf{hierarchical algorithm } 
+	\item \textbf{coscheduling}
+\end{itemize}
+
+\paragraph{Probes algorithm} When the processor executing the process becomes overloaded it takes the decision to transfer the process, \textbf{probes} another processor to decide whether to transfer the process. If the contacted processor is \textbf{underloaded} the transfer takes place, otherwise it selects randomly another processor to repeat the attempt up to a maximum number of times. The problem here is to decide the threshold for accepting processes and the maximum number of repetition. 
+
+\paragraph{Deterministic algorithm}
+Here we have $n$ processes to distribute on $k$ identical processors $(n > k)$. There is an assumption: the \textbf{traffic} between each process couple is known. The algorithm distributes the load to minimize the total traffic among the processors. The drawbacks of this strategy is the knowledge of the traffic distribution, traffic information and deal with change of variation of it.
+
+\paragraph{Centralized algorithm} it is a centralized algorithm to distribute the load between workstations for load balancing. Each workstation has a \textbf{score} and if it sends to other processes (resource consuming) the score increase, if it servers others (it is running processes of other workstation) decreases the score. A processors in the free state receives the process generated by the workstation with the lowest score. The algorithm uses a table of processor utilization. A possible variation consists on the fact that the score can be increased/decreased by a constant for each unit of CPU time requested/offered.
+
+\paragraph{Bidding algorithm} It is an extension of the centralized algorithm. It is based on the metaphor of an economic system, where CPU time is a associated to a price. The price of the resources if fixed by the marker lows (scores). Each processor computes the \textbf{offered price} according to the demands and quality of service. The algorithm evaluates the most convenient choice for each process to be executed.
+
+\paragraph{Hierarchical algorithm}
+The hierarchical algorithm improves scalability of the scheduler. Processes are organized based on an \textbf{hierarchical organization} in which each $K$ processors has a \textbf{supervisor} that keeps the information about the single $K$ workload and the number of available processors. We can have different levels of organization, and it is more fault tolerance since in case of crash of the supervisor \textbf{substitution mechanisms} are used to substitute it.
+Every supervisor that receives a request of $J$ processors: if it has $K < J$ processors then forwards the request to a higher level of the hierarchy, otherwise it partition the request according to the free CPU of the lower levels forwarding them to the lower levels to the processors.
+
+\paragraph{Coscheduling} An algorithm can consider the communication among processes to allocate strongly connected processes on the same node. It is convenient to keep together communicating processes, in order to reduce communication delays.
+A common representation used for this algorithm is based on the usage of a matrix in which rows represent time units and columns represent processors. The location $(i,j)$ contains the id of the a process to be executed at time $i$ on processor $j$. The algorithm at time $i$ runs the assigned processes indicated in row $i$.

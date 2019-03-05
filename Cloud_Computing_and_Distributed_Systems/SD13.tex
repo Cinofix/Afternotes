@@ -1,0 +1,56 @@
+\section{New paradigms}
+In the following section we are going to analyze three new paradigms for computing that are: \textbf{mobility computing}, \textbf{ubiquitous computing} and\textbf{ peer-to-peer computing}.
+
+\subsection{Mobility computing}
+\textbf{Mobile computing} is concerned with exploiting the connectedness of devices that move around in the everyday physical world; ubiquitous computing is about exploiting the increasing integration of computing devices with our everyday physical world. As devices become smaller, we are better able to carry them around with us or wear them, and we can embed them into many parts of the physical world – not just the familiar desktop or a server rack. And as wireless connectivity becomes more prevalent, we are better able to connect these new small devices to one another, and to conventional personal and server computers. Mobile computing is a paradigm that allows users to move their personal computers maintaining some connectivity to other machines. \\
+The idea of mobility consists on moving the knowledge close to resources in order to improve the performance of the communication system, and it allows adapting the access of the clients to remote resources improving so the flexibility property of the system. An simple example is Amazon CloudFront. There are two possible levels of mobility:
+\begin{itemize}
+	\item \textbf{Code mobility}, it is the capability to dynamically relocate at run time the distributed application components. It can lead to the relocation of only the code or also the state.
+	\item \textbf{Mobile agent}, program in execution can  migrate among machines in an heterogeneous networks. Migration time and the new location depend on interaction between agent and the environment.
+\end{itemize}
+
+\paragraph*{Migration.} We have seen that with mobile agent there is a sort of migration, and so we can define \textbf{migration of processes} or \textbf{migration of objects}.
+The main goal is to implement a \textbf{load balancing}, which a system that distributes load uniformly between machines on the network. It is very useful for small networks and it provides location transparency to the client.
+
+\paragraph*{Mobile code.} Mobile code defines different paradigms, that are different in terms of model independence, interaction schemes for coordination and component relocation to realize the service. The service is realized if one knows the services, needed resources or executing item. Components are the resources used, interaction is defined with request-reply protocol. There are essentially four paradigms:
+\begin{itemize}
+	\item \textbf{client-server}, common architecture that we have already seen, in which there is a client entity that ask for a resource and the server reply with an answer. Code is executed inside the server.
+	\item \textbf{remote evaluation}, involves the transmission of executable software code from a client computer to a server computer for subsequent execution at the server. After the code has finished executing, the results of its execution are sent back to the client.
+	\item \textbf{code on demand}, sends executable software code from a server computer to a client computer upon request from the client's software. Some well-known examples of the code on demand paradigm on the web are Java applets.
+	\item \textbf{mobile agent}, is a composition of computer software and data which is able to migrate (move) from one computer to another autonomously and continue its execution on the destination computer. In reality, the mobile agent is the code/object on move which travels in its itinerary within the network of connected nodes. More specifically, a mobile agent is a process that can transport its state from one environment to another, with its data intact, and be capable of performing appropriately in the new environment. Mobile agents decide when and where to move. 
+\end{itemize}
+
+Mobile code paradigm brings some issues that must be considered, like: security, detect component to move, why, how and when move it, communication, data space management.\\
+Advantages of mobility code are: maintainability, flexibility of data management and in protocol inclusion, reliability and autonomy. Common applications are: IR, E-Commerce.
+
+\subsubsection{Types of code mobility}
+There are essentially two types of code mobility: \textbf{strong mobility} and \textbf{weak mobility}. 
+
+\paragraph*{Strong mobility.} involves moving both the code, data and the execution state from one host to another, this is important in cases where the running application needs to maintain its state as it migrates from host to host. Execution is suspended, transmitted to the new environment and there started again.
+
+\paragraph*{Weak mobility.} Involves moving the code and the data only. Therefore, it may be necessary to restart the execution of the program at the destination host.
+
+\subsubsection{Data space management} 
+We can simply say that mobility is a modification of the data space. Management depends on the resource type and by the references. We can have transferable resource or non transferable, and we can ave multiple links with the same resource. Every resource has one identifier, type and value, and they can be used for binding them. \textbf{Binding by type} guarantees compatibility, with \textbf{binding by values} the value does not change after the migration, instead with \textbf{binding by identifier} the name identifies the resource.
+When we have different strategies to manage the data space:
+\begin{itemize}
+	\item \textbf{Binding Removal}, remove the binging to resources (invalidation). If a process try to access to invalid resource an exception can occurs.
+	\item \textbf{Network Reference}, maintain the reference but make it remote. Problem: how can we distinguish local binding to remote one?
+	\item \textbf{Move}, moves directly the resource and it remains local. Move code and data.
+	\item \textbf{Copy}, duplicate the resources and code.
+	\item \textbf{Re-binding}, instead of applying a copy try to use an object of the same type. Different object but with different type.
+\end{itemize}
+
+\subsubsection{Mobility design}
+Security is a fundamental point for mobility, since communication is not sure and there can be applied different types of attacks like: access to private resources (authentication), spoofing, incorrect resource using, denial of service or block of machines.
+The main goals of the design of mobile code are:
+
+\begin{itemize}
+	\item \textbf{security}, protection by accidental damages or intentional ones of the execution environment.
+	\item \textbf{portability}, heterogeneity management of the platforms.
+	\item \textbf{performance}, provide an high level of performance.
+\end{itemize}
+Code can be interpreted or compiled, both the two strategies bring some advantages and limits. Interpretation increases portability and security run time control, but decreases performance. Compilation improves performance but decreases portability and security. As we know there are also other strategies, called hybrid (like java), that try to get the best of both the two strategies. In general with hybrid solution the source code is compiled in an intermediate language, lower respect to the original one, then it is interpreted.
+
+\subsection{Ubiquitous systems}
+\textbf{Ubiquitous computing} refers to a system in which computing is made to appear anytime and everywhere. In contrast to desktop computing, ubiquitous computing can occur using any device, in any location, and in any format. A user interacts with the computer, which can exist in many different forms, including laptop computers, tablets and terminals in everyday objects such as a refrigerator or a pair of glasses. 

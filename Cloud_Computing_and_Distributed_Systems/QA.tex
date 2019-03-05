@@ -1,0 +1,79 @@
+\section{Questions \& Answers}
+\subsection{Introduction}
+\textbf{What is a distributed system? What does it mean transparency in distributed system? Define and specify the various types of transparency and give two examples.} \\
+
+A distributed system is a system composed by a set of processes that interacts each others in order to provide and satisfy some services. These processed are connected by a network and they communicate using a particular implementation of interprocess communication. Processed are autonomous since they can work alone. One of the main goal of a distributed system is to provide transparency to the client. Transparency hides some implementation to the client that can ignore, if it is possible, how the system work. There are different levels of transparency:
+\begin{itemize}
+	\item location (DNS)
+	\item access (URL in www does not provide access)
+	\item mobility
+	\item failure
+	\item replication (proxy for multi-server)
+	\item concurrency
+	\item performance
+	\item scaling
+\end{itemize}
+
+\textbf{Define the different types of operating systems implemented for distributed systems. Discuss their advantages and limits.}\\
+In general are implemented 4 types of distributed systems:
+\begin{itemize}
+	\item Uniprocessor system, implemented for single central systems which have a global view of the entire system.
+	\item Network Operating System (NOS),is characterized by loosely-coupled HW and loosely-coupled SW, meaning that independent computer systems run independent applications. It is designed primarily to support more computer systems connected by a network. It manages resources provided by different computers and offers services to remote clients.
+	\item Distributed Operating System, has tightly coupled software on a loosely coupled hardware, meaning that it is composed by independent computer systems with independent software that are coordinated by a controller. It is an operating system that runs on several machines whose purpose is to provide a useful set of services, generally to make the collection of machines behave more like a single machine. It provides: common IPC, global protection, process management, file system and high level of transparency.
+	\item Multiprocessor Operating System, it has tightly coupled software on tightly coupled hardware with shared memory. There is a unique global execution queue and several CPUs that executes ready processes. In order to have an advantage from the presence of the cache it is important that the scheduler considers also in which CPU have already run processes ready for the execution.
+\end{itemize}
+
+\subsection{Interprocess communication}
+\textbf{Describe the inter process communication based on RPC. Define the software architecture and components. What are the main design goals, and the implementation problems and choices?}\\
+Remote Procedure Call is a paradigm for interprocess communication. Client and Server are the two entities that want to communicate, interact. RPC consists on the usage of the client of procedures provided by the server, which provides an interface to use them. The main goal of RPC is to provide transparency such that remote procedure call are seen as local one. The two entities are composed by essentially these components:
+\begin{itemize}
+	\item communication modules, present inside the client and the server. They implement and manage the communication between the two entities using request-reply protocol.
+	\item stub, it make transparent the remote procedure call and execute marshalling and unmarshalling. Server stub applies unmarshalling and execute the service procedure required by the client. Client stub applies marshalling and make transparent the rpc to the client.
+	\item dispatcher, select the right procedure that is required by the client request.
+\end{itemize}
+However, due to their different failure and performance characteristics and to the possibility of concurrent access to servers, it is not necessarily a good idea to make remote procedure calls appear to be exactly the same as local calls. \textbf{Design issues}: parameter passing (by values, by reference, by value), binding (static, dynamic), fault management.\\
+
+
+\textbf{Define the possible semantics associated to RPC and the relation with the fault management. Give an example for each case.}\\
+Invocation semantic defines the semantic provided to the client. The types of semantic consider possible retransmission of the request, filtering of duplicates and re-execution of multiple request. There are essentially 4 types of semantics that can be defined:
+\begin{itemize}
+	\item exactly once, there is only one transmission and the request is executed by the server only once or completely not in case of fault.
+	\item maybe, there is no-transmission of the message and there is no guarantee that it will be received by the server.
+	\item at least once, when the sender send the request it set a timeout. If the client does not receive the answer before the timeout it will send again the request. The server can be execute one or more times the same request.
+	\item at most once, there is possible re-transmission of the request but the server does not re-execute the same request. The server maintains an history table, recording the client request and its result.
+\end{itemize}
+Considering fault management the last 3 semantics the sender has the guarantee that the request is not executed or it is partially executed. Partial execution wastes time and resources inside the server but it is difficult to solve in distributed system, since only exactly one semantic have no partial execution. Exactly once is easy to implement in local system in which there is the possibility to know the state of the entire state.\\
+
+
+\textbf{Possible faults in RPC}\\
+Possible fault events during an RPC
+\begin{itemize}
+	\item client cannot locate the server process 
+	\item loss of the client request message
+	\item loss of the reply of the server
+	\item server crash during the call
+	\item client crash during the call
+\end{itemize}
+
+
+\textbf{Primitives and possible faults in Request-Reply protocol}\\
+Request-Reply protocol is based on three fundamental primitives: doOperation, receive and reply.
+\begin{itemize}
+	\item loss of messages by client or server
+	\item network errors
+	\item process fault, crashing of server or client
+\end{itemize}
+
+\textbf{Describe communication based on RMI and its architectural components.}\\
+Remote Method Invocation is a communication paradigm based on invocation of methods provided by local or remote objects. The client requires the execution of a method provided by an object that can be on the same process or in a remote one. RMI provides a high level of transparency and it is very similar with the idea of RPC but has the advantage of use object oriented expression and powerful. RMI architectures is composed by:
+\begin{itemize}
+	\item communication modules, implemented by server and receiver. They define request-reply protocol between the two entities client and server.
+	\item remote reference module, contains a table reference to local or remote objects.
+	\item proxy, provides location transparency to the client. it gives the idea the objects are local defined.
+	\item skeleton, implements the methods provided by the server
+	\item Dispatcher, selects the right method required by the client.
+\end{itemize}
+
+
+\textbf{Define publish-subscribe system}\\
+Publish-subscribe systems are also referred as distributed event-based systems. They are the most widely used of all the indirect communication techniques.More specifically, whereas many systems naturally map onto a request-reply or a remote invocation pattern of interaction, many do not and are more naturally modeled by the more decoupled and reactive style of programming offered by events. A publish-subscribe system is a system where publishers publish structured events to an event service and subscribers express interest in particular events through subscriptions which can be arbitrary patterns over the structured events. A given event will be delivered to potentially many subscribers, and hence publish-subscribe is fundamentally a one-to-many communications paradigm. The main characteristics of publish-subscribe systems are: heterogeneity and asynchronicity.The programming model in publish-subscribe systems is based on a small set of operations; Publishers disseminate an event e through a publish(e) operation and subscribers express an interest in a set of events through subscriptions. In particular, they achieve this through a subscribe(f) operation where f refers to a filter –that is, a pattern defined over the set of all possible events. The expressiveness of filters (and hence of subscriptions) is determined by the subscription model. Subscribers can later revoke this interest through a corresponding unsubscribe(f) operation. When events arrive at a subscriber, the events are delivered using a notify(e) operation. 

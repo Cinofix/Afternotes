@@ -1,0 +1,195 @@
+\section{Distributed Transaction}
+A transaction becomes \textbf{distributed} if it invokes operations in several different
+servers. So instead of having a single server there is a set of them that execute the transaction operations. These servers coordinate to guarantee the same result, and sometimes this operation is not so easy such that it will necessary to introduce a coordinator entity or implement different coordination protocol. There are two different ways that distributed transactions can be structured:
+\begin{itemize}
+	\item \textbf{flat transactions}, are composed by a set of operations that are executed sequentially. Each request is completed before going on to the next one. When servers use locking, a transaction can only be waiting for one object at a time.
+	
+	\item \textbf{nested transactions}, are composed by other transactions, called subtransactions, which can run concurrently if the are at the same level.
+	
+\end{itemize}
+\image{img/distTransactions.png}{Distributed transactions}{0.9}
+Considering the previous picture the transaction on the left there is a flat transaction that invokes operations sequentially on objects in servers $X$, $Y$ and $Z$. 
+On the right there is a nested transaction composed by two subtransactions. The subtransactions $T_1$ and $T_2$ open further subtransactions $T_{11}$, $T_{12}$, $T_{21}$, and $T_{22}$, which access objects at servers $M$, $N$ and $P$. In the nested case, subtransactions at the same level can run concurrently, so $T_1$ and $T_2$ are concurrent, and as they invoke objects in different servers, they can run in parallel. The four subtransactions  $T_{11}$,  $T_{12}$, $T_{21}$ and $T_{22}$ also run concurrently.
+
+\image{img/bankingTran.png}{Nested banking transaction}{0.7}
+
+
+\subsection{Coordinator of a distributed transaction}
+Servers that execute requests as part of a distributed transaction need to be able to communicate with one another to coordinate their actions when the transaction commits. A client starts a transaction by sending an \verb|openTransaction| request to a \textbf{coordinator}. The coordinator returns the resulting \textbf{transaction identifier} (TID) to the client, it can be for example a pair $(\text{server ID}, \#\text{transaction local})$. Transaction identifiers for distributed transactions must be unique within a distributed system. At the end is responsible for committing or aborting it. 
+Each server that manages an object used by a transaction is called \textbf{participant} in the transaction. Each participant:
+\begin{itemize}
+	\item executes operations of the transaction $T$.
+	\item is responsible for keeping track of all of the recoverable objects at that server that are involved in $T$.
+	\item is responsible for cooperating with the coordinator to complete the \textit{commit} or call a \verb|abortTransaction|.
+\end{itemize}
+During the progress of the transaction, the coordinator records a list of references to the participants, and each participant records a reference to the coordinator. Each time that a new participant it executes a \verb|join| to inform the coordinator that a new server is executing the transaction.
+\image{img/coordinator.png}{Coordinator}{0.7}
+
+
+\subsection{Atomicity}
+When a distributed transaction comes to an end, the \textbf{atomicity} property of transactions requires that either all of the servers involved commit the transaction or all of them abort the transaction. To achieve this, one of the servers takes on a coordinator role, which involves ensuring the same outcome at all of the servers. The manner in which the coordinator achieves this depends on the protocol chosen. \\
+
+There are essentially two protocols that try to guarantee atomicity among all the servers:
+
+\begin{itemize}
+	\item \textbf{One phase commit}, the coordinator informs all the participants of the result (commit/abort) and waits for the ack from each of them. It repeats the operation up to completion. But in this way it can happen that atomicity is not satisfied. In fact, if the client executes \verb|commit| it does not allow a server to abort if it is necessary or it does not allow a coordinator to detect possible server faults.
+	\item \textbf{Two phase commit}, all the participants can do \verb|abort|. The client asks the coordinator to execute the \verb|commit| and activate protocol two phase commit.
+\end{itemize}
+
+\textbf{Two phase commit} is the most common and used algorithm and it is composed essentially by two distinct phase:
+\begin{itemize}
+	\item Phase 1: \textbf{voting}, coordinator asks if all are ready to commit.
+	\item Phase 2: \textbf{decision}, communicates \verb|commit| only if all are ready.
+\end{itemize}
+This protocol allows the servers to communicate with one another to reach a joint decision as to whether to commit or abort. In general: If any one participant votes to abort, then the decision must be to abort the transaction, otherwise If all the participants vote to commit, then the decision is to commit the transaction.\\
+The problem is to ensure that all of the participants vote and that they all reach the
+same decision.
+\newpage
+\subsection{Two phase commit protocol}
+The two-phase commit protocol is implemented following the following algorithm:
+\begin{itemize}
+	\item Phase 1 (\textbf{voting phase}): The coordinator sends a \verb|canCommit?| request to each of the participants in the transaction. When a participant receives a \verb|canCommit?| requests it replies with its vote (Yes or No) to the coordinator. Before voting Yes, it prepares to commit by saving objects in permanent storage. If the vote is No the participant aborts immediatly.
+	\item Phase 2 (\textbf{decision}): The coordinator collects the votes, if there are no failures and all the votes are Yes the coordinator decides to commit the transaction and sends a \verb|doCommit| request to each of the participants.\\ Otherwise the coordinator decides to abort the transaction and send \verb|doAbort| requests to all participants that voted Yes.\\
+	Participants that voted Yes are waiting for a \verb|doCommit| or \verb|doAbort| request from the coordinator. When a participant receives one of these messages it acts accordingly and in the case of commit, makes a \verb|haveCommitted| call as confirmation to the coordinator.
+\end{itemize}
+
+\image{img/twoPhaseCommit.png}{Two Phase commit functions}{0.8}
+
+The general behavior can be summarized with the following schema:
+\image{img/twoPhaseCommunication.png}{Communication in two phase commit protocol}{0.8}
+
+
+\subsection{Fault and performance management}
+There are various stages in the protocol at which the coordinator or a participant cannot progress its part of the protocol until it receives another request or reply from one of the others. In order to avoid that some entities wait for a long time without any probability to get an answer it is introduced the usage of \textbf{timeouts}. For instance a participant that is waiting for a \verb|doCommit| message set a timeout, if the timeout fire it will abort the transaction.\\
+The critic point for fault management happen if the coordinator crashes after that it sent \verb|doCommit| to all the partecipants. The problem consists on the fact that later it will be no able to check if all the participants have commited or not.\\
+
+Considering the performance offered by the algorithm. Provided there is no fault, the two-phase commit protocol involving $N$ participants can be completed with $N$ \verb|canCommit?| messages and replies, followed by $N$ \verb|doCommit| messages. That is, the cost in messages is proportional to $3N$, and the cost in time is three rounds of messages. The \verb|haveCommitted| messages are not counted in the estimated cost of the protocol, which can function correctly without them – their role is to enable servers to delete stale coordinator information. In the worst case, there may be arbitrarily many server and communication failures during the two-phase commit protocol. 	
+
+
+\subsection{Two phase commit protocol for nested transactions}
+
+As we have seen before nested transactions are composed by top-level transaction and subtransactions. When a subtransaction completes, it makes an independent decision either to commit provisionally or to abort. A \textbf{provisional commit} is different from being preared to commit: nothing is backed up in permanent storage. If the server crashes subsequently, its replacement will not be able to commit. After all subtransactions have completed, the provisionally committed ones participate in a two-phase commit protocol, in which servers of provisionally committed subtransactions express their intention to commit and those with an aborted ancestor will abort.
+In other words provisional commit means that coordinator and transactional servers are ready to commit subtransaction but they have not yet done so.
+
+\image{img/DistnestedTransactions.png}{Distributed nested transaction}{0.7}
+From the previous picture we can see that even if $T_{11}$ abort $T_1$ in this example is in provisional commit state. It can happen if the transaction $T_{11}$ is not considered fundamental: example multiple thread to find an element, if at least one of this thread find the element I can ignore the other ones. But there are also case in which $T_{11}$ plays a fundamental role, and in this case $T_1$ should abort.\\
+
+The top-level transaction plays the role of coordinator in the two-phase commit protocol. The second phase of the two-phase commit protocol is the same as for the non- nested case. The coordinator collects the votes and then informs the participants as to the outcome. When it is complete, coordinator and participants will have committed or aborted their transactions.
+
+
+\subsection{Protocol realization}
+
+Two phase commit protocol can be realized as:
+\begin{itemize}
+	\item \textbf{Flat}, the coordinator of the top-level transaction sends \verb|canCommit?| messages to the coordinators of all of the subtransactions in the \textbf{provisional commit list}. Partecipants that receive the message replies with it vote Yes or No if they can commit or not. The participant check the list to verify whether a subtransaction already provisional commited is descendent of a transaction already aborted. In this case also the subtransaction has to abort.
+	
+	
+	
+	\item \textbf{Hierarchical}, the coordinator of the top-level transaction communicates with the coordinators of the subtransactions for which it is the immediate parent. It sends \verb|canCommit?| messages to each of them, which in turn pass them on to the coordinators of their child transactions. Each participant collects the replies from its descendants before replying to its parent.
+\end{itemize}
+
+
+\subsection{Concurrency control for distributed transactions}
+The servers apply to their own objects the protocols of concurrency control for
+distributed transactions like \textbf{locking}, \textbf{optimistic} and \textbf{timestamp}. Servers must coordinate to ensure serial equivalence. This implies that if transaction $T$ is before transaction $U$ in their conflicting access to objects at one of the servers, then they must be in that order at all of the servers whose objects are accessed in a conflicting manner by both $T$ and $U$.
+
+\paragraph*{Locking.} In a distributed transaction, the locks on an object are held locally (in the same server). The \textbf{local lock managerx} can decide whether to grant a lock or make the requesting transaction wait. However, it cannot release any locks until it knows that the transaction has been committed or aborted at all the servers involved in the transaction.\\
+When locking is used for concurrency control, the objects remain locked and are unavailable for other transactions during the atomic commit protocol. Since each server manages the locks locally and independently from the others, it is possible that different servers may impose different orderings on transactions. These different orderings can lead to cyclic dependencies between transactions, giving rise to a \textbf{distributed deadlock} situation.
+\image{img/locking.png}{Locking in distributed transactions}{0.5}
+
+\paragraph*{Timestamp.} In distributed transactions, we require that each coordinator provides \textbf{globally unique timestamps}. A globally unique transaction \textit{timestamp} is provided to the client by the coordinator the first time. The transaction timestamp is passed to the coordinator at each server whose objects perform an operation in the transaction.\\
+To achieve the same ordering at all the servers, the coordinators must agree as to the ordering of their timestamps. A \textit{timestamp} consists of a $<local\text{ }timestamp, server-id>$ pair. \\
+When \textit{timestamp} ordering is used for concurrency control, conflicts are resolved with a possible abort.
+
+\paragraph*{Optimistic.} With \textit{optimistic} concurrency control, each transaction is validated before \textit{commit execution}. Transaction numbers are assigned at the beginning of the validation phase and transactions are serialized according to the order of their transaction numbers. A distributed transaction is validated by a collection of independent servers, each of which validates transactions that access its own objects. This validation takes place during the first phase of the \textit{two-phase commit protocol}.
+\image{img/optimisticTable}{Example of commitment deadlock with optimistic concurrency control}{0.5}
+As it is possible to see in the previous image, transactions access the objects in the order $T$ before $U$ at server $X$ and in the order $U$ before $T$ at server $Y$. Now if we suppose that $T$ and $U$ start validation at about the same time, but server $X$ validates $T$ first and server $Y$ validates $U$ first. 
+From a previous rule of the validation protocol, we know that only one transaction may perform validation and update phases at a time. Therefore each server will be unable to validate the other transaction until the first one has completed. This is an example of \textbf{commitment deadlock}.
+If parallel validation is used, transactions will not suffer from \textit{commitment deadlock}, but this imply that only one transaction at a time can enter during the validation phase.
+
+\subsection{Distributed deadlock}
+Most deadlock detection schemes operate by finding cycles in the transaction \textit{wait-for graph}. In a distributed system involving multiple servers being accessed by multiple transactions, a global \textit{wait-for graph} can in theory be constructed from the local ones. There can be a cycle in the global \textit{wait-for graph} that is not in any single local one, there can be in fact a \textbf{distributed deadlock}. We can understand so that, to detect a \textit{distributed deadlock}, it is required to find a cycle in the global transaction \textit{wait-for graph} that is distributed among the servers that were involved in the transactions. An example of the \textit{global wait-for graph} is the following:
+\image{img/distributedDeadlock}{Example of a global \textit{wait-for graph}}{0.6}
+A simple solution is to use \textbf{centralized deadlock detection}, in which one server takes on the role of \textbf{global deadlock detector}. When it finds a cycle, it makes a decision on how to resolve the deadlock and tells the servers which transaction to abort. Centralized deadlock detection is not a good idea, because it depends on a single server to carry it out. It suffers from the usual problems associated with centralized solutions in distributed systems.
+
+\paragraph*{Phantom deadlock.} Using this strategy it can be possible to find a phantom deadlock. A deadlock that is \textit{"detected"} but it is not really a deadlock is called a \textbf{phantom deadlock}. In a distributed deadlock detection, as the procedure will take some time, there is a chance that one of the transactions that holds a lock will meanwhile have released it, in which case the deadlock will no longer exist.
+
+\paragraph*{Edge chasing.} A distributed approach to deadlock detection uses a technique called \textbf{edge chasing}. In this approach, the \textit{global wait-for graph} is not constructed, but each of the servers involved has knowledge about some of its edges. The servers attempt to find cycles by forwarding messages called \textbf{probes}, which follow the edges of the graph throughout the distributed system. A \textit{probe} message consists of transaction wait-for relationships representing a path in the \textit{global wait-for graph}. When a cycle is detected, a transaction in the cycle is aborted to break the deadlock. \textbf{Transaction priorities} is a variant of edge chasing that reduces the number of probe messages.
+
+\subsection{Transaction recovery}
+The atomic property of transactions requires that all the effects of committed transactions and none of the effects of incomplete or aborted transactions are reflected in the objects they accessed. This property can be described in terms of two aspects: \textbf{durability} and \textbf{failure atomicity}. \textit{Durability} requires that objects are saved in permanent storage and will be available indefinitely thereafter. \textit{Failure atomicity} requires that effects of transactions are atomic even when the server crashes.\\
+We will assume that when a server is running it keeps all of its objects in its volatile memory and records its committed objects in a \textbf{recovery file}. Therefore recovery consists of restoring the server with the latest committed versions of its objects from permanent storage.\\
+The requirements for \textit{durability} and \textit{failure atomicity} are not really independent of one another and can be dealt with by a single mechanism, the \textbf{recovery manager}. \\
+The tasks of a \textbf{recovery manager} are:
+\begin{itemize}
+	\item To save objects in permanent storage (in a recovery file) for committed
+	transactions.
+	\item To restore the server’s objects after a crash.
+	\item To reorganize the recovery file to improve the performance of recovery.
+	\item To manage recovery file.
+\end{itemize}
+Any server that provides transactions needs to keep track of the objects accessed by clients’ transactions. At each server, an \textbf{intentions list} is recorded for all of its currently active transactions. An \textit{intentions list} of a particular transaction contains a list of the references and the values of all the objects that are modified by that transaction. When a transaction is committed, that transaction’s \textit{intentions list} is used to identify the objects it affected. Each object in the \textit{recovery file} is associated with a particular transaction by saving the intentions list in the
+\textit{recovery file}. Following image shows a summary of the types of entry included in a \textit{recovery file}:
+\begin{table}[H]
+	\centering
+	\begin{tabular}{| c | p{11cm} |}
+		\hline
+		\textbf{Type of entry} & \textbf{Description of contents of entry} \\ \hline
+		\textbf{Object} & A value of an object. \\
+		\hline
+		\textbf{Transaction status} & Transaction identifier, transaction status (\textit{prepared}, \textit{committed}, \textit{aborted}) and other status values used for the two-phase commit protocol. \\
+		\hline
+		\textbf{Intentions list} & Transaction identifier and a sequence of intentions, each of which consists of \textit{<objectID, $p_i$>}, where $P_i$ is the position in the recovery of the value of the object.\\
+		\hline
+	\end{tabular}
+	\caption{Types of entry in a recovery file.}
+\end{table}
+Two approaches can be used to create a \textit{recovery file}: \textbf{logging} and \textbf{shadow version}.
+
+\subsubsection{Logging}
+In the logging technique, the \textit{recovery file} represents a log containing the \textbf{history} of all the transactions performed by a server. The \textit{history} consists of values of objects, transaction status entries and transaction intentions lists. During the normal operation of a server, its recovery manager is called whenever a transaction prepares to commit, commits or aborts a transaction. When the server is prepared to commit a transaction, the recovery manager appends all the objects in its intentions list to the recovery file, followed by the current status of that transaction together with its intentions list. When a transaction is eventually committed or aborted, the recovery manager appends the corresponding status of the transaction to its recovery file. After a crash, any transaction that does not have a committed status in the log is aborted.
+\par \bigskip \noindent
+The below image illustrates the log mechanism for the banking service transactions $T$
+and $U$. Entries to the left of the double line represent a snapshot of the values of $A$, $B$ and $C$ before transactions $T$ and $U$started. In this diagram, we use the names $A$, $B$ and $C$ as unique identifiers for objects.
+We show the situation when transaction $T$ has committed and transaction $U$ has prepared
+but not committed. When transaction $T$ prepares to commit, the values of objects $A$ and
+$B$ are written at positions $P_1$ and $P_2$ in the log, followed by a prepared transaction status entry for $T$ with its intentions list $(< A, P_1 >, < B, P_2 >)$. When transaction $T$ commits, a committed transaction status entry for $T$ is put at position $P_4$. Then when transaction $U$ prepares to commit, the values of objects $C$ and $B$ are written at positions $P_5$ and $P_6$ in the log, followed by a prepared transaction status entry for $U$ with its intentions list $(< C, P_5 >, < B, P_6 >)$. Each transaction status entry contains a pointer to the position in the recovery file of the previous transaction status entry to enable the recovery manager to follow the transaction status entries in reverse order through the recovery file. The last pointer in the sequence of transaction status entries points to the checkpoint.
+\image{img/loggingBank}{Example of log for banking service}{1}
+
+\subsubsection{Shadow versions}
+The logging technique records transaction status entries, intentions lists and objects all in the same file: the \textbf{log}. The \textbf{shadow versions} technique is an alternative way to organize a recovery file. It uses a \textbf{map} to locate versions of the server’s objects in a file called a version store. The map associates the identifiers of the server’s objects with the positions of their current versions in the version store. The versions written by each transaction are \textit{"shadows"} of the previous committed versions.\\
+When a transaction is prepared to commit, any of the objects changed by the transaction are appended to the version store, leaving the corresponding committed versions unchanged. These new as-yet-tentative versions are called shadow versions. When a transaction commits, a new map is made by copying the old map and entering the positions of the shadow versions. To complete the commit process, the new map replaces the old map.\\
+To restore the objects when a server is replaced after a crash, its recovery manager reads the map and uses the information in the map to locate the objects in the version store. The below image illustrates this technique with the same example involving transactions $T$ and $U$. The first column in the table shows the map before transactions $T$ and $U$, when the balances of the accounts $A$, $B$ and $C$ are \$100, \$200 and \$300, respectively. The second column shows the map after transaction $T$ has committed.
+\image{img/shadowVersions}{Example of log for banking service}{0.8}
+The version store contains a checkpoint, followed by the versions of $A$ and $B$ at $P_1$
+and $P_2$ made by transaction $T$. It also contains the shadow versions of $B$ and $C$ made by
+transaction $U$, at $P_3$ and $P_4$.
+The map must always be written to a well-known place so that it can be found when the system needs to
+be recovered. The switch from the old map to the new map must be performed in a single atomic step.
+
+\subsubsection{Recovery of the two-phase commit protocol}
+The recovery management described previously, must be extended to deal with any transactions that are performing the \textit{two-phase commit protocol} at the time when a server fails. The recovery managers use two new status values for this purpose: \verb|done| and \verb|uncertain|. A \textbf{coordinator} uses committed to indicate that the outcome of the vote is \verb|Yes| and \verb|done| to indicate that the \textit{two-phase commit protocol} is complete. A participant uses \verb|uncertain| to indicate that it has voted
+\verb|Yes| but does not yet know the outcome of the vote.\\
+In \textbf{phase 1} of the protocol, when the \textit{coordinator} is prepared to commit, its recovery manager adds a coordinator entry to its recovery file. When it votes \verb|Yes|, its recovery manager records a participant entry and adds an \verb|uncertain| transaction status to its recovery file as a forced write. When a participant votes \verb|No|, it adds an \verb|abort| transaction status to its recovery file.\\
+In phase 2 of the protocol, the recovery manager of the coordinator adds either a \textit{committed} or an \textit{aborted} transaction status to its recovery file, according to the decision.
+\renewcommand{\arraystretch}{1.3}
+\begin{table}[H]
+	\centering
+	\begin{tabular}{| p{2cm} | p{1.8cm} | p{10.8cm} |}
+		\hline
+		\textbf{Role} & \textbf{Status} & \textbf{Action of recovery manager} \\ \hline
+		Coordinator & \textit{prepared} & No decision had been reached before the server failed. It sends \textit{abortTransaction} to all the servers in the participant list and adds the transaction status \textit{aborted} in its recovery file. Same action for state \textit{aborted}. If there is no participant list, the participants will eventually timeout and abort the transaction. \\
+		\hline
+		Coordinator & \textit{committed} & A decision to commit had been reached before the server failed. It sends a \textit{doCommit} to all the participants in its participant list (in case it had not done so before) and resumes the two-phase protocol at step 4. \\
+		\hline
+		Participant & \textit{committed} & The participant sends a \textit{haveCommitted} message to the coordinator (in case this was not done before it failed). This will allow the coordinator to discard information about this transaction at the next checkpoint.\\
+		\hline
+		Participant & \textit{uncertain} & The participant failed before it knew the outcome of the transaction. It cannot determine the status of the transaction until the coordinator informs it of the decision. It will send a \textit{getDecision} to the coordinator to determine the status of the transaction. When it receives the reply it will commit or abort accordingly. \\
+		\hline
+		Participant & \textit{prepared} & The participant has not yet voted and can abort the transaction. \\
+		\hline
+		Coordinator & \textit{done} & No action is required. \\
+		\hline
+	\end{tabular}
+	\caption{Table for the different actions of the recovery manager.}
+\end{table}

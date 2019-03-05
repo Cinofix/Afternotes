@@ -1,0 +1,212 @@
+\section{Transaction and concurrency control}
+A transaction defines a sequence of server operations that is guaranteed by the
+server to be atomic in the presence of multiple clients and server crashes.
+Formally, a \textbf{transaction} is an operation sequence on the server, involving a set of processes and/or shared resources, that are guaranteed to be \textbf{atomic} (by the server) in presence of \textbf{concurrency} and \textbf{faults}.
+The goal of transactions is to ensure that all of the objects managed by a server remain in a consistent state when they are accessed by multiple transactions and in the presence of server crashes.
+
+Properties of the transaction:
+\begin{itemize}
+	\item \textbf{Isolation}, they are free from interference by operations being performed on behalf of other concurrent clients. In other words, all the operations are executed successfully or if just one is not completed, one has to reconstruct the initial state.
+	
+	\item \textbf{All or nothing}, either all of the operations must be completed successfully or they must have no effect at all in the presence of server crashes. In other words, there is no interference with the other transactions, partial effects are not visible.
+\end{itemize}
+
+An easy way to remember transaction properties is to use the word \textbf{ACID}:
+\begin{itemize}
+	\item \textbf{Atomicity}, a transaction must be all or nothing.
+	\item \textbf{Consistency}, a transaction takes the system from one consistent state to another consistent state. Multi-threading and possible \textbf{interleaving} of methods can generate different result in absence of any type of control.
+	\item \textbf{Isolation}, each transaction must be performed without interference from other transactions
+	\item \textbf{Durability}, after a transaction has completed successfully, all its effects are saved in permanent storage. Data saved in a file will survive if the server process crashes.
+\end{itemize}
+\image{img/transactionEx.png}{Example of a transaction}{0.3}
+In general \textbf{transactions} can be part of the middleware.
+
+\subsection{Concurrency control}
+A server that supports transactions must \textbf{synchronize the operations} sufficiently to
+ensure that the isolation requirement is met. One way of doing this is to perform the
+transactions \textbf{serially} – one at a time, in some arbitrary order. Unfortunately, this solution would generally be unacceptable for servers whose resources are shared by multiple interactive users. For instance, in our banking example it is desirable to allow several bank clients to perform online banking transactions at the same time as one another. The aim for any server that supports transactions is to \textbf{maximize concurrency}.
+Therefore transactions are allowed to execute concurrently if this would have the same effect as a serial execution – that is, if they are \textbf{serially equivalent} or \textbf{serializable}. In other words, transactions are serializable if the serial and concurrent run are equivalent. It is necessary to introduce a new entity called \textbf{coordinator} that manages concurrency.
+
+
+The coordinator gives each \textbf{transaction an identifier}, or \textbf{TID}. The client invokes the\\ \verb!openTransaction! method of the coordinator to start a new transaction – a transaction identifier or TID is allocated and returned. At the end of a transaction, the client invokes the \verb!closeTransaction! method to indicate its end – all of the recoverable objects accessed by the transaction should be saved. If, for some reason, the client wants to abort a transaction, it invokes the \verb!abortTransaction! method – all of its effects should be removed from sight. A transaction is achieved by cooperation between a client program, some recoverable objects and a coordinator. The client specifies the sequence of invocations on recoverable objects that are to comprise a transaction. To achieve this, the client sends with each invocation the transaction identifier returned by \verb!openTransaction!. One way to make this possible is to include an extra argument in each operation of a recoverable object to carry the TID.
+%\image{img/transactionBank.png}{Transaction example}{0.3}
+
+The transaction manager has to take care also of these possible issues that can income:
+\begin{itemize}
+	\item \textbf{lost update}, changing data not correctly managed, and that determines the loss of the update of a result. Reading old values and use for execution.
+	\image{img/lostUpdate.png}{Lost update}{0.55}
+	
+	\item \textbf{retrieval disparity} or \textbf{inconsistent retrieval}, data values are not 	consistent for all the copies. If shared data change is not atomic, it is necessary to deal also copies and also inconsistent values derived from a possible recovery.
+	\image{img/incosistentRetrieval.png}{Incosistent retrieval}{0.55}
+\end{itemize}
+
+\subsection{Serial equivalence}
+As we anticipate before, we have serially equivalent transactions only if the concurrent and serial execution lead to the same results.
+If the transactions \textbf{interfere} one can define a combination of operations in the sequences (interleaving) such that it is \textbf{serially equivalent}. This means that transactions have the same values of variables to be read and produce the same results at the end of the execution.\\
+An analysis of serial equivalence between transactions is so useful for avoiding lost update and inconsistency.
+\image{img/serialEquivalent.png}{Serially equivalent}{0.65}
+
+\subsection{Conflict of operations}
+Serial equivalence is not satisfied in presence of \textbf{conflict operations}. The operations are in \textbf{conflict} if the result(effect) of the combined execution depends on the execution order.
+The following image contains the compatibility table between operations:
+\image{img/conflictRules.png}{Conflict Rules}{0.9}
+
+
+From this we can conclude that:
+\begin{center}
+\textit{Two transactions are serially equivalent $\iff$ all the operation pairs in conflict are executed with the same order on all the objects they refer to.}
+\end{center}
+
+\textbf{Serial equivalence} specify a set of rules to define concurrency control protocol between transactions.
+
+Concurrency can be managed using 3 different ways:
+\begin{itemize}
+	\item \textbf{Lock}
+	\item \textbf{Optimistic}
+	\item \textbf{Timestamp - ordering}
+\end{itemize}
+
+\image{img/nonSeriallyEq.png}{Non-serially equivalent interleaving operations}{0.85}
+
+The execution of a set of transactions even serial equivalent is not free from the problem of \textbf{dirty reads} (incorrect) due to execution without success of transactions (\textbf{abort}). The solution consists to delay the commit of the transactions, and not commit it immediately.
+%TODO immagine
+
+Other events that can bring some wrong effects to the results are given by the aborting operation of a transaction or by multiple \verb|write| operations to the same object (\textbf{premature writes}) . The execution of a transaction with abort can cause other abort (\textbf{domino effect}). A way to solve this problem consists on imposing that the \verb|read| of objects happens only if the previous \verb|write| on that object have been executed by completed transactions (commit). Or another strategy consists on delaying the execution of \verb|read|. 
+The resolution of this problem results fundamental in order to be able of recovering the previous state (undoing operations). A good implementation consists on recovering the previous state using of \textbf{before images} for all the write operations in each transaction. In order to guarantee correctness: one postpones the execution of a write until the transaction that made the object update (commit or abort) just before completes.\\
+
+Generally, it is required that transactions delay both their read and write operations so as to avoid both \textbf{dirty reads} and \textbf{premature writes}. The executions of transactions are called \textbf{strict} if the service delays both read and write operations on an object until all transactions that previously wrote that object have either committed or aborted. The \textbf{strict execution} of transactions enforces the desired property of isolation.
+
+\subsection{Nested transactions}
+More complicated transactions, \textit{top-level}, can be composed by other different transactions, \textit{subtransactions}, like modules. A subtransaction appears atomic to its parent with respect to transaction failures and to concurrent access. Subtransactions at the same level, such as $T_1$ and $T_2$, can run concurrently, but their access to common objects is serialized. If one or more of the subtransactions fails, it doesn't mean that also the top-level transaction fails but the parent transaction could record the fact and then commit, with the result that all the successful child transactions commit. For example, a transaction to deliver a mail message to a list of recipients could be structured as a set of subtransactions, each of which delivers the message to one of the recipients.\\
+The advantages of splitting a transaction in multiple one are: increasing of performance, since transaction at the same level can be executed in parallel and fault-tolerance, not the entire transaction fails but only subtransactions,
+\image{img/subtransactions.png}{Nested transactions}{0.7}
+
+The rules for committing of nested transactions are provided as follow:
+\begin{itemize}
+	\item a transaction may commit or abort only after its child transactions have completed.
+	\item if the parent aborts, all of its subtransactions are aborted.
+	\item if a subtransaction aborts, the parent can decide whether to abort or not.
+\end{itemize}
+
+\subsection{Concurrency control: Lock}
+Transactions must be scheduled so that their effect on shared data is serially equivalent. A server can achieve serial equivalence of transactions by serializing access to the objects. The most common used solution consist on \textbf{locking} the access to the shared objects. The idea of \textbf{lock} is to provide access with \textbf{mutual exclusion}, only once at a time, to objects that are modified. \\
+
+All the pairs of operations of two transactions in conflict have to be executed with the same order. Each transaction does not get a new lock after having released another lock and in order to avoid dirty reads and premature writes each lock is maintained up to the transaction end. Lock can be assigned considering the following lock compatibility:
+
+\image{img/lockCompatibilityMat.png}{Lock compatibility matrix}{0.8}
+
+The operation conflict rules tell us that:
+\begin{itemize}
+	\item If a transaction \textit{T} has already performed a read operation on a particular object, then a concurrent transaction \textit{U} must not write that object until T commits or aborts.
+	\item If a transaction \textit{T} has already performed a write operation on a particular object, then a concurrent transaction \textit{U} must not read or write that object until T commits or aborts.
+\end{itemize}
+
+\subsubsection{Strict two-phase locking}
+\textbf{Strict two-phase} locking is a basic algorithm that provides concurrency control using lock strategy.\\
+
+When an operation accesses an object within a transaction:
+\begin{itemize}
+	\item if the object is not already locked, it is locked and the operation proceeds.
+	\item if the object has a conflicting lock set by another transaction, the transaction must wait until it is unlocked.
+	\item if the object has a non-conflicting lock set by another transaction, the lock is shared and the operation proceeds.
+	\item if the object has already been locked in the same transaction, the lock will be promoted if necessary and the operation proceeds. Where promotion is prevented by a conflicting lock rule $2$ is applied.
+\end{itemize}
+
+For nested transactions it is necessary that each set of nested $T$ does not see partial results of other sets of nested $T$ (for atomicity property) and each $T$ in the set of the nested $T$ must not see partial results of other $T$ in the set itself.
+
+Every lock that is acquired by a successful subtransaction is inherited by its parent when it completes. Inherited locks are also inherited by ancestors. Note that this form of inheritance passes from child to parent! The top-level transaction eventually inherits all of the locks that were acquired by successful subtransactions at any depth in a nested transaction. This ensures that the locks can be held until the top-level transaction has committed or aborted, which prevents members of different sets of nested transactions observing one another’s partial effects. The subtransactions are not concurrently executed with the father, but inherits the needed lock temporary.
+
+Now the following rules regards the allocation and release of lock in nested transactions:
+\begin{itemize}
+	\item a subtransaction acquires a \textbf{read-lock} if no transactions active has a write lock and who has the \textbf{write-lock} is his ancestor.
+	\item a subtransaction acquires a write-lock if no transaction active has a read or write lock and who has the \textbf{read-lock} or write-lock is his ancestor.
+	\item when a subtransaction \textbf{commit} the lock are inherited by the father with the same type.
+	\item when a subtransactions \textbf{abort} the lock are lost, if the father has some of them he keeps them.
+\end{itemize}
+
+
+\subsubsection{Deadlock}
+
+The usage of lock technique can bring the system in deadlock. \textbf{Deadlock} is a state in which each member of a group of transactions is waiting for some other member to release a lock. It can happen from indirect dependency on the objects.
+\image{img/deadlockEx.png}{Lock deadlock}{0.7}
+
+A \textbf{wait-for graph} can be used to represent the waiting relationships between current transactions. In a wait-for graph the nodes represent transactions and the edges represent wait-for relationships between transactions. There is an edge from node $T$ to node $U$ when transaction $T$ is waiting for transaction $U$ to release a lock.\\
+Deadlocks may be detected by finding cycles in the wait-for graph. Having detected a deadlock, a transaction must be selected for abortion to break the cycle. 
+\image{img/wait-forGraph.png}{Wait-for graph}{0.4}
+Lock timeouts are a method for resolution of deadlocks that is commonly used. Each lock is given a limited period in which it is invulnerable. After this time, a lock becomes vulnerable. Provided that no other transaction is competing for the object
+that is locked, an object with a vulnerable lock remains locked. However, if any other transaction is waiting to access the object protected by a vulnerable lock, the lock is broken (that is, the object is unlocked) and the waiting transaction resumes. The transaction whose lock has been broken is normally aborted. 
+This solution solves the problem of deadlock, but it brings some drawbacks like: overhead, due the fact the timeout wastes time, it can happen that some transactions abort also without actual deadlock, which is very common for long transactions.
+
+Another solution is to \textbf{prevent deadlock}, locking all of the objects used by a transaction when it starts. This would need to be done as a single atomic step so as to avoid deadlock at this stage. Such a transaction cannot run into deadlocks with other transactions, but this approach unnecessarily restricts access to shared resources. Deadlocks can also be prevented by requesting locks on
+objects in a predefined order, but this can result in premature locking and a reduction in
+concurrency.
+
+\subsection{Lock compatibility (read, write and commit locks)}
+Even when locking rules are based on the conflicts between read and write operations and the granularity at which they are applied is as small as possible, there is still some scope for increasing concurrency. We discuss two approaches that have been used to deal with this issue:
+\begin{itemize}
+	\item \textbf{Two-version locking:} the setting of exclusive locks is delayed until a transaction commits.
+	\item \textbf{Hierarchic locks:} mixed-granularity locks are used.
+\end{itemize}
+
+\paragraph*{Two-version locking.} This is an optimistic scheme that allows one transaction to \verb|write| tentative versions of objects while other transactions \verb|read| from the committed versions of the same objects. \verb|read| operations only wait if another transaction is currently committing the same object. This scheme allows more concurrency than read-write locks. Transactions cannot commit their \verb|write| operations immediately if other uncompleted transactions have read the same objects. Therefore, transactions that request to commit in such a situation are made to wait until the reading transactions have completed. \textbf{Deadlocks} may occur when transactions are waiting to commit. Therefore, transactions may need to be aborted when they are waiting to commit, to resolve deadlocks.
+\image{img/lockCompatibilityRead.png}{Compatibility table for two-version locking.}{0.9}
+In the previous image it is possible to see the compatibilities of different locks. This variation on strict two-phase locking uses three types of lock: a \verb|read| lock, a \verb|write| lock and a \verb|commit| lock:
+\begin{itemize}
+	\item Before a transaction’s \textbf{read operation} is performed, a \verb|read| lock must be set on the object. The attempt to set a \verb|read| lock is successful unless the object has a \verb|commit| lock, in which case the transaction waits.
+	\item Before a transaction’s \textbf{write operation} is performed, a \verb|write| lock must be set on the object. The attempt to set a \verb|write| lock is successful unless the object has a \verb|write| lock or a \verb|commit| lock, in which cases the transaction waits.
+\end{itemize}
+
+\paragraph*{Hierarchic locks.} Gray, in the 1978, proposed the use of a hierarchy of locks with different granularities. At each level, the setting of a parent lock has the same effect as setting all the equivalent child locks. This economizes on the number of locks to be set. In Gray’s scheme, each node in the hierarchy can be locked, giving the owner of the lock explicit access to the node and giving implicit access to its children.
+\image{img/lockCompatibilityHierarchic.png}{Compatibility table for hierarchic locks.}{0.9}
+Gray also proposed a third type of intention lock, that combines the properties of a \verb|read| lock with an intention to \verb|write| lock.\\
+Hierarchic locks have the advantage of reducing the number of locks when mixed-
+granularity locking is required. The compatibility tables and the rules for promoting locks are more complex. The mixed granularity of locks could allow each transaction to lock a portion whose size is chosen according to its needs. A long transaction that accesses many objects could lock the whole collection, whereas a short transaction can lock at finer granularity.
+
+\subsection{Concurrency control: Optimistic}
+Locking is not the unique solution and it has some drawbacks that should be considered:
+\begin{itemize}
+	\item For system that does not have concurrent access to shared data locking is inefficient and brings an useless overhead.
+	\item deadlock is difficult to solve and prevent.
+	\item To avoid cascading aborts, locks cannot be released until the end of the transaction. This may reduce significantly the potential for concurrency.  
+\end{itemize}
+Another solution is given by \textbf{optimistic concurrency control}, which assumes that there are no conflicts for the operations.
+In \textbf{optimistic} schemes, a transaction proceeds until it asks to commit, and before it is allowed to commit the server performs a check to discover whether it has performed operations on any objects that conflict with the operations of other concurrent transactions, in which case the server aborts it and the client may restart it. The aim of the check is to ensure that all the objects are correct. \\
+In other words, during \textbf{commit time} server performs a check and whether there have been interferences and in that case it removes the transactions.\\
+
+Optimistic strategy has no deadlock state and it provides maximum level of concurrency. But the main drawback is that for heavy load the interference probability and conflict is very high.\\
+
+Transactions pass from these phases:
+\begin{itemize}
+	\item \textbf{Work phase}, each transaction has a copy called, tentative version, of each object that is updated by a write operation.
+	
+	\item \textbf{Validation phase}, when a transaction wants to terminates it is validated to establish whether or not its operations on objects conflict with operations of other transactions on the same objects. If the validation is successful, then the transaction can commit. If the validation fails, then some form of conflict resolution must be used and either the current transaction or, in some cases, those with which it conflicts will need to be aborted. It is performed one at a time.
+	
+	\item \textbf{Update phase}, If a transaction is validated, all of the changes recorded in its tentative versions are made permanent. Read-only transactions can commit immediately after passing validation. Write transactions are ready to commit once the tentative versions of the objects have been recorded in permanent storage.
+\end{itemize}
+
+\subsubsection{Serializability}
+When transactions enters into the validation phase they are numbered in increasing order. In order to provide validation of the transaction serializability  the following rules are considered:
+\image{img/optimisticRules.png}{Validation rules}{0.9}
+
+If the update phase is exclusive rule 3 is satisfied. Note that this restriction on write operations, together with the fact that no dirty reads can occur, produces strict executions. To prevent overlapping, the entire validation and update phases can be implemented as a critical section so that only one client at a time can execute it. The validation of a transaction must ensure that rules 1 and 2 are obeyed by testing for overlaps between the objects of pairs of transactions $T_v$ and $T_i$.
+\image{img/optimisticSerializability.png}{Optimistic serializability validation}{0.8}
+There two possible strategy to check overlapping:
+\begin{itemize}
+	\item \textbf{backward}, checks with the previous transactions already evaluated.
+	\item \textbf{forward}, compare with future transactions not already evaluated.
+\end{itemize}
+Both the two strategies check if the transaction reads a values that was changed later by another one.
+
+\subsection{Concurrency control: Timestamp}
+The last solution that we present on this document is based on the idea of using ordering. To each transaction is associated a \textbf{timestamp} (unique label). The timestamp defines its position in the time sequence of transactions. Requests from transactions can be totally ordered according to their timestamps.
+Each object has a \textbf{read timestamp} and \textbf{write timestamp} that registers the time of the last transaction that accessed it. So for assumption for each object there is a unique copy.
+
+The object authorizes the operation (read or write) only to transactions with timestamp greater (more recent) of the object timestamp. Transactions that arrive late abort their execution. The validation is so performed immediately and it is simple and quick.\\ 
+This solution does not present deadlock state.
+A transaction’s request to write an object is valid only if that object was last read and written by earlier transactions. A transaction’s request to read an object is valid only if that object was last written by an earlier transaction.
+%\image{img/timestampConcurrencyAlg.png}{Timestamp control algorithm}{0.5}
+The following rules are considered during the validation phase:
+\image{img/timestampConcurrency.png}{Timestamp control rules}{0.8}
+Here we present an example of transactions execution and validation:
+\image{img/timestampConcurrencyEx.png}{Timestamp in transactions T and U}{0.85}
+

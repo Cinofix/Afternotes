@@ -1,0 +1,954 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage[english]{isodate}
+\usepackage[paper=a4paper]{geometry}
+\newgeometry{top=3.5cm,bottom=2.5cm,right=2.5cm,left=2.5cm}
+\usepackage{graphicx}
+\usepackage{comment}
+\usepackage{fancyhdr}
+\usepackage{framed}
+\usepackage{lastpage}
+\usepackage[hidelinks]{hyperref}
+\usepackage{tabularx}
+\usepackage[table]{xcolor}
+\usepackage{enumitem}
+\usepackage{mdwlist}
+\usepackage{placeins}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{comment}
+\usepackage{float}
+
+
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% DEFINIZIONI
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\titolo}  {Afternotes}
+\newcommand{\versione}{2.0}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% SETUP DOCUMENTO
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\input{cloud_computing_report_setup.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% SEZIONI
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction to Distributed system}
+A \textbf{distributed system} is one in which components located as networking computers
+communicate and coordinate their actions only by passing messages. It is a set of autonomous nodes that interact and collaborate in order to reach a particular goal. Computers that are connected by a network may be spatially separated by any distance, and they communicate by exchanging information through a communication network. They may be on separate continents, in the same building or in the same room.
+Another definition can be the following one: a \textbf{distributed system} is composed by more than one autonomous computer systems that interact to reach a given goal. Nodes are autonomous since they can work alone, maintaining processes and data.
+The distributed systems are different from parallel systems, in which the main focus is the execution of a single application using several cores.
+  
+\subsection{Advantages}
+Possible advantages of having a distributed systems are:
+\begin{itemize}
+	\item \textbf{Resource Sharing}, is one of the first and important advantages of a distributed system. Sharing of hardware and software resources. 
+	\item \textbf{Heterogeneity}, it can be composed by different components, O.S., hardware, applications etc.
+	\item \textbf{Reliability}, if there is a crash the system is still alive. The system is fault-tolerant up to some crash, so it can be measured.
+	\item \textbf{Extendibility/Scalability}, extendibility refers to the possibility to include another node in the system, while scalability refers to the possibility of including a new node of the same type.
+	\item \textbf{Performance}, they offer results in an efficient way and optimum values of throughput and response time.
+	\item \textbf{Transparency}, is defined as the concealment from the user and the application programmer of the separation of components in a distributed system, so that system is perceived as a whole rather than as a collection of independent components. In a simpler way: \textit{It appears to the customer as a single system.}
+\end{itemize}
+
+\subsection{Characteristics}
+A distributed system has particular characteristics, listed up in the following section:
+\begin{itemize}
+	\item \textbf{Concurrency}, nodes can work in parallel.
+	\item \textbf{Autonomous and asynchronous}, a node can survive alone and each machine has its own clock. There isn't a unique global clock.
+	\item \textbf{Resource sharing} - coordination - access, resources can be shared and so a distributed system implement a strategy to manage them. 
+	\item \textbf{Lack of global time}, when processes need to cooperate they coordinate their actions by exchanging messages. Since each machine is composed by an own clock, they are not able to coordinate their clock. A solution is to consider \textit{timestamp.}
+	\item \textbf{Faults independent}, all computer systems can fail, and it is responsibility of
+	system designers to plan for the consequences of possible failures. Distributed systems
+	can fail in new ways. Possible faults of nodes don't affect other nodes in the network. We can consider in fact, nodes independent to each other in terms of faults. Processes
+	on them may not be able to detect whether the network has failed or has become
+	unusually slow.
+\end{itemize}
+All these characteristics are offered by Internet.
+\image{img/internet_as_DS.png}{Internet as Distributed System}{0.8}
+
+\subsection{Goals}
+\begin{itemize}
+	\item \textbf{economy}, since data can be shared is not necessary to replicate them.
+	\item \textbf{software}, their implementation follows particular standard and also application based on them.
+	\item \textbf{flexibility}, gives a clear interface to use the system.
+	\item \textbf{availability}, system detects fault and applies recover operations.
+	\item \textbf{performance}, optimal performance in terms of response time, throughput, parallelism and bottleneck reduction.
+	\item \textbf{locality} and control distribution, security and efficiency.
+	\item \textbf{transparency}.
+\end{itemize}
+
+\subsection{Computer System vs Distributed System}
+A computer system is characterized by single hardware, system software and application software for data or control. A distributed system, instead, is composed by distributed hardware, can have or not distributed software/application to manage data or control.
+Distributed hardware means that the system is composed by more than two computer systems, interconnected by a communication network and each computer system is independent from the others but can interact with them.
+Control is essential to manage physical or logical resources on the system, it can be:
+\begin{itemize}
+    \item \textbf{centralized}, unique entity responsible to manager resources.
+    \item \textbf{distributed}, computer systems on the net cooperate to reach the solution.
+    \item \textbf{hierarchical}, the system is more scalable since all the functions are subdivided in different modules.
+\end{itemize}
+Manage data means that is necessary that the system implements some strategies to administrate resources and provide them when they are required. Data can be replicated, multiple copies in different locations, or partitioned, portion of data are stored in various locations.
+
+\subsection{Open problems}
+The development of a DS deals with some particular issues:
+\begin{itemize}
+    \item \textbf{data sharing}, understands how and what resources must be shared and it provides system to retrieve them efficiently.
+    \item \textbf{heterogeneity}, enables users to access services and run applications over a heterogeneous collection of computers and networks. Heterogeneity must consider different networks, computer HW, operating system (SW), programming languages and applications.
+    \item \textbf{Concurrency}, there is the possibility that several clients will attempt to access a shared resource at the same time. Process that administrates shared resources could take one client request at a time. Processes have to communicate in order to synchronize the access to the shared resources.
+    \item \textbf{Openness}, the system is not completely defined but it is possible to extend it, for instance including a new machine. Open distributed systems are based on the provision of a uniform communication mechanism and published interfaces for access to shared resources. Open distributed systems can be constructed from heterogeneous hardware and software, possibly from different vendors.
+    \item \textbf{Middleware}, is an intermediate layer that provides an unique public interface. It defines a public and clear interface to use the features provided by the system.
+    \item \textbf{Mobility}, the term mobile code is used to refer program code that can be transferred from one computer to another and run at the destination. For instance Java application can be executed in different systems, since they create a virtual environment to run the code.
+    \item \textbf{Security}, is necessary to develop a secure system that doesn't allow unauthorized users to read/write data. Security for information resources has three components: \textit{confidentiality} (protection against disclosure to unauthorized individuals), \textit{integrity} (protection against alteration or corruption), and \textit{availability} (protection against interference with the means to access the resources).
+    \item \textbf{Scalability}, a system is defined scalable if it will remain effective when there is a significant increase in the number of resources and the number of users. The system works well independently on the amount of customers and adding components doesn't change the way in which resources are managed.
+    \item \textbf{Quality of Service (QoS)}, provides a good QoS, which is the main nonfunctional properties of systems that affect the quality of services experienced by clients and users. \textit{QoS} consider reliability, security and performance of the entire system.
+    \item \textbf{Fault management}, faults need to be transparent to the user. The three main steps are identification, masking and recovery. One of the most common recovery algorithm is "checkpoint and rollback" in which we go back to the last checkpoint to recover the last consistent state. Notice that global clock does not exists, meaning that time for checkpoints can be different. Moreover, we define \textit{"availability"} the probability of having the system working.
+    \item \textbf{Transparency}, system is perceived as a whole rather than as a collection of independent components.
+\end{itemize}
+
+\subsection{Transparencies}
+A system can provide different levels of transparencies:
+\begin{itemize}
+    \item \textbf{Access} transparency, enables local and remote resources to be accessed using identical operations.
+    \item \textbf{Location} transparency, enables resources to be accessed without knowledge of their location.
+    \item \textbf{Concurrency} transparency, enables several processes to operate concurrently using shared resources without interference between them. 
+    \item \textbf{Replication} transparency, enables multiple instances of resources to be used to increase reliability and performance without knowledge of the replicas by users or application programmers.
+    \item \textbf{Failure} transparency, enables the concealment of faults, allowing users and application programs to complete their tasks despite the failure of hardware or software components.
+    \item \textbf{Mobility} transparency, allows the movement of resources and clients within a system without affecting the operation of users or programs.
+    \item \textbf{Performance} transparency, allows the system to be reconfigured to improve performance as loads vary.
+    \item \textbf{Scaling} transparency, the system and applications can expand in scale without change to the system structure or the application algorithms.
+\end{itemize}
+
+\subsection{WWW as Example}
+The World Wide Web, also called WWW, can be seen as a large distributed system based on Internet and its characteristics are:
+\begin{itemize}
+    \item \textbf{open system}, it can be extended and implemented in new ways without disturbing its existing functionality. Operations are based on communication standards and document or content standards that are freely published and widely implemented. It is open with respect to the types of resource that can be published and shared on it.
+    \item \textbf{Client-Server architecture}, it is based on client-server architecture using standard rules for interaction (HTTP).
+    \item \textbf{Transparency}, using DNS (Domain Name System) it reach the location transparency. With the usage of symbolic server name it is not necessary for the client to know the exact physical address IP of the server. If the server is replicated the user does not know, so we also have the replication transparency. But it doesn't provide location transparency, since the structure of the file system should be known in order to construct the resource URL.
+\end{itemize}
+
+\newpage
+
+\section{Distributed System}
+\subsection{Communication}
+When we talk about \textit{"communication"}, we can separately talk about communication entities and communication paradigms. \textbf{Communication entities} can answer to the question "What is communicating?", instead, \textbf{communication paradigm} concerns "How they communicate?". Entities can be called: nodes or processes (\textit{system-oriented entities}) or components, objects or web services (\textit{problem-oriented entities}).
+These entities can communicate using different paradigms: 
+\begin{itemize}
+    \item \textbf{Interprocess communication}, refers to the relatively low-level support for communication between processes in distributed systems, including message-passing primitives, direct access to the API offered by Internet protocols (socket programming) and support for multicast communication.
+    \item \textbf{Remote Invocation} covers a range of techniques based on a two-way exchange between communicating entities in a distributed system and resulting in the calling of a remote operation, procedure or method. In other words, it is based on the idea of ask/use methods implemented by a remote process. Some techniques: \textit{Request-reply} protocols (client-server), \textit{Remote procedure calls} (calling procedures in remote processes), \textit{Remote method invocation} (invoke a method in a remote object).
+    \item \textbf{Indirect communication}, allows a strong degree of decoupling between senders and receivers. In particular, senders don't need to know who they are sending to, furthermore, senders and receivers don't need to exist at the same time. Some techniques are: \textit{group communication}, \textit{publish-subscribe}.
+\end{itemize}
+
+\subsection{HW Organization}
+The main goal of the hardware organization is to improve the performance maintaining the cost as low as possible. There can be developed Centralized System, that increases the CPU speed but has some physical constraints, or \textit{Distributed Systems}, for which there can be different various models divided according to the \textbf{Flynn classification}:
+\image{img/flynnClassification}{Flynn Classification}{0.6}
+\begin{itemize}
+    \item \textbf{SISD}, it corresponds to the Von Neuman model with single program executed by a CPU and data are stored inside a memory. CPU apply FETCH, DECODE and EXECUTE operations for each instruction of the program. In order to improve the performance of the system some techniques are adopted like: parallelism, use different ALU to execute more instruction on the same time, pipelining, simultaneously execute more operations for different instructions, or usege of hierarchies of memory (cache levels).
+    \image{img/sisd}{SISD}{0.3}
+    \item \textbf{SIMD}, typical of parallel execution in which there's a unique program executed on a set of data. This system is implemented inside a single PC, so there is a unique program counter that decides which is the next instruction to be executed of the program. Also in this case there can be different architectures that determine how to organize the system, like: A vector of ALU working on a vector of data and produce a vector of output.
+    \image{img/simd}{SIMD}{0.3}
+    \item \textbf{MISD}, Multiple Instructions Single Data.
+    \image{img/misd}{MISD}{0.3}
+    \item \textbf{MIMD}, typical of distributed system in which different CPU executes different program on different data stream. Each CPU is associated with his Program Counter, memory, data and programs and they cooperate to execute and provide a common service.
+    \image{img/mimd}{MIMD}{0.3}
+\end{itemize}
+
+A \textbf{MIMD} system, implemented by distributed system, can be organized in different ways, Multiprocessor or Multicomputer.
+
+\subsubsection{Multiprocessor}
+\textbf{Multiprocessor}, is characterized by a set of CPUs connected in a communication network in which there is a shared memory. The advantage of this design is that it reduces transmission delay since CPUs are strictly coupled. Some architectures are proposed:
+\begin{itemize}
+    \item \textbf{Bus}, CPUs are connected in a bus and they share a memory. They have to interact to decide who can access to the shared memory. Each time that a process needs a resource it asks to the shared memory. We can imagine that it is necessary to implement a synchronization system to access to the memory.
+    \image{img/busArchitecture}{Multiprocessor - Bus architecture}{0.55}
+ 	An improvement of this architecture is based on the usage of a private memory, in which each CPU has also a private cache memory where are stored the most recently used words. If the required word is stored inside the \textbf{cache} so there is an hit and it is not necessary to access to the shared memory. The greater is the hit rate the better are the performance. Data are written in cache and inside the shared memory.
+    \image{img/multiprocessorBusCache}{Multiprocessor - Bus with cache memory usage}{0.55}
+    \item \textbf{Switch}, the shared memory is subdivided into n modules and particular element, called switch, are used to decide the right path. With this implementation different CPU can access to different memory module at the same time. The disadvantage of this solution is the cost of switch. N memory modules and N CPUs require $N^2$ switches.
+    \image{img/multiprocessorSwitch}{Multiprocessor - Switch}{0.55}
+    \item \textbf{Omega Network}, respect to switch architecture switches are organized as a binary tree, with the advantage of decreasing the number of required switches (n/2 log n). The drawback is given by communication delay of each switch.
+    \item \textbf{NUMA} (\textit{Not Uniform Memory Access}), each CPU has a local memory, this brings a increase of performance since CPU save most of data of shared memory inside local memory. It is necessary to develop an allocation algorithm for programs and data. 
+\end{itemize}
+
+\subsubsection{Multicomputer}
+Each computer system is composed by a private local memory and they can be local at different positions, loosely coupled, this brings some transmission delay and loss of transmission speed. The computer systems are autonomous but they are connected by a network and they interact using it. Also here there can be different architectures:
+\begin{itemize}
+    \item \textbf{Bus}, computer systems are connected by a bus line but there is no shared memory. They can access to remote resources (like printer or file server). It is necessary to implement a system  to reduce traffic and some communication network protocols. It is expansible.
+    \image{img/multicomputerBus}{Multicomputer - Bus}{0.7}
+    \item \textbf{Switch}, computer systems can be organized as a grid of switch or an hypercube, that reduces the number of steps and switch necessary to connect all the nodes.
+    \image{img/multicomputerSwitch}{Multicomputer - Switch}{0.7}
+    \item massive parallelism, supercomputer with thousands of CPU.
+    \item Clusters of workstations, computer system connected with available components and there is particular special design to optimize performance and reliability. 
+\end{itemize}
+
+\subsection{SW Organization}
+A distributed system can be classified also based on the software architecture adopted:
+\begin{itemize}
+	\item \textbf{loosely-coupled}, machines are completely independent and they share resources. Each computer system can be identified and it is able to operate independently of other in such a way that a network fault does not block the operation of single computer system.  
+	\item \textbf{tightly-coupled},  machines are independent but there is a controller that coordinates them. We can say that there exists a hierarchy structure.
+\end{itemize}
+The coupling can deal with both software and hardware viewpoints: a loosely coupled software provides its application running independently, and several applications can interact if installed in several machines; a loosely coupled hardware is going to indicate the physical machines and their numbers, their independency and how they interact among each other. A distributed system is obtained by combining these features, so it can have independent applications on independent machines and so on.\\
+We can distinguish several Operating Systems depending on the type of the system we are dealing with:
+\begin{itemize}
+	\item \textit{Uniprocessor system}: for single central system the OS provides the virtualization of the machine and manages the resources and processes, in particular using a so called ready queue, the queue of ready processes. The model for the OS can be classified in two categories: \textbf{microkernel} model which is made by layered components, in such a way that upper components provide functionalities to the lower parts; \textbf{monolithic} model in which all the components are stored.
+	\item \textit{Network management in a distributed system} (\textbf{NOS})
+	\item \textit{Distributed system} (\textbf{DOS})
+	\item \textit{Multiprocessor system} (\textbf{MOS})
+\end{itemize}
+
+\begin{itemize}
+	\item \textbf{NOS} has loosely coupled software on a loosely coupled hardware. It’s a network of machines each with its own memory, CPU, OS and devices. The remote execution requires that the job can see the resource location.
+	\image{img/nos}{NOS architecture}{0.6}
+	\item \textbf{DOS} has a tightly coupled software on a loosely coupled hardware. Everything is managed by global manager, without sharing memory.\\
+	It is an operating system that produces a single system image for all the resources, in other words it represents the implementation of the abstraction of a single time-sharing system (system image) on a set of machines, possibly heterogeneous, interconnected and with the same operating system. 
+	A DOS is an operating system that runs on several machines whose purpose is to provide a useful set of services, generally to make the collection of machines behave more like a single machine. The distributed operating system plays the same role in making the collective resources of the machines more usable that a typical single-machine operating system plays in making that machine's resources more usable. Usually, the machines controlled by a distributed operating system are connected by a relatively high quality network, such as a high speed local area network. Most commonly, the participating nodes of the system are in a relatively small geographical area, something between an office and a campus.
+	A DOS should provide:
+	\begin{itemize}
+		\item Common IPC (Inter-Process Communication), provides mechanisms to allow the processes to manage shared data. 
+		\item Global protection, provides protection mechanisms to maintain secure system and data.
+		\item Process management, provides mechanisms to manage processes. For instance adopt a load balancing to schedule possible requests.
+		\item File system, allows a unique view and access way to the file system.
+		\item System interface, gives a unique and homogeneous interface to give the maximum transparency.  
+	\end{itemize}
+	\image{img/dos}{DOS architecture}{0.6}
+	\item \textbf{MOS} has a tightly coupled software on a tightly coupled hardware with global shared memory. In this OS, there’s unique global execution queue and several CPUs that executes ready processes. In order to have an advantage from the presence of the cache it’s important that the scheduler considers also in which CPU have already run processes ready for the execution. This will lead to an higher \textbf{hit rate}.
+	\image{img/mos}{MOS architecture}{0.6}
+\end{itemize}
+
+\newpage
+
+\section{Models of Systems}
+The architecture of a system is its structure in terms of separately specified components and their interrelationships. The overall goal is to ensure that the structure will meet present and likely future demands on it.
+\subsection{Architectural Model}
+An architectural model provides the definition of what are components, structures of the system and functions associated to them. There are different types of processes: \textit{client} (it requires resources), \textit{server} (it provides resources), or \textit{peer} (it is both client and server). These processes are connected by a communication network in which they can communicate and interact. 
+Architectural models can be classified in \textbf{client-server} or \textbf{peer processes}. The choice of one of this possible architectures affects performance, reliability, scalability, cost and security of the system.
+A \textbf{client-server} architecture can be based on \textit{layers} or tiers.
+A Layer architecture splits complex system into a number of layers, in which each level uses functions of the below layer and in turn, it will offer other services to the upper levels. Each level offers an abstraction of its implementation of the below layers to the upper layers.
+Tiered architectures are complementary to layering. Whereas layering deals with the vertical organization of services into layers of abstraction, tiering is a technique to organize functionality of a given layer and place this functionality into physical nodes. This technique is most commonly associated with the organization of applications and services. Each tier level is used as level of abstraction.
+\subsubsection{Client-Server}
+\textit{Client-server} architecture is the most common and based on the idea that there are some processes, called \textbf{clients}, that ask for resources and special processes, called \textbf{servers}, that serve requests and replying on them. In a client-server model there can be different clients that apply a request to the server, and in order to satisfy all the requests the server maintains a queue in which stores them. When the client submits a request it waits until it receives the result. The time between send a request and receive the corresponding response is called \textit{response time}.
+\image{img/clientServerOneTier}{Client-Server single-tier architecture}{0.5}
+Considering a more complicated architecture with two tiers response time can be greater, since also the server has to wait for the required resource.
+\image{img/clientServerMultiTier}{Client-Server multi-tier architecture}{0.65}
+Client-Server architecture can be composed by a set of servers that provide the same services and they can interact to reduce the load of each server. If the load of a server decrease so the response time improves. Respect to the previous simple model, with only one server, these kind of architectures are also fault tolerant, since if at least one is up the system can provide response.
+Some of these architectures introduce a new component called \textbf{proxy}, used to reduce the traffic and provide cache functionalities. The proxy pattern is a commonly recurring pattern in distributed systems designed particularly to support location transparency in remote procedure calls or remote method invocation.
+
+\subsubsection{Peer-To-Peer}
+\textbf{Peer-to-peer} systems represent a paradigm for the construction of distributed systems and applications in which data and computational resources are contributed by many hosts on a network, all of which participate in the provision of a uniform service.
+Processes can be everywhere, but they have to cooperate in order to solve problems of consistency of the resources and to synchronize their actions.\\
+In this architecture, all the processes involved in a task or activity play similar roles, interacting cooperatively as peers without any distinction between client and server processes or the computers on which they run. In practical terms, all participating processes run the same program and offer the same set of interfaces to each other. While the client-server model offers a direct and relatively simple approach to the sharing of data and other resources, it scales poorly.
+\image{img/peerToPeer}{Peer-to-peer architecture}{0.85}
+A key problem for peer-to-peer systems is the placement of data objects across many hosts and subsequent provision for access to them in a manner that balances the workload and ensures availability without adding undue overheads.
+
+\subsubsection{Variants of Client-Server Model}
+There are some variants of the client-server model, for example there could be \textbf{mobility} of the node, of the code (program can be moved) or data.
+\textit{Applets} are a well-known and widely used example of mobile code – the user running a browser selects a link to an applet whose code is stored on a web server; the code is downloaded to the browser and runs there. An advantage of running the downloaded code locally is that it can give good interactive response since it does not suffer from the delays or variability of bandwidth associated with network communication. When a client request something to the server, the reply given by the server is an applet code that will be executed from the client hardware.
+A \textit{mobile agent} is a running program (including both code and data) that travels from one computer to another in a network carrying out a task on someone’s behalf, such as collecting information, and eventually returning with the results. Mobile agents might be used to install and maintain software on the computers within an organization or to compare the prices of products from a number of vendors by visiting each vendor’s site and performing a series of database operations.
+
+
+\subsection{Fundamental model}
+All of the previous models are composed of processes that communicate with one another by sending messages over a computer network. All of the models share the design requirements of achieving the performance, correctness and reliability characteristics of processes and networks and ensuring the security of resources in the system. Fundamental models decide to focus their attention to some particular aspects:
+\begin{itemize}
+	\item \textbf{Interaction models}, how processes interact. In the analysis and design of distributed systems they are concerned especially in how processes communicate (message passing). The interaction model must reflect the facts that communication takes place with delays.
+	\item \textbf{Fault models}, focus the attention on the problem of possible faults of the system. They define and classify faults, providing a basis for the analysis of their potential effects and for the design of systems that are able to tolerate faults of each type while continuing to run correctly.
+	\item \textbf{Security model}, a distributed systems can be exposed to attack by both external and internal agents. Security model defines and classifies the forms that such attacks may take, providing a basis for the analysis of threats to a system and for the design of systems that are able to resist them.
+\end{itemize}
+
+\subsection{Interaction models}
+The behavior and state of a distributed system can be described by a distributed algorithm – a definition of the steps to be taken by each of the processes of which the system is composed, including the transmission of messages between them. Messages are transmitted between processes to transfer informations between them and to coordinate their activities.
+Each process has its own state, consisting of the set of data that can access and update, including the variables in its program. The state belonging to each process is completely private – that is, it cannot be accessed or updated by any other process.
+There are some factors that affect performance and reliability of interaction system:
+\begin{itemize}
+	\item \textbf{latency}, the delay between time of starting transmission and time starting to receive the message by receiver. It is also defined as the time to obtain a service.
+	\item \textbf{band}, the total amount of information that can be transmitted in the network in a given time.
+	\item \textbf{jitter}, variation in the time taken to deliver a series of messages. \textit{Jitter} is relevant to multimedia data. For example, if consecutive samples of audio data are played with differing time intervals, the sound will be badly distorted.
+	\item \textbf{Lack of global time} is another problem to consider. There isn't a unique clock but each process has its own clock and their usually are not synchronized. One solution can be to implement a virtual clock used by each process to verify the current state of the system.
+	\item A distributed system can be also classified as \textbf{synchronous} or \textbf{asynchronous}. In \textit{synchronous} system processes are synchronized and so it is more easy to develop communication protocols since there is a bound on execution, transmission and clock. Instead, \textit{asynchronous} system are not bounded, so it is necessary to develop different strategy to provide communication protocols.
+\end{itemize}
+
+\subsection{Fault models}
+In a distributed system both processes and communication channels may fail. The failure model defines the ways in which failure may occur in order to provide an understanding of the effects of failures.
+\image{img/processesChannels}{Communication channels can suffer from arbitrary failures}{0.8}
+There are different types of failure:
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{| c | p{1.7cm} | p{9.5cm} |}
+		\hline
+		\textbf{Class of failure} & \textbf{Affects} & \textbf{Description} \\ \hline
+		\textbf{Fail-stop} & \textit{Process} & Process is blocked, it can't execute and provide nothing. Other processes think that it is available and they are not able to detect that it is blocked. \\
+		\hline
+		\textbf{Crash} & \textit{Process} & Process halts and remains halted. Other processes may not be able to detect this state. \\
+		\hline
+		\textbf{Omission} & \textit{Channel} & A message inserted in an outgoing message buffer never arrives at the other end's incoming message buffer.\\
+		\hline
+		\textbf{Send-omission} & \textit{Process} & A process completes a send, but the message is not put in its outgoing message buffer. \\
+		\hline
+		\textbf{Receive-omission} & \textit{Process} & A message is put in a process's incoming message buffer, but that process does not receive it.\\
+		\hline
+		\textbf{Arbitrary} & \textit{Process} or \textit{channel} & Process/channel exhibits arbitrary behavior: it may send/transmit arbitrary messages at arbitrary times, commit omissions; a process may stop or take an incorrect step. The term arbitrary or Byzantine failure is used to describe the worst possible failure semantics, in which any type of error may occur. For example, a process may set wrong values in its data items, or it may return a wrong value in response to an invocation.\\
+		\hline
+	\end{tabular}
+	\caption{Omission and arbitrary failures.}
+\end{table}
+\par
+Other kinds of failure are called \textbf{timing failures} and they are associated only to \textit{synchronous systems}, that have the constraint of time bounds.
+\begin{table}[H]
+	\centering
+	\begin{tabular}{| c | p{1.7cm} | p{9.5cm} |}
+		\hline
+		\textbf{Class of failure} & \textbf{Affects} & \textbf{Description} \\ \hline
+		\textbf{Clock} & \textit{Process} & Process's local clock exceed the bounds on its rate of drift from real time. \\
+		\hline
+		\textbf{Performance} & \textit{Process} & Process exceeds the bounds on the interval between two steps.\\
+		\hline
+		\textbf{Performance} & \textit{Channel} & A message's transmission takes longer than the stated bound.\\
+		\hline
+	\end{tabular}
+	\caption{Timing failures.}
+\end{table}
+\par
+A communication is considered reliable when there is \textbf{validity} (messages are delivered) and \textbf{integrity} (delivered messages are ordered and correct).
+
+\subsection{Security model}
+A distributed system can be interest of possible attacks, so it is necessary to develop system and strategies for authentication, cryptography and for maintaining integrity and security of the entire system and resources. 
+
+\section{Client-Server communication}
+There are some issues to design a communication system for client-server architecture, such as \textbf{addressing}, \textbf{primitive}, \textbf{protocols} and \textbf{reliability}.
+\subsection{Addressing}
+Addressing refers to the ability of a client to understand where is the server (\textit{server localization}). There can be different solution to solve these problems and answer to questions like "Where is the server?". \\
+The first one is based on the usage of \textbf{LAN}, in which there is the assumption that client knows the address of the server and server gets also the address of the client when it receives a request.
+\image{img/lan}{Lan}{0.8}
+The problem of this solution is that there is \textit{no location transparency} and in case of relocating of the server it is necessary to apply \textit{modification on the client}.
+\par \medskip \noindent
+The second strategy is based on the used of \textbf{broadcast} strategy. Client sends via broadcast a special packet \verb!locate! to identify the server and discover where it is located. Only the server answers with a message in which it is specified its physical location. This solution offers \textit{location transparency}.
+\image{img/broadcast}{Broadcast}{0.8}
+Here the problem regards the usage of channel, since now there is an increasing of traffic due to broadcast flooding.
+\par \medskip \noindent
+The last solution is given by the usage of a particular entity called \textbf{Name Server}, which provides to the client the physical address of the server. The client sends to \textit{NS} a request to get the server address and \textit{NS} answers replying with a message containing the physical address of the server.
+\image{img/nameServer}{Name server}{0.8}
+This solution provides location transparency for the server but not for the NS and for each communication the client must contact the NS, that can be considered as a bottleneck.
+
+\subsection{Primitives}
+Primitives can be different considering asynchronous and synchronous systems or if the receiver use or not a buffer. The classic type of primitives are \verb!send! and \verb!receive!.
+\subsubsection{Synchronous}
+Processes are blocked when they use primitive. In \textit{synchronous} system with the different primitives we have the following behavior:
+\begin{itemize}
+	\item \verb!send! the sender specifies the send buffer and destination address. Process remains blocked until the buffer has been sent. 
+	\item \verb!receive! the invocation doesn't return control to the calling process until the message has been received and stored into a destination buffer.
+\end{itemize}
+\subsubsection{Asynchronous}
+Processes can go on, primitives don't block the execution of other processes. With the usage of different primitives, we have the following behavior:  
+\begin{itemize}
+	\item \verb!send!, the control returns to the process as soon as the buffer to be sent is copy into the buffer of the kernel (local). Process is blocked just the time to copy message inside buffer. 
+	\item \verb!receive! indicates to the kernel the local base address and the size of the buffer where data are received and it returns control to the calling process.
+\end{itemize}
+The advantage of an \textit{asynchronous} system is that caller continues the computations concurrently to the communication, but the drawback is that it is difficult to recognize when communication is terminated.
+\subsubsection{Primitives with buffer}
+Receiver has a buffer in which it can store messages sent by sender. It can be introduced for \textit{asynchronous} and \textit{synchronous} systems. The procedure is described as following:
+\begin{itemize}
+	\item The process that invokes the receive, asks the kernel to create the mailbox and specifies its local address (ex: port number).
+	\item The kernel keeps the mailbox in the kernel space.
+	\item Messages arrived with the process address, are put in the mailbox. If there's a pending receive the message is passed to the process, eventually unblocking it, otherwise the message is kept until an invocation doesn't arrive.
+	\item If the mailbox is full the kernel could discard the message. 
+\end{itemize}
+
+\subsubsection{Primitives without buffer}
+If there's no buffer, communications must be synchronous, sender is blocked until it receives an unblock. The procedure is so defined:
+\begin{itemize}
+	\item The caller is blocked when it invokes the \verb!receive(addr, &m)!, where \verb!addr! is the address of the sending process and \verb!&m! is the memory space of the invoking process.
+	\item Kernel unblocks the caller when message is received and copied in the buffer.
+	\item If the message is received and there are no more pending \verb!receive!, kernel cancels the message and the client tries again.
+	\item If the \verb!receive! is from a server that is executing operations for a client and another client sends a message, there is a \verb!race condition! since the new client has to wait for a new \verb!receive! from the server.
+\end{itemize}
+   
+\subsection{Protocols}
+\textbf{Fragmentation} and \textbf{re-composition} of messages might be needed at application level if the message is too long. Messages will be split in \textbf{packets}.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{ |p{1cm}||p{3cm}|p{2cm}|p{6cm}|  }
+	\hline
+	\multicolumn{4}{|c|}{\textbf{Types of Messages}} \\
+	\hline
+	\textbf{Code} & \textbf{Type} & \textbf{From - To} & \textbf{Description}\\
+	\hline
+	&&&\\
+	REQ& Request &C $\rightarrow$ S& The client ask for a service\\
+	REP& Reply & S $\rightarrow$ C & The server sends a reply\\
+	ACK& Ack & C/S $\rightarrow$ S/C & The previous message arrived\\
+	AYA& Are you alive? & C $\rightarrow$ S & Send to the server when it doesn't answer\\
+	IAA& I'm alive! & S $\rightarrow$ C & Server reply to a AYA message\\
+	TA& Try again & S $\rightarrow$ C & Server is busy, no space. Server is overloaded\\
+	AU& Address unknown & S $\rightarrow$ C & No process uses this address\\
+	&&&\\
+	\hline
+\end{tabular}
+\end{table}
+\verb!Ack! from server to client can be useful to get some information about the communication or execution performance and it allows the client to send another request. Instead \verb!ack! from client to server can be useful to distinguish request and discard copy of reply.\\
+Some examples of the \textit{client-server} interaction can be found in the following image: 
+\image{img/interactionClientServer}{Examples of interaction Client-Server}{0.7}
+
+\subsection{Networks/Reliability}
+Communication in distributed system depends on the usage of a network that connects computer systems. Networks can be distinguished considering their size (LAN, MAN, WAN) or transmission technology (wired, wireless), and the different level of \textbf{QoS} offered. In this case the \textbf{QoS} provided by a network takes care of its performances (transmission speed, latency, band), reliability and security. The implementation of a distributed system has to consider also this aspect, for instance latency is useful for the development of synchronous systems.
+Distributed Systems are mainly implemented on application level.
+\image{img/osiLevels.png}{TCP/IP layers}{1}
+
+\section{Interprocess Communication}
+Communication between processes is essential to allow them to cooperate and reach specific goals. Interprocess communication define how processes communicate inside the network. IPC can be implemented in different ways:
+\begin{itemize}
+	\item \textbf{Remote Procedure Call}, allowing a calling process to call a procedure in a remote node as if it is local. Provide maximum transparency, processes call remote procedures as they are local.
+	\item \textbf{Remote Method Invocation}, remote objects are called with a remote invocation. It is necessary to maintain a remote interface to give information about what kind of methods the object offers and how remote processes can invoke them. Note that the caller global environment cannot be used as well as pointers for memory allocation.
+	\item \textbf{Events}, asynchronous notification to objects of events. Indirect communication is defined as communication between entities in a distributed system through an intermediary with no direct coupling between the sender and the receiver(s).
+\end{itemize}
+RMI and RPC are analogous to the local method invocation and to the local procedure call, but with a different implementation.
+
+\subsection{Transparency and Implementation}
+One aspect that is very important for an \textit{IPC} is the level of transparency provided to the processes. The main goal is to call remote procedures as they are local. In this case RPC offers the maximum level of transparency, but it has some problems to distinguish local and remote procedure. The development of RPC and RMI includes:
+\begin{itemize}
+	\item \textbf{Marshalling},  the process of taking a collection of data items and assembling them into a form suitable for transmission in a message. In other words, it is a technique to codify parameters in order to be sure that the structure given to the procedure is preserved. This problem rises from the possibility of a computer system to represent data in different ways. \textit{Marshalling} codify parameters to transform them into a common representation, improving reliability and performance.
+	\item \textbf{Invocation semantic}, determines what kind of semantic is given to the processes.
+	\item \textbf{Binding}, strategy to identify and connect to the server. It can be \textit{\textbf{static}}, decided a priori how to reach the server, or \textit{\textbf{dynamic}}, discovers where is the server dynamically. The first one is faster since there is a direct communication to the server but the second one offers an high level of location transparency.
+\end{itemize}
+
+The \textbf{Middleware} provides transparency, the procedures call are used in same way if they are local or remote. It supports implementation for RPC and RMI and if the middleware allows different programming languages, it usually specifies the final notation using an \textbf{Interface Definition Language} (IDL).
+\textbf{Interfaces} are implemented in order to make the operations transparent, programs are organized in a set of modules that cooperate. The interface has only the information needed for available methods and it doesn't define the final implementation.\\
+Two essential modules for RPC are:
+\begin{itemize}
+	\item \textbf{Client stub}, used to catch the request and to translate it into a remote action.
+	\item \textbf{Server stub}, receives the request, selects the right procedure, execute it and return possible results to the client.
+\end{itemize}
+
+\subsection{Object Oriented Model}
+RMI is based on the \textbf{Object Orient Model} (\textit{OOM}), in which components are called objects. An object is an entity that contains set of data and methods that define its behavior. From an implementation point of view an \textit{OOM} offers:
+\begin{itemize}
+	\item \textbf{Reference to object}, it is an alternative identifier for an object. Objects can be passed as arguments or obtained as results.
+	\item \textbf{Interface}, it defines methods and how to use them but it doesn't specify how they are implemented.
+	\item \textbf{Methods}, operations that define the behavior of objects of the same class. They can be invoked from external objects. 
+\end{itemize}
+Usually Object Oriented Programming languages are supported by an entity called \textit{Garbage Collector}, used to recovery memory space of objects that are not referenced.
+\image{img/oopInvocation}{Remote and local invocation methods}{0.75}
+On the previous picture we can see an example of interaction using remote and local methods. 
+\begin{enumerate}
+	\item Object A invokes a remote invocation to object B, since it is out of the environment of A.
+	\item Later B invokes local methods of C and D.
+	\item At the end E applies a remote invocation to a method of F, since they are inside the same system but in different environments.
+\end{enumerate}
+  
+\subsection{Invocation Semantics}
+Remote procedure calls provides a range of invocation semantics that specify the implementation of the invocation of the protocol \textbf{Request-Reply}. Invocation semantics are defined in base of different implementation choices considering: 
+\begin{itemize}
+	\item Retransmission of the request.
+	\item Duplicate filtering in the server in case of re transmission.
+	\item At arrival of a retransmitted request: re-execution or re-send of results.
+\end{itemize} 
+There can be different types of \textbf{call semantic}, referring to the reliability of the RPC or RMI from the caller point of view. Local operations guarantee \textit{Exactly Once} semantic, since the caller knows that the request will be sended and executed exactly once.
+\image{img/callSemantic.png}{Invocation Semantic}{1}
+\begin{itemize}
+	\item \textbf{Maybe}, the request is sent only once independently of the fact that the client receives a reply or not. There is no fault tolerance measure, there might be loss of the invocation or the result or crashing of the server. The client doesn't know if the RMI o RPC has been successful or not.
+	\item \textbf{At least once}, there is re-transmission until the client doesn't get a reply. There might be possible duplicate executions. It can be used only for \textbf{\textit{idempotent}} operations, which return the same result at every execution and that don't produce any change of state.
+	\item \textbf{At most once}, there is retransmission until the client doesn't get a reply, but the server remembers the operations already executed and don't replay the same operations. The server maintains an history table in which stores client id and operations executed for him. When a request arrives to the server it verifies if the request has already been performed for the same client, and in case of positive answer, it returns the result without replay the execution. For this reason operations for this semantic are called \textit{\textbf{non-idempotent}}, since each time they are executed, they produce a change of state inside the server.\\
+	At \textit{most once} semantic must solve the problem of deciding how big is the history table and when remove an entry.
+\end{itemize}
+
+\subsection{RMI and RPC implementations}
+RPC and RMI are very similar, the choice of adopting one of them essentially regards the programming language adopted, for instance oop languages (like Java) tend to adopt RMI. In this section we want to focus our attention on how this two techniques are implemented and which are the modules that interact.
+\subsubsection{RMI}
+The structure of an RMI communication system is composed by different modules that interact to reach the final goal:
+\begin{itemize}
+	\item \textbf{Communication module}, it is responsible for providing a specified invocation semantic. There are 2 communication modules, one inside the client environment and the other one inside the server environment. The two components carry out the request-reply protocol between client and server, specifying the message type, the request and the remote reference of the object to be invoked. 
+	\item \textbf{Remote reference module}, it is responsible for the translation between local and remote object references and for creating remote object references. It contains a \textbf{remote object table} that records the correspondence between local object references in that process and remote object references.
+	\item \textbf{Proxy}, it makes remote method invocation transparent to the client, that sees the invocation as if it were local. It is also responsible for marshalling and un-marshalling.
+	\item \textbf{Dispatcher}, it is defined inside the server. When it receives a request message from the communication module, it selects the appropriate method in the skeleton required by the request.
+	\item \textbf{Skeleton}, it implements the methods in the remote interface.
+\end{itemize}
+\image{img/rmiImplementation}{Internal implementation of RMI}{0.8}
+
+
+\subsubsection{RPC}
+The structure of an RPC communication system is composed by different components that interact to reach the final goal:
+\begin{itemize}
+	\item \textbf{Stub}, its main role is to make transparent the remote call and execute marshalling. There are two kinds of stubs: \textbf{server stub} and \textbf{client stub}. \textit{Client stub} makes transparent the remote call and execute marshalling, instead \textit{server stub} applies un-marshalling and execute the service procedure required.
+	\item \textbf{Dispatcher}, it opens the request message and it selects the procedure correspond to the request.
+\end{itemize}
+
+\image{img/rpcImplementation}{Internal implementation of RPC}{0.7}
+
+\subsection{Callback}
+In some cases a client can send continuous requests to the server and in this way the transmission delay and waiting time have a strong effect to the performance.\\ 
+\textit{Request-Reply} protocol is not ideal. A possible solution is to \textit{reverse the interaction}: server notifies the client when it's available. The client sends a remote object containing a methods that the server can invoke. The server keeps a list of records containing clients and their requests. When an \textbf{event} occurs the server calls all the interested clients. The advantage of using this approach is that it avoids repeated calls from the clients that increase the performances, but on the other hand, the drawback is that the server has to keep a list of the interested clients and realize RMI to all the callback in the list. Regarding to the indirect communication there isn't an event space.
+\image{img/callback.png}{RMI Callback}{0.7}
+
+\section{Interprocess Communication - Implementation \& Design}
+Communication inside distributed systems can be carried out using different implementations. There are many possible kinds of communication, we will illustrate so the three most important. We will deal with:
+\begin{itemize}
+	\item \textbf{Socket}, creates, at low level, a channel between processes on different hosts. For each application it is necessary to define protocol for data coding and decoding. This solution lacks of transparency.
+	\item \textbf{Remote Procedure Call} or \textbf{RPC} allows client programs to call procedures transparently in server programs running in separate processes and generally in different computers from the client.
+	\item \textbf{Remote Method Invocation} or \textbf{RMI}  allows an application running on a local machine to invoke the methods of another application running on a remote machine. Locally only a \textbf{remote object reference} (\textit{Object callback}) is created, that is actually active on a different host. A program invokes methods through such a local reference. All the invocations of the methods to be transmitted are handled by the \textbf{Object Request Broker} (\textit{ORB}).
+\end{itemize}
+Middleware provides transparency to the interprocess communication. It is above the transport layer adopted from the network and it gives a interface to the upper levels providing transparency on the protocol adopted (TCP or UDP).
+
+\begin{itemize}
+	\item \textbf{UDP} represents a datagram communication so without ordering and reliability. Interface to \textit{UDP} is based on \textbf{message passing} and to enable sending a \textbf{single message} from sender to receiver. It uses an \textbf{unreliable} communication which is based on a \textit{not blocking send} and a \textit{blocking receive} with possible timeouts.\\
+	With UDP there can be different types of \textbf{faults} like: \textit{omission} (loss of messages, $\dots$), and \textit{arbitrary} (unordered delivery). It can be useful for applications that don't require strong reliability (like DNS).
+	\item \textbf{TCP} opens a stream communication. From its nature TCP doesn't provide location transparency since client has to specify IP address and port number of the server, but a solution can be the usage of a name server.\\
+	Interface to \textit{TCP} is based on \textbf{bidirectional stream} and to enable sending a \textbf{stream of data} between sender and receiver. It is based on \textbf{producer-consumer} communication.\\
+	With TCP there can be different types of \textbf{faults} like: possible block of due to the \textit{buffer} of the destination socket, control of the \textit{correctness}, \textit{duplication} and \textit{ordering}, control of the \textit{message loss}.
+\end{itemize}
+\image{img/sockets}{Sockets and ports}{0.7}
+Possible faults can occur in different cases respect to UDP. Possible block due to the buffer of the destination socket, duplicate, ordering, correctness or message loss. Furthermore, it is impossible to distinguish network and destination process fault. 
+
+\section{Request-Reply communication}
+When we are dealing with client-server architecture, the form of \textbf{request-reply} communication is supported. In this type of communication, client and server exchange messages, described as \textit{send} and \textit{receive} operations, which can be datagrams if using UDP, streams for TCP.
+\image{img/req-rep}{Request-Reply communication}{0.8}
+
+\subsection{Primitives} 
+The request-reply protocol is composed by the following \textit{primitives}:
+\begin{itemize}
+	\item \textit{doOperation}
+	\item \textit{getRequest}
+	\item \textit{sendReply}
+\end{itemize}
+The way in which this 3 functions are implemented correspond to the choice of a specific semantic provided by the communication system.
+ 
+The method \textit{doOperation} is used by clients to invoke remote operations, specifying the server and the operation needed to be executed. The client is usually blocked until the server performs the requested operation since this type of communication is \textbf{synchronous} in the normal case. Asynchronous request-reply communication is rare, but it can exists, and it might be useful in situations where clients are allowed to retrieve replies later. The method \textit{getRequest} is used by the server process to receive requests. The server will reply to the client using \textit{sendReply} method when it has finished to invoke the requested operation. The client which receives the reply from the server is unblocked.\\
+
+The information to be transmitted in a request message or a reply message is shown in the figure below:
+\image{img/message-structure}{Request-Reply message structure.}{0.8}
+The first field indicates the type of the message, if it's a request or a reply message. \textit{requestId} is the message identifier. The \textit{doOperation} method generates a \textit{requestId} for each message and the server remembers these identifiers. The third field is a remote reference, and the fourth field is an identifier for the operation to be invoked.\\
+
+Notice that in request-reply communication each message have a \textbf{unique message identifier} by which it may be referenced. This message identifier is composed by a  \textit{requestId} which is a sequence of integers, and
+an \textit{identifier} for the sender process, to be unique in the distributed system.
+
+\subsection{Reliability and Faults in Request-Reply}
+So far we have seen the basic characteristics of the request-reply communication protocols, but we also can consider additional properties such as \textit{reliability} of the message delivering. \\
+
+In particular, if the primitives are implemented over UDP protocol, they suffer from:
+\begin{itemize}
+	\item Order of delivering not guaranteed
+	\item Loss of messages
+	\item Process failures
+\end{itemize}
+
+In order to cope with these problems, \textit{doOperation} can use a \textbf{timeout}, when the client is waiting for the server's reply. After a timeout, \textit{doOperation} sends the request message repeatedly until either it gets a reply or it is sure that the delay is due to lack of response from the server rather than to lost messages. When the server receives several request messages as it happens using the \textit{timeout}, it should recognize multiple messages with the same request identifier and filter out the duplicates.\\
+
+Another problem can be the \textbf{re-execution} of the operations: if the reply from the server has been lost, the server should execute the operation again to obtain the result unless it has stored the interested result. An \textit{idempotent} operation could be useful in these cases. Otherwise, the \textbf{history} of transmitted reply messages can be maintained. The problem of maintaining the history table is that it can occupy the memory: in order to deal with this problem, the client can make only one request at a time, so the server can interpret each request as acknowledgement of its previous reply, so the history need to contain only the last reply message sent to each client. However periodically the messages in the history are discarded after a period of time, because the client process can terminate and does not send the acknowledgement.
+
+\subsection{Remote procedure call}
+In RPC, procedures on remote machines can be called as if they are procedures in the local address space. In particular \textit{Interface definition languages} (IDLs) are designed to allow procedures implemented in different languages to invoke one another. An IDL provides a notation for defining interfaces in which each of the parameters of an operation may be described as for input or output in addition to having its type specified.\\
+
+The primitives of request-reply protocols can be implemented in different ways to provide different delivery guarantees:
+\begin{itemize}
+	\item \textit{Retry request message}: asking to retransmit the request message until either a reply is received or the server reasonably considered failed.
+	\item \textit{Duplicate filtering}: filtering out duplicate requests at the server.
+	\item \textit{Retransmission of results}: keeping a history of result messages to enable lost results to be retransmitted without re-executing the operations at the server.
+\end{itemize}
+
+\subsubsection{Semantics of RPC}
+First of all, we say that the termination is \textbf{normal} when the client receives the message from the server. The termination is considered \textbf{abnormal} if the client does not receive the reply.
+
+\begin{itemize}
+	\item \textbf{Maybe semantics}: RPC may be executed once or not at all. If the result message has not been received after a timeout and there are no retries, it is uncertain whether the procedure has been executed. Maybe semantics is useful only for applications in which occasional failed calls are acceptable.
+	\item \textbf{At least once semantics}: it is achieved by the retransmission of request messages as idempotent operation. The client calls with timeout, and if the answer has not arrived yet, it tries again repeating the attempts a finite number of times. The server executes the received calls and sends the answers, but it does not keep the state of previous calls.
+	\item \textbf{At most once semantics}: it is achieved by retries masking any omission falures of the requests. The messages contain a call sequence number. The server keeps the results of the last call executed with sequence number for each request and it checks whether it is a new one. Only in this case executes it, otherwise it sends the already computed result.
+\end{itemize}
+
+\subsubsection{RPC fault management and semantics}
+The faults can be classified into two main cathegories:
+\begin{itemize}
+	\item \textbf{Communication}: working processes can not be able to communicate temporarly.
+	\item \textbf{Node crash}: possible recovers, we should build the correct semantics.
+\end{itemize}
+
+In particular, the possible faults are the following:
+\begin{itemize}
+	\item the cannot locate the server process
+	\item loss of the client request message
+	\item loss of the reply of the server
+	\item server crash during the call
+	\item client crash during the call
+\end{itemize}
+
+We can try to distinguish the several situations in which the client sends the request then the timeout reaches the deadline while it waits for the answer:
+\begin{itemize}
+	\item if the client does not try again: semantics RPC is \textit{maybe}.
+	\item if the client tries until it gets a reply and the answer is AU, the call has \textit{abnormal termination} with RPC semantics is \textit{exactly once}.
+	\item if the client tries until it gets a reply and the answer is the reply, if the server has no memory of previous execution, the server can execute the duplicated requests and so RPC semantics is \textit{at least once}.
+	\item if the server keeps the result of the last execution in a buffer, in case of duplicated requests it is detected and it sends again
+	the result; RPC semantics is \textit{at most once}.
+\end{itemize}
+
+Furthermore we should distinguish the two types of crashes: \textit{during or after the execution} or \textit{before} the execution. In any case, if the server crashes, with \textit{exactly once semantics} we would have normal termination with one execution, abnormal termination with no execution. This type of semantics rises the problem of inconsistency between the client and server. Atomic transaction or implement the RPC \textit{at most once} can be thought as a solution to this problem.
+\image{img/semanticsRPC.png}{RPC semantics}{0.7}
+
+\subsubsection{RPC semantics and server crash}
+Crashing of server can happen during or after the execution phase, and this is totally transparent to the client. The unique information that it has is the fact that the timeout occurs.
+\textbf{Semantics exactly} once is very difficult to reach on a distributed system, it has to satisfy the behavior "all or nothing". Meaning that in case of normal termination the request is executed only once, otherwise in case of abnormal termination no execution of the request. In presence of server crash provide exactly once semantic it is necessary to use \textbf{atomic actions},  which allow client and server to coordinate their action in order to guarantee "all or nothing" property. But this approach is not practicable, and what is essentially done is to implement \textbf{at most once semantic}.
+
+Summary of the two semantics:
+
+\begin{itemize}
+	\item \textbf{At least once RPC}
+	\begin{itemize}
+		\item \verb|client|, sends request setting a timeout. If the timeout is over try again until it receives an answer or for a finite number of times.
+		\item \verb|server|, executes the received call and sends the answer. It does not keep memory of the previous calls.
+	\end{itemize}
+	
+	
+	\item \textbf{At most once RPC}
+	\begin{itemize}
+		\item \verb|client|, sends request setting a timeout. If the timeout is over try again until it receives an answer or for a finite number of times.
+		\item \verb|server|, it store an history of the last call for each client. For each request checks whether it is a new one and only in this case executes it, otherwise it sends the previous computed result. Only in case of crash of the server this state is loss.
+	\end{itemize}
+\end{itemize}
+
+
+\section{Multicast communication}
+Communication can be defined not only for one-to-one, but there other two possible cases:
+\begin{itemize}
+	\item \textbf{broadcast}, consists on a one-to-all communication system. A process send the message to all the other processes. Primitives are designed to send the message to all the processes.
+	\item \textbf{multicast}, consists on a one-to-many communication system. A process send the message to a specific group of processes. Primitives are designed to send the message to set of receivers.
+\end{itemize}
+Multicast communication is very frequent and there are different motivations:
+\begin{itemize}
+	\item \textbf{fault tolerance - service replication}, since the request is sent to a set of servers in parallel if one of them crash the other can reply to the request. So it is tolerant to server crashing.
+	\item \textbf{replication of data}, data can be replicated in different servers.
+	\item \textbf{performance}, the request can be executed by a group of servers in parallel. This approach improves the performance of the system. For instance the update of several copies of different files can be performed by a specific group.
+\end{itemize}
+
+Multicast communication brings also some issues for which it is necessary to design a strategy for managing them. For instance, sender send a request to a group of servers and how it has to deal the answer? There can be different strategies: no wait, wait only for one answer, wait for some answer (how many?) or wait for all answers. 
+\image{img/multicast.png}{Multicast}{0.6}
+
+\subsection{Atomicity and Reliability}
+Multicast communication can also provide two different properties:
+\begin{itemize}
+	\item \textbf{Atomicity}, there is the guarantee that all the components inside the group receive the message. It is received by all or none.
+	\item \textbf{Reliability}, the delivery is guarantee.
+\end{itemize}
+An \textbf{unreliable} multicast communication system sends only once the message. It is also available the combinations: atomic and unreliable, since if one of servers does not receive the message the others discard the message.
+
+\subsection{Multicast protocols: ordering} 
+Another important issue for multicast protocol is ordering, messages are transmitted to a group in multicast arrive to each component of the group according to the sending order.
+Consider the following figure:
+\image{img/multicast-ordering.png}{Message ordering}{0.4}
+$A$ and $B$ are two events sent by two different senders and $A$ is sent before $B$. Ordering problem consists to develop a strategy that ensures that receivers receive the two messages with the same order.
+Single atomic multicast keep the FCFS order of the messages, so when there is only one sender the order is guaranteed, instead considering if there are multiple senders this strategy doesn't ensure the order.
+
+Some strategies are considered to solve this problem:
+\begin{itemize}
+	\item \textbf{FIFO ordering}, FIFO ordering is concerned with preserving the order from the perspective of a sender process. If a process sends one message before another, it will be delivered in
+	this order at all processes in the group.
+	\item \textbf{Causal ordering}, it considers a logical ordering, called also casual, and the messages are delivered considering that constraint. If an event $A$ precedes an event $B$ then the messages are delivered according to that order.
+\end{itemize}
+In a \textbf{totally ordering multicast} if a message is delivered before another message at one process, then the same order will be preserved at all processes.
+
+\subsection{Multicast protocols: implementation}
+Multicast can be supported by different types of implementations of the two primitives: \verb!send! and \verb!receive!. The way in which they are implemented define the characteristics of the multicast system.
+On the following figure we can see a basic implementation of \verb!send! primitive, not reliable and atomic.
+\image{img/implementation}{Basic send procedure}{0.5}
+For a reliable multicast is necessary to check possible loss of messages, crashing of sender, wait the answer and also consider possible retransmission in case of time-out.
+The implementation have also to consider the occurrence of faults like message omission an sender crash. A possible solution is to use a monitor with the following roles:
+\begin{itemize}
+	\item check the current transmission
+	\item manage possible retransmission
+	\item remove crashed processes, if a process is waiting for an ack but the server crashed it will wait for ever.
+	\item notifies the group’s components when a process is added, or when a process is excluded.
+\end{itemize}
+
+\subsection{Reliability and Atomicity}
+Atomicity and reliability bring with them a non indifferent cost since:
+\begin{itemize}
+	\item \textit{sender} sends the message to the group and waits for the ack from all the components inside the group.
+	\item if all the ack arrive it'ok, otherwise if they do not arrive within a timeout it is necessary to re-transmit the message.
+\end{itemize}
+Another problem for atomicity regards the management of sender fault. In this case to preserve atomicity every destination process sends an ack and wait for confirm, the sender once the multicast is completed sends back to confirm to everyone. But this solution is not so efficient, and so we can consider \textbf{Hold-back queue} as alternative.
+
+With \textbf{Hold-back queue} the destination keep the message suspended before delivery, up to the arrival of the confirm. In order to guarantee the ordering and atomicity the messages are numbered and every message is delayed until the previous ones arrive.
+\image{img/holdbackqueue.png}{Hold-Back queue}{0.7}
+
+Another solution consists to the usage of \textbf{negative ack}, the messages are numbered according to the order from the server and the destination process sends a \textbf{NACK} if the message number of the arrival is not in the order of the sequence. The destination process does not send the \textbf{ACK} and the sender has a copy (history) of the sent messages.
+But using only ack is difficult to understand when it's time to clear the history, so occasionally destination processes send positive ack with number of received message using piggybacking technique.
+
+\subsection{Atomic and totally ordered multicast}
+In order to guarantee atomicity and totally order each process is associated with a unique \textit{totally ordered identifier}. A message is \textbf{stable} in the destination if other messages with smaller identifier cannot arrive. Destination pass to upper levels (application) only stable messages. This solution is easy to implement if sender and receivers agree with a \textbf{shared identifier sequence} used to assign identifier to the messages. In order to decide this sequence some solutions are proposed:
+\begin{itemize}
+	\item using a timestamp from physical or logical clock
+	\item using a sequencer process
+	\item using a protocol among the group processes to generate an identifier
+\end{itemize}
+Regarding the implementation it can defined:
+\begin{itemize}
+	\item \textbf{centralized}, unique manager that makes the ordering. But the drawback is that it can became a bottleneck since all the request should pass from him.
+	\item \textbf{distributed}, coordination of the receivers that makes an agreement on the ordering. In general what is adopted in this case is the usage of distributed algorithms.
+\end{itemize}
+\image{img/ipMulticast}{IP multicast communication}{0.5}
+
+
+\section{Event notification}
+In general we refer to objects that want to receive information and be notified by an event for which it is subscribed. This approach introduces a new paradigm called \textbf{publish-subscribe}.
+
+\image{img/eventNotification.png}{Eventi notification}{0.7}
+
+A publish-subscribe system is a system where publishers publish structured events to an event service and subscribers express interest in particular events through subscriptions which can be arbitrary patterns over the structured events. For example, a subscriber could express an interest in all events related to this textbook, such as the availability of a new edition or updates to the related web site. The task of the publish-subscribe system is to match subscriptions against published events and ensure the correct delivery of event notifications. A given event will be delivered to potentially many subscribers, and hence publish-subscribe is fundamentally a one-to-many communications paradigm.
+In other words: an object generates events and publishes the type of event that can be notified, and another one that wants to receive \textbf{notifications} executes a subscribe to the event types of interest. 
+This approach preserve heterogeneity since publisher can assume different types and events can be with different types. It is commonly adopted by \textit{asynchronous systems}, and it is different from callback since the last one is a one-to-one communication sistem, instead in event notification more than one objects can be interested on a particular event and all of them receive a notification when it occurs.
+
+\image{img/eventNotification_full.png}{Eventi notification}{0.7}
+
+Two fundamental characteristics of publish-subscribe systems are:
+\begin{itemize}
+	\item \textbf{Heterogeneity}, event-generating objects publish the types of events they offer, and that other objects subscribe and provide an interface for receiving and dealing with the resultant notifications.
+	\item \textbf{Asynchronicity}, notifications are sent asynchronously by event-generating publishers to all the subscribers that have expressed an interest in them to prevent publishers needing to synchronize with subscribers – publishers and subscribers need to be decoupled.
+\end{itemize}  
+
+\subsection{Event service}
+\textbf{Event service} is a service that manages the event space, for which the main goal is to keep publisher and subscriber independent. Publisher uses event service to produce events and subscriber uses it to specify the event of interest in order to receive the notification.
+Event service maintain a database of published events and of interest.
+\image{img/eventService.png}{Event service}{0.7}
+Notification can be modeled considering different solutions:
+\begin{itemize}
+	\item \textbf{Direct notification}, notification is performed directly by the object of interest to the subscriber, no overhead is introduced. The drawback is that when there are a lot of  subscribers there is an huge overhead inside event space. 
+	\item \textbf{Notification via observer}, use another entity called \textbf{observer} for managing the notification. There can be adopted more than one observers and for each observer is associated a set of subscriber as a hierarchical system. This solution improves scalability, fault management and in terms of performance each observer has a local queue of notifications, instead of using a unique one like direct communication. This solution is also the best one in terms of security since there is no direct communication with the object and the object of interest is inside the local environment.
+	\item \textbf{Notification via observer with external object}, observer time to time ask if the event is done. Scalability, many object of interest for the same observer.
+\end{itemize}
+\image{img/notificationModel.png}{Notification models}{0.7}
+The observer can implement different functionalities:
+\begin{itemize}
+	\item \textbf{forward observer}, deliver notification from different objects.
+	\item \textbf{filtering}, reduce the number of notification received from an observer.
+	\item \textbf{event model}, interest to specific relations among events.
+	\item \textbf{mailbox}, introduces a delay in the notification delivery when the subscriber is not ready. This technique is useful to improve fault management.
+	\item \textbf{Priority}, observer can manage priority for notification.
+\end{itemize}
+
+
+\include{CCDS9}
+
+
+\section{Coordination and synchronization: clock}
+Time is an important and interesting issue in distributed systems, for several
+reasons. First of all, time is a quantity we often want to measure accurately. In order to know at what time of day a particular event occurred at a particular computer it is necessary to synchronize its clock with an authoritative, external source of time.
+Second, algorithms that depend upon \textbf{clock synchronization} have been developed for several problems in distribution. These include maintaining the consistency of distributed data, authentication protocols, eliminating the processing of duplicate updates, ordering events and serialization of transactions.
+In distributed systems there's no \textbf{global physical clock}, meaning that there can be skew between computer clocks on the same network. In order to provide clock synchronization different algorithms are designed.\\
+These algorithms can be developed considering \textbf{physical clocks} and \textbf{logical clocks}.
+
+\subsection{Model definition}
+Considering the following example that, for assumption, communicates using message passing.
+\image{img/clocks.png}{Clocks}{0.5}
+There are $N$ processes $p_1, p_2,...,p_N$ connected in a network. Each process has a \textbf{local clock} and there is no shared memory, they can communicate only using message passing.\\
+We define ordering with the following notation:
+$$e \rightarrow_i e^\prime \qquad \text{if the event e occurs before } e^\prime \text{ in process } p_i$$
+$$h = <e_i^0, e_i^1,...> \qquad \text{state history of process i}$$
+Where the \textbf{history} represents the sequence of events that take place on the process.
+
+\subsection{Physical clock}
+Synchronization algorithms based on \textbf{physical clocks} operate using local clock of each process.
+With the notation $C_i(t)$ we define the local clock of process $p_i$ at physical time $t$. It is commonly used to consider the timestamp, time indicating when the event occurs.
+Two events are successive only if the clock resolution (the time between two successive updates of the clock value) is less than the time interval between the two successive events. For example: if the local clock consider only minutes all the events occurring between $0 < t < 60$ have the same arrival time.
+Different local clock can have different values, and it is possible to define:
+\begin{itemize}
+	\item \textbf{Skew}, difference between two clocks.
+	\item \textbf{Drift rate}, frequency of the local clock is different from an ideal one.
+\end{itemize}
+A possible idea consists to synchronize local clocks with the \textit{UTC} (Coordinated Universal Time), which provides the real time of the earth.
+Synchronization can be:
+\begin{itemize}
+	\item \textbf{external}, if it is forced by external agents.
+	Formally speaking:
+	$$|S(t) - C_i(t)| < D	\qquad 1 \leq i \leq N \qquad \forall \in I$$
+	Where $S(t)$ is the real time (provided for instance by UTC), $D$ is the precision and $I$ is the interval of synchronization. This procedure synchronizes the clock of each process $i$ with precision $D$ from the real time.
+	
+ 	\item \textbf{internal}, if there is an agreement among a set of processes.	Formally speaking:
+ 	$$|C_i(t) - C_j(t)| < D	\qquad 1 \leq i \leq N \qquad \forall \in I$$
+ 	All the clocks are synchronized with precision $D$.
+\end{itemize}
+\image{img/synchIntExt.png}{External and Internal synchronization}{1}
+
+A physical clock $H$ is correct if the drift is within a given threshold $\rho > 0$. Formal definition:\\
+Given $t,t^\prime \quad$ if $t^\prime > t\quad$ then $\qquad(1-\rho)(t^\prime - t) \leq H(t^\prime) - H(t) \leq (1+ \rho)(t^\prime - t)$.
+A clock $C$ is defined as \textbf{monotone} if it only goes on forward. 
+Some events can break monotonicity of a clock, just to give an idea, recovery procedure set the current time to a previous time. \\
+
+From the physical clock we can define also software clock which is given by: $$C_i(t) = aH_i(t)+b \qquad \qquad \text{a,b constants}$$.
+\image{img/clockDeviance.png}{Clock deviance from real time}{0.5}
+
+\subsubsection{Clock synchronization algorithm: Distributed synchronous system}
+We begin by considering the simplest possible case: synchronization between processes in a synchronous system. In a \textbf{synchronous system}, bounds are known for the\textit{ drift rate} of clocks, the \textit{maximum message transmission delay}, and the time required to execute each step of a process. One process sends the time t on its local clock to the other in a message m. In principle, the receiving process could set its clock to the time $t + T_{com}$, where $T_{com}$ is the time taken to transmit $m$ between them. The two clocks would then agree since the aim is internal synchronization, it does not consider external synchronization with UTC.
+\image{img/clockSyncInSyncSystem.png}{Clock synchronization: Sync. System}{0.7}
+On this image we have two processes $p$ and $p^\prime$ that want to communicate using message passing. $p$ sends a message with the local clock $t$ and $p^\prime$ receives the message and sets its own local clock to $t+T_{com}$.
+From a distributed synchronous system we know that:
+\begin{itemize}
+	\item There is always a \textbf{minimum transmission time}, $T_{min}$, that would be obtained if no other processes executed and no other network traffic existed. It can be measured or conservatively estimated.
+	\item In a synchronous system, by definition, there is also an upper bound max $T_{max}$ on the time taken to transmit any message.
+\end{itemize}
+From these results some possible choice can be discussed to determine the threshold $T_{com}$:
+\begin{itemize}
+	\item set $T_{com}$ threshold equal to $T_{max}$ or $T_{min}$, with possible \textbf{shew error} equal to: $$\text{error} \leq \Delta = (T_{max} - T_{min})$$
+	\item set $T_{com}$ threshold equal to $(T_{max} + T_{min})/2$, with possible \textbf{shew error} equal to: $$\text{error} \leq \frac{\Delta}{2}$$
+\end{itemize}
+In general from a better analysis it is possible to say that for a synchronous system, the optimum bound that can be achieved on clock skew when synchronizing $N$ clocks is $\Delta(1 -1/N)$.
+
+
+\subsubsection{Clock synchronization algorithm: Cristian}
+Most distributed systems found in practice are \textbf{asynchronous}: meaning that message delays are not bounded and there is no maximum bound on message transmission delays. For an asynchronous system, we can only say only that $T_{com} = min + x$ , where $x > 0$ and it is not known in a particular case.
+Some algorithms are designed in order to implement clock synchronization for asynchronous systems. The first one was given by \textbf{Cristian}, in 1989, which suggested the usage of a \textbf{time server}, connected to a device that receives signals from a source of UTC, to synchronize computers externally. 
+\image{img/cristianAlg.png}{Cristian Algorithm}{0.7}
+Every machine periodically asks for the time to the time server and when it receives the reply:
+\begin{itemize}
+	\item It checks the clock.
+	\item It computes the network delay (at least $T_{min}$) as $T_{round}$, round trip time.
+	\item It sets the clock to $t+ T_{round}/2$.
+\end{itemize}
+From the point of view of the time server when it receives a time request the server puts the time $t$ in the reply message just at the last moment useful for sending.
+The precision $D$ given by this technique is equal to $\pm (T_{round}/2 - T_{min})$.
+
+This algorithms works well when synchronization delay is close to zero. But in any case it has some drawbacks like: the usage of a central server reduces and limits reliability and performance, or malicious interference of the clients. Some aspects can be improved for example using multicast instead of using a single and central server or introduce authentication technique for the clients.
+
+\subsubsection{Clock synchronization algorithm: Berkeley}
+Another interesting algorithm for clock synchronization in asynchronous systems is called \textbf{Berkeley}. Berkeley uses a coordinator computer as the master, also called \textbf{active time server}. Unlike in Cristian’s protocol, this server periodically polls the other computers whose clocks are to be synchronized, called \textbf{slaves}. The slaves send back their clock values to it. The master estimates their local
+clock times by observing the round-trip times (similarly to Cristian’s technique), and it averages the values obtained (including its own clock’s reading). The coordinator indicates who has to speed-up or speed-down the clock using the average value. The idea is that this average cancels out the individual clocks’ tendencies to run fast or slow. The master eliminates any occasional readings associated with larger times than this maximum.
+
+Instead of sending the updated current time back to the other computers – which would introduce further uncertainty due to the message transmission time – the master sends the amount by which each individual slave’s clock requires adjustment. This can be a positive or negative value.
+
+The Berkeley algorithm eliminates readings from \textbf{faulty clocks}. Such clocks could have a significant adverse effect if an ordinary average was taken so instead the master takes a \textbf{fault-tolerant average}. That is, a subset is chosen of clocks that do not differ from one another by more than a specified amount, and the average is taken of readings from only these clocks. In other words, the average does not consider the times too far or with abnormal values, meaning that is more \textbf{fault-tolerant} than a simple average. 
+
+But as Cristian's algorithm Berkeley uses a central server that limits reliability and performance of the entire system.
+
+\subsubsection{Clock synchronization algorithm: NPT}
+Cristian and Berkeley algorithm are based on the usage of a centralized system, which limits some properties of the entire system. Another approach is given by \textbf{distributed algorithms}.
+The \textbf{Network Time Protocol} (NTP) defines an architecture for a \textit{time service} and a protocol to distribute time information over the Internet. NTP provides:
+\begin{itemize}
+	\item synchronization of the physical clocks respect to UTC for all the clients inside the network.
+	\item \textbf{reliable} service that is fault tolerant to connection loss. Fault tolerance is given by redundancy of server and path.The servers can reconfigure so as to continue to provide the service if one of them becomes unreachable.
+	\item \textbf{scalability}, allows frequent synchronization also in presence of many nodes.
+	\item To provide protection against interference with the time service, whether malicious or accidental: The time service uses authentication techniques to check that timing data originate from the claimed trusted sources. It also validates the return addresses of messages sent to it.
+\end{itemize}
+
+The NTP service is provided by a network of servers located across the network. \textbf{Primary servers} are connected directly to a time source, like UTC. Instead \textbf{secondary servers} are synchronized, ultimately, with primary servers. The servers are connected in a logical hierarchy called a \textbf{synchronization subnet}, whose levels are called \textbf{strata}.
+\image{img/NTP.png}{NTP subnet}{0.7}
+The greater is the number of servers adopted the greater is the reliability provided, but this decrease the precision since the synchronization takes time and bring delays.
+
+Server synchronization can be done:
+\begin{itemize}
+	\item \textbf{multicast}, common with high speed LAN with small delay.One or more servers periodically multicasts the time to the servers running in other computers connected by the LAN, which set their clocks assuming a small delay. Low precision.
+	\item \textbf{procedure call}, the server is passive and waits for requests like Cristian's algorithm. More precision.
+	\item \textbf{symmetrical}, servers exchange messages with timestamp, it is commonly used for low levels. More precision.
+\end{itemize}
+
+
+\subsection{Logical clock}
+In distribute systems since we cannot synchronize clocks perfectly across a distributed system, we cannot in general use physical time to find out the order of any arbitrary pair of events occurring within it. Another interesting solution is given by \textbf{logical clock}, but first it is necessary to give some notions of \textbf{causal ordering}.
+
+\subsubsection{Causal Ordering}
+On this section we will define some formal notation that will be adopted later.
+Consider $N$ processes $p_1,p_2,..., p_N$:
+We write $e \rightarrow_i e^\prime$ if event $e$ occurs before $e^\prime$ in process $p_i$.
+When $p_i$ sends a message $m$ to $p_j$ the event  \verb!send(m)! precedes event \verb|receive(m)|:
+$$send(m) \rightarrow receive(m)$$
+
+Causal ordering defines order between events and it has some properties:
+\begin{itemize}
+	\item if $\exists p_i \rightarrow e^\prime \qquad \implies \quad e \rightarrow e^\prime$ 
+	\item $\forall \text{ message } m \qquad send(m) \rightarrow receive(m)$
+	\item if $e,e^\prime, e^{\prime\prime}$ are events:
+	 $$e \rightarrow e^{\prime}, e^\prime \rightarrow e^{\prime\prime} \qquad \implies \quad e \rightarrow e^{\prime\prime}  $$
+	 \item event $a$ and $b$ can be concurrent and we denote this property as $a || b$. Meaning that they are not related.
+\end{itemize}
+\image{img/causalOrdering.png}{Causal ordering example}{0.8}
+
+\subsubsection{Logical clock - Lamport timestamp}
+Logical clock was introduced by Lamport in 1978, and it represents the causal ordering (\textit{happened-before}) of events. It is independent from physical clock and it is basically a software counter. Each process $p_i$ keeps its own \textbf{logical clock}, $L_i$ , which it uses to apply so-called \textbf{Lamport timestamps} to events. We denote the timestamp of event $e$ at $p_i$ by $L_i(e)$.
+Processes update their logical clocks and transmit the values of their logical clocks in messages as follows:
+\begin{itemize}
+	\item \textbf{LC1}: $L_i$ is incremented before each event is managed at process $p_i$. In other words, $L_i$ = $L_i$ +1 $\forall$ event that occurs in $p_i$ the logical clock is \textbf{incremented}.
+	\item \textbf{LC2}: if $p_i$ sends a message $m$ it sends in \textbf{piggybacking} the value $t = L_i$. if $p_j$ receives a message $(m,t)$ it sets $L_j = max(L_j, t)$ and applies \textbf{LC1} for the event \verb|receive(m)|.
+\end{itemize}
+\image{img/logicalClock.png}{Logical clock algorithm example}{0.7}
+
+Logical clock has the monotonicity property, meaning that:
+$$\text{If} \quad e \rightarrow e^\prime \quad \implies \quad L(e) < L(e^\prime)$$
+Note that this relation is not an if-and-only-if, so if we know that $L(e) < L(e^\prime)$ we cannot infer that $e \rightarrow e^\prime$. 
+
+\subsubsection{Logical clock - vector clock}
+Some pairs of distinct events, generated by different processes, have numerically identical Lamport timestamps. However, we can create a global ordering of events by taking into account the pair (timestamp,$p_i$). If $e$ is an event occurring at $p_i$ with local timestamp $T_i$ , and $e^\prime$ is an event occurring at $p_j$ with local timestamp $T_j$ , we define the global logical timestamps for these events to be $(T_i,i)$ and $(T_j,j)$, respectively. And we define:
+$$ (T_i, i) < (T_j,j) \quad \iff \quad  T_i < T_j \quad \vee \quad (T_i = T_j \wedge i < j)$$
+This ordering has no general physical significance (because process identifiers are arbitrary), but it is sometimes useful.
+A different ordering that overcomes the iff limitation of the Lamport definition,  $L(e) < L(e^\prime) \not\Rightarrow e < e^\prime$, is the \textbf{vector clock}.
+To each process $p_i$ we associate a \textbf{vector of clocks} $V_i$ used for local timestamp.
+\image{img/vectorClockAlg.png}{Vector clock algorithm }{0.8}
+\begin{itemize}
+	\item $V_i[i]$ represents the event number occurred in $p_i$ and marked by $p_i$.
+	\item $V_i[j]$ represents the event number occurred in $p_j$ and that potentially affected $p_i$.
+\end{itemize}
+
+Then: $$V(e) < V(e^\prime) \qquad  e < e^\prime$$ 
+$$V = V^\prime \quad \iff \quad V[i]=V^\prime[i] \qquad \forall i = 1,...,N$$
+$$V \leq V^\prime \quad \iff \quad V[i] \leq V^\prime[i] \qquad \forall i = 1,...,N$$
+$$V < V^\prime \quad \iff \quad V[i] \leq V^\prime[i] \quad \wedge \quad V \neq V^\prime \quad \qquad \forall i = 1,...,N$$
+
+\image{img/vectorClock.png}{Vector clock algorithm example}{0.7}
+The main drawback of this strategy is that it requires memory space to store the vector $V$ and message dimension increase proportional to $N$.
+
+\subsection{Global state}
+Another fundamental problem consists to verify global properties in a distributed system. We begin by giving the examples of a distribute system in which deadlock between two or more processes can happen.
+\image{img/deadlockGlobalProp.png}{Global state: deadlock}{0.30}
+As it is possible to see is fundamental to study properties of the system for know better what it can happen and possible issues. Knowing the \textbf{global state} of the system sometimes can solve  some problems.
+
+The essential problem is the absence of global time. If all processes had perfectly synchronized clocks, then we could agree on a time at which each process would record its state – the result would be an actual global state of the system. From the collection of process states we could tell, for example, whether the processes were deadlocked. But we cannot achieve perfect clock synchronization, so this method is not available to us.\\
+
+Each process $p_i$ is associated to a local state history: $h_i = <e_i^0,e_i^1,...>$. 
+\begin{itemize}
+	\item $e_i^k$ k-th event in the local history of $p_i$. Local state history of process $p_i$ up to $k$ is so defined: $h_i^k = <e_i^0, e_i^1,..., e_i^k>$.
+	\item $s_i^k$ state of $p_i$ just after occurrence of event $e_i^k$.
+	\item $s_i^0$ initial state of $p_i$.
+\end{itemize}
+Global state history of the set of processes $\{p_1,p_2,...,p_N\}$.
+$$ H = \bigcup\limits_{i=1}^{N} h_{i}$$
+$$ S = \{s_1, s_2,..., s_N\} \qquad \mathbf{global \quad state}$$\\
+But now the question is spontaneous: Which are the significant states?\textbf{ Distributed snapshot} is an algorithm used to derivate a global state in which the distributed system can be. It defines a \textbf{consistent global state}.
+
+
+A cut of the system’s execution is a subset of its global history that is a union of prefixes of process histories:
+$$ C = \bigcup\limits_{i=1}^{N} h_{i}^{c_i} \qquad C \rightarrow \{e_1^{c_1},...,e_N^{c_N}\}$$
+
+\subsubsection{Consistent global state}
+A cut of a distributed system is said to be \textbf{consistent} if for each event included in the cut, it also includes the related events according to \textit{happened-before}:
+$$\forall e \in C \quad e^{\prime} \rightarrow e \qquad \implies \qquad e^{\prime}\in C$$
+\image{img/consistentState.png}{Consistent and Inconsistent cut}{0.60}
+A global state is said to be consistent if it corresponds to a consistent cut. A \textbf{global execution} is a succession of global consistent states $S_0 \rightarrow S_1 \rightarrow S_2 \rightarrow ... $. A \textbf{consistent run} is an ordering of the events in a global history that is consistent with this happened-before relation o $\rightarrow$ on $H$.
+
+\subsubsection{Distributed snapshot}
+Chandy and Lamport describe a \textbf{snapshot algorithm} for determining global states of distributed systems, which we now present. The goal of the algorithm is to record a set of process and channel states (a snapshot) for a set of processes $p_i$ $(i=1,2,...,N)$ such that, even though the combination of recorded states may never have occurred at the same time, the recorded global state is consistent.
+The algorithm records state locally at processes; it does not give a method for gathering the global state at one site. An obvious method for gathering the state is for all processes to send the state they recorded to a designated collector process, but we shall not address this issue further here. The algorithm assumes that:
+\begin{itemize}
+	\item reliable channel and communication. Neither channels nor processes fail – communication is reliable so that every message sent is eventually received intact, exactly once.
+	\item Channel is unidirectional and provide FCFS-ordered message delivery.
+	\item The graph of processes and channels is strongly connected (there is a path between
+	any two processes).
+	\item Any process may initiate a global snapshot at any time.
+	\item The processes may continue their execution and send and receive normal
+	messages while the snapshot takes place.
+\end{itemize}
+A process that starts records its own state and then sends a special message (\textbf{marker}) on all the outgoing channels to other processes to gather the global state. A process that receivers a marker message if it has not recorded its state it records it and forwards the marker on the outgoing channel, otherwise if it has already recorded its state it records the channel state (message sequence received on the channel from its last registration and before receiving the marker).
+
+\image{img/chandyLampAlg.png}{Chandy-Lamport algorithm}{0.9}
+
+\image{img/snapshot1.png}{Distributed snapshot 1}{1}
+\image{img/snapshot2.png}{Distributed snapshot 1}{1}
+\newpage
+
+
+\include{CCDS11}
+\include{SD10}
+\include{SD11}
+\include{SD12}
+\include{SD13}
+\include{CCDS8}
+\include{CCDS12}
+
+
+\include{QA}
+\end{document}

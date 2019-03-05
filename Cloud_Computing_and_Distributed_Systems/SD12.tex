@@ -1,0 +1,341 @@
+\section{Replication}
+In this section, we will analyze the \textit{replication} of data, considered also as the management of a set of data copies among multiple computers. The motivations that lead us to discuss about this specific topics are the following:
+\begin{itemize}
+	\item \textbf{Availability: }users require services to be highly available. A service should be accessible with reasonable response times about in the 100\% of the cases. The factors that are relevant to high availability are:
+	\begin{itemize}
+		\item \textit{Server failures} in this case replication is a technique for automatically maintaining the
+		availability of data despite server failures. If each of \textit{n} servers has an independent probability \textit{p} of failing or becoming unreachable, then the availability of an object stored at each of these servers is:
+		$$1 - p(\text{all servers failed or unreachable}) = 1-p^n$$
+		\item \textit{Network partitions and disconnected operation}. Mobile users may deliberately disconnect their computers or become unintentionally disconnected from a wireless network as they move around.
+	\end{itemize}
+	\item \textbf{Fault tolerance: }a fault-tolerant service always guarantees strictly correct behavior or data despite a certain number and type of faults.
+	\item \textbf{Performance: }the caching of data at clients and servers is by now
+	familiar as a means of performance enhancement. For \textit{stable} data, replication management is simple, instead, for \textit{variable} data, one has to introduce protocols to guarantee consistency.
+\end{itemize}
+Traditionally, in a distributed system, data are shared among several machines, for this reason, processes can work on different copies distributed in a \textbf{data store}. Since, there's many data replication, it is present the need of ensure read and write consistency.\\
+
+\textbf{Consistency models} can be considered as special agreements between processes and data store. In the following pages we will see several examples of consistency.\\
+
+\image{img/dataReplication}{Representation of a data store distributed in several nodes.}{0.7}
+\newpage 
+\subsection{Consistency models} 
+\textbf{Consistency models} specifies a contract between programmer and system, wherein the system guarantees that if the programmer follows the rules, memory will be consistent and the results of reading, writing, or updating memory will be predictable. The expected behavior in a system is that a \textit{read} gets the result of the last \textit{write}. Now, it will be possible to analyze different types of consistency models.
+\subsubsection{Strict consistency}
+Each \textit{read} of a data $x$ returns the value corresponding to the result of the last \textit{write}. The main features of this particular model are:
+\begin{itemize}
+	\item It makes implicit assumptions of a global time.
+	\item All the \textit{write} are ordered.
+	\item Every \textit{write} is immediately visible to all.
+\end{itemize} 
+\image{img/StrictConsistency}{Example of Strict consistency.}{0.8}
+Strict consistency is the strongest consistency model. Under this model, a write to a variable by any processor needs to be seen instantaneously by all processors. In practice it cannot be implemented in a distributed system. In other words, this specific model can be used only in \textbf{uniprocessor} systems. 
+
+\subsubsection{Sequential consistency}
+Results are the same as if all the processes were sequential and the operations of each process were in the specified order. Its features are the following:
+\begin{itemize}
+	\item It's not time based.
+	\item Internal operations cannot be differently ordered.
+	\item All see the same interleaving and, as a consequence, all reads must have the same sequence.
+\end{itemize}
+\image{img/SequentialConsistency}{Example of Sequential consistency.}{0.85}
+
+\paragraph*{Linearizable. } we denote $ts_{OP}(x)$ as the \textit{timestamp} of operation OP executed on data $x$, where $OP$ can be both a read or a write operation. We can define the linearizable property as:
+$$\text{If }ts_{OP1(x)}\text{ < }ts_{OP2(y)}\text{ then operation }OP1(x)\text{ precedes }OP2(y)\text{ in the operations sequence.}$$
+Sequential consistency can be considered as the serialization of the transactions but with different granularity, then, it is possible to conclude that:
+$$\text{Strict consistency} \rightarrow \text{Linearizable} \rightarrow \text{Sequential consistency}$$
+
+\subsection{Causal consistency}
+All the processes must see with the same order those \textit{write} potentially in causal relation. Concurrent \textit{write} can be seen in any order by different machines.
+\image{img/CausalConsistency}{Example of Causal consistency.}{0.85}
+The first one is an example of causal consistency and \textbf{not} sequential consistency (neither strict). In the second image, by deleting $R(x)a$ in $P2$ it becomes causal consistent.\\
+Read and write operations that are causally related are seen by every node of the distributed system in the same order. Concurrent writes may be seen in different order in different nodes. \\
+For instance, If there is an operation or event A that causes another operation B, then causal consistency provides an assurance that each other process of the system observes operation A before observing operation B. Therefore, causally related operations and concurrent operations are distinguishable in the causal consistency model. In more detail, if one write operation influences another write operation, then these two operations are causally related, one relies on the other. Concurrent operations are the ones that are unrelated by causality or causally independent. In particular, concurrent writes are independent operations, no one causes or influences the other. \\
+
+On the previous image we have two examples: the left one preserve causal consistency, instead the right one. Write operations that are related by potential causality are seen by each process of the system in common order. Also, concurrent writes can occur in any order and can be seen in different orders by the processes in the system. 
+
+\subsubsection{FIFO consistency}
+Process \textit{write} are seen by all the other processes in the execution order (FIFO). Write of different processes can be seen in any order by different machines. The following example is not valid for Causal consistency because W(x)1 and W(x)2 are causal, so different processes must read it in the same sequence.
+\image{img/FifoConsistency}{Example of Fifo consistency.}{0.7}
+
+\subsubsection{Weak Consistency}
+It is needed in order to synchronize variables and it works in the following way:
+\begin{enumerate}
+	\item Access to synchronized variables sequentially consistent.
+	\item Operations on synchronized variables are not allowed until all the previous
+	\textit{write} are completed everywhere.
+	\item Data \textit{read} or \textit{write} operations are not allowed until all the previous synchronization operations are completed.
+\end{enumerate}
+\image{img/WeakConsistency}{Example of Weak and not Weak consistency.}{0.8}
+
+\subsubsection{Relaxed Consistency}
+Relaxed consistency has been introduced since a data store can't recognize synchronized requests for \textit{write} or for \textit{read} (in this second case an useless overhead will be introduced).\\
+In order to solve this, different synchronization operations will be used:
+\begin{itemize}
+	\item \textbf{Acquire: }to enter a critical section.
+	\item \textbf{Release: }just out of the critical section.
+\end{itemize}
+The procedure will work as follows:
+\begin{enumerate}
+	\item Before executing a \textit{read} or a \textit{write} all the acquisitions of a process must be completed successfully.
+	\item Before executing a \textit{release} all the previous \textit{read} or \textit{write} done by the process must be completed.
+	\item The access to the synchronized variables are with FIFO policy.
+\end{enumerate}
+\image{img/RelaxedConsistency}{Example of Relaxed consistency.}{0.7}
+Updates can be done in two different phases:
+\begin{itemize}
+	\item At release time: \textbf{Eager}
+	\item At acquire time: \textbf{Lazy}
+\end{itemize}
+Another approach could be the one of dividing the program in phases instead of critical section and before entering the phase $n+1$, all the processes must have completed phase $n$.
+
+\subsubsection{Entry consistency}
+In this model, every shared data is associated to a synchronized variable and we access it with an acquire-release. In this way, there's an increase in the access time but also an increase in the parallelism by allowing multiple accesses to critical section.\\
+The access to a synchronized variable could be \textbf{exclusive} or \textbf{not exclusive}.
+\begin{enumerate}
+	\item An access acquisition to a synchronized variable is not admitted for a process until all the update of the guarded shared data have been executed by the process.
+	\item Before admitting an exclusive access to a synchronized variable for a process, no other process can have a synchronized variable neither exclusive.
+	\item After an exclusive access to a synchronized variable every other not exclusive access to the synchronized variable must check with the process owner of the variable the most recent information.
+\end{enumerate}
+\image{img/EntryConsistency}{Example of Entry consistency.}{0.7}
+At \textit{acquire} time all the data are made visible. After $P$ makes an \textit{acquire} all the other processes must pass the check of $P$.
+
+\subsubsection{Comparison of consistency models}
+Among the different consistency models, it is possible to consider the following comparisons.
+\begin{table}[H]
+	\centering
+	\begin{tabular}{| c | p{12cm} |}
+		\hline
+		\textbf{Consistency} & \textbf{Description} \\ 
+		\hline
+		\textit{Strict} & Total absolute ordering of all the elements shared for access. \\
+		\hline
+		\textit{Sequential} & All the processes must see the shared accesses in the same order. The accesses are ordered also according to a global timestamp (not unique). \\
+		\hline
+		\textit{Linearizable} & All the processes see all the shared accesses in the same order. The accesses are not time ordered. \\
+		\hline
+		\textit{Causal} & All the processes see the shared accesses in causal relation in the same order.  \\
+		\hline
+		\textit{FIFO} & All the processes see \textit{writes} between them in the order as they used them. \textit{Writes} of different processes are not always seen in the same order. \\
+		\hline
+	\end{tabular}
+	\caption{Consistency models that don't use synchronized operations.}
+\end{table}
+\begin{table}[H]
+	\centering
+	\begin{tabular}{| c | p{12cm} |}
+		\hline
+		\textbf{Consistency} & \textbf{Description} \\ 
+		\hline
+		\textit{Weak} & Shared data can be considered consistent only after the synchronization. \\
+		\hline
+		\textit{Relaxed} & Shared data can be considered consistent only when the process exit the critical section. \\
+		\hline
+		\textit{Entry} & Shared data of a critical section can be considered consistent only when the process enters a critical section. \\
+		\hline
+	\end{tabular}
+	\caption{Consistency models with synchronized operations.}
+\end{table}
+
+\subsubsection{Eventual consistency (final)}
+The previous models were centered on data, this means that we search to have a consistent view of data for simultaneous accesses. \textit{Eventual consistency} is instead \textbf{client centered}, it guarantees the correct access to the data store from the viewpoint of each client.\\
+Eventual consistency guarantee to propagate the update to all the copies at the end, it is efficient if the clients always work on the same replica.\\
+There are different models that describe the access:
+\begin{itemize}
+	\item \textbf{Monotone reads:} if the process reads $x$ ,every successive read of
+	that process returns the same value or a more recent one.
+	\item \textbf{Monotone writes:} a \textit{write} of a process on $x$ is completed before any other \textit{write} on $x$ of the same process.
+	\item \textbf{Reads your write: }the effects of a \textit{write} on $x$ by a process are always
+	visible by successive \textit{read} on $x$ by the same process.
+	\item \textbf{Writes follow reads:} guarantees that a \textit{write} on $x$ by a process successive to a \textit{read} on $x$ by the same process gives the same results read or a more recent one.
+\end{itemize}
+
+\subsection{Replica positioning}
+The data in our system consist of a collection of items that we shall call objects. An
+\textit{object} could be a file, but each such logical object is implemented by a collection of physical copies called \textbf{replicas}. The replicas are physical objects, each stored at a single computer, with data and behavior that are tied to some degree of consistency by the system’s operation. The replicas of a given object are not
+necessarily identical, at least not at any particular point in time. Some replicas may have received updates that others have not received.\\
+Replicas can be stored in memory in different ways:
+\begin{itemize}
+	\item \textbf{Permanent: }they are static copies, mainly this is done for an historical archive. Ex: backup.
+	\item \textbf{Server-initiated: }They are created dynamically and they are based on the knowledge of the topology.
+	\item \textbf{Client-initiated: }They are based on the client cache.
+\end{itemize}
+\image{img/ReplicaPositioning}{Model of replica positioning.}{0.7}
+Cache is an example which data is partial, incomplete and not necessary consistent.
+ 
+\subsubsection{System model}
+The model involves replicas held by distinct \textbf{replica managers}, which are software components that contain the replicas on a given computer and perform operations upon them directly. This general model may be applied in a client-server environment, in which case a \textit{replica manager} is a server.\\
+We shall always require that a replica manager applies operations to its replicas recoverably, in such a way that these operation can be recovered. This allows us to assume that an operation at a replica manager doesn't leave inconsistent results if it partially fails. Replica manager manages also possible faults and guarantee coherent behavior.
+\image{img/ArchitecturalModelReplicatedData}{A basic architectural model for the management of replicated data.}{0.7}
+In the previous image it is possible to see the general model of replica management.\\
+A collection of replica managers provides a service to clients. The clients see a service that gives them access to objects, which in fact are replicated at the managers. Each client requests a series of operations, an operation may involve a combination of reads of objects and updates to objects. Requested operations that involve no updates are called \textit{read-only} requests, requested operations that update an object are called \textit{update} requests (these may also involve reads).\\
+Each client’s requests are first handled by a component called a \textbf{front end}. The role of the \textit{front end} is to communicate by message passing with one or more of the replica managers, rather than forcing the client to do this itself explicitly. Front end introduces replication, location and access transparency. It is the vehicle for making replication transparent. A \textit{front end} may be implemented in the client’s address space, or it may be a separate process.\\
+In general, it is possible to highlight five steps during the execution of a single request upon replicated objects:
+\begin{enumerate}
+	\item \textbf{Request:} The \textit{front end} issues the request to one or more replica managers in two possible ways:
+	\begin{itemize}
+		\item Either the front end communicates with a single replica manager, which in turn communicates with other replica managers.
+		\item Or the front end multicasts the request to the replica managers.
+	\end{itemize}
+	\item \textbf{Coordination:} replica managers coordinate for executing the
+	request consistently, they agree on whether the request is to be applied. They also decide the ordering of the request relative to others. The types of ordering defined are:
+	\begin{itemize}
+		\item \textit{FIFO ordering:} if a \textit{front end} issues request $r$ and then request $r'$, any correct replica manager that handles $r'$ handles $r$ before it.
+		\item \textit{Causal ordering:} if the issue of request $r$ happened-before the issue of request $r'$, then any correct replica manager that handles $r'$ handles $r$ before it.
+		\item \textit{Total ordering:} if a correct replica manager handles $r$ before request $r'$, then any correct replica manager that handles $r'$ handles $r$ before it.
+	\end{itemize}
+	\item \textbf{Execution:} The replica managers execute the request, perhaps \textit{tentatively}, in order to undo its effects later. Meaning that it can work on tentative version and update at the end.
+	
+	\item \textbf{Agreement:} The replica managers reach consensus on the effect of the request, if they agree to the commit choice, that will be committed.
+	\item \textbf{Response:} One or more replica managers responds to the \textit{front end}. In some systems, one replica manager sends the response. In others, the front end receives responses from a collection of replica managers and selects or synthesizes a single response to pass back to the client.
+\end{enumerate}
+\newpage
+
+\section{The role of group communication}
+The membership of groups can be created in different ways, in replication circumstances, there's a strong requirement for dynamic membership, in which processes join and leave the group as the systems executes. A group membership service implements several features:
+\begin{itemize}
+	\item Provides an interface to manage group changes, group creation/delete.
+	\item Implement a fault detector that marks the suspected processes.
+	\item Notifies the group changes to the group members.
+	\item Makes the group address expansion.
+\end{itemize}
+A group membership service maintains \textbf{group views}, which are lists of the current group members, identified by their unique process identifiers.\\
+For each group $g$ the group service delivers to any member process $p \in g$ a series of views. In general, a member \textit{delivering a view}, when a membership change occurs and the application is notified of the new membership. Group decided a priori and can evolve during the time.
+Some basic requirements for \textbf{view delivery} are as follows:
+\begin{itemize}
+	\item \textit{Order:} if a process $p$ delivers view $v(g)$ and then $v'(g)$, then no other process $q \neq p$ delivers $v'(g)$ before $v(g)$.
+	\item \textit{Integrity:} if a process $p$ delivers view $v(g)$, then $p \in v(g)$.
+	\item \textit{Non-triviality:} if process $q$ joins a group and is or becomes indefinitely reachable from process $p \neq q$, then eventually $q$ is always in the views that $p$ delivers.
+\end{itemize}
+\image{img/GroupOfProcesses}{Services for a group of processes.}{0.7}
+A \textbf{view-synchronous} group communication system makes additional guarantees to those above about the delivery ordering of view notifications with respect to the delivery of multicast messages.\\
+The guarantees provided by view-synchronous group communication are as follows:
+\begin{itemize}
+	\item \textit{Agreement:} correct processes deliver the same sequence of views and the same set of messages in any given view. If a correct process delivers message $m$ in view $v(g)$, then all other correct processes that deliver $m$ also do so in the view $v(g)$.
+	\item \textit{Integrity:} if a correct process $p$ delivers message $m$, then it will not deliver $m$ again.
+	Furthermore, $p \in group(m)$ and the process that sent $m$ is in the view in which $p$
+	delivers $m$.
+	\item \textit{Validity:} correct processes always deliver the messages that they send. If a process $q$ has not delivered a message, system notifies and successive views exclude $q$. Let $p$ be any correct process
+	that delivers message $m$ in view $v(g)$. If some process $q \in v(g)$ does not deliver $m$ in
+	view $v(g)$, then the next view $v'(g)$ that $p$ delivers has $q \notin v'(g)$.
+\end{itemize}
+Considering the following image, a group with three processes, $p$, $q$ and $r$. Suppose that $p$ sends a message $m$ while in view $(p, q, r)$ but that $p$ crashes soon after sending $m$, while $q$ and $r$ are correct. One possibility is that $p$ crashes before $m$ has reached any other process. In this case, $q$ and $r$ each deliver the new view $(q, r)$, but neither ever delivers $m$ (\textbf{a}).\\
+The other possibility is that $m$ has reached at least one of the two surviving
+processes when $p$ crashes. Then $q$ and $r$ both deliver first $m$ and then the view $(q, r)$ (\textbf{b}). It is not allowed for $q$ and $r$ to deliver first the view $(q, r)$ and then $m$ (\textbf{c}), since then they would deliver a message from a process that they have been informed has failed, nor can the two deliver the message and the new view in opposite orders (\textbf{d}).
+\image{img/ConsistentMessage}{Delivery of consistent messages.}{0.9}
+
+\subsection{Fault-tolearnt services}
+In the following pages we will examine how to provide a service that is correct, despite process failures, by replicating data and functionality at replica managers. Different models of replication for fault tolerance will be presented below.
+\subsubsection{Passive (primary-backup) replication}
+In the \textbf{passive} or \textbf{primary-backup} model of replication for fault tolerance, there is at any one time a single \textit{primary} replica manager and one or more \textit{secondary} replica managers (\textit{backups} or \textit{slaves}). In the pure form of the model, \textit{front ends} communicate only with the primary replica manager to obtain the service. The primary replica manager executes the operations and sends copies of the updated data to the backups. If the primary fails, one of the backups is promoted to act as the primary.\\
+The sequence of events when a client requests an operation to be performed is as
+follows:
+\begin{enumerate}
+	\item \textit{Request:} the front end issues the request, containing a unique identifier, to the primary replica manager.
+	\item \textit{Coordination:} the primary takes each request atomically, in the order in which it receives it. It checks the unique identifier, in case it has already executed the request, and if so it simply resends the response.
+	\item \textit{Execution:} the primary executes the request and stores the response.
+	\item \textit{Agreement:} if the request is an update, then the primary sends the updated state, the response and the unique identifier to all the backups. The backups send an acknowledgement.
+	\item \textit{Response:} the primary responds to the front end, which hands the response back to the client.
+\end{enumerate}
+\image{img/PassiveModel}{The passive (primary-backup) model for fault tolerance.}{0.75}
+This system obviously implements linearizability if the primary is correct, since the
+primary sequences all the operations upon the shared objects. If the primary fails, then
+the system retains linearizability if a single backup becomes the new primary and if the
+new system configuration takes over exactly where the last left off. In other words, if the primary fails another backup is used to substitute it. That is if:
+\begin{itemize}
+	\item The primary is replaced by a unique backup (if two clients began using two
+	backups, then the system could perform incorrectly).
+	\item The replica managers that survive agree on which operations had been performed
+	at the point when the replacement primary takes over.
+\end{itemize}
+To survive up to $f$ process crashes, a passive replication system requires $f+1$ replica managers.
+
+\subsection{Active replication}
+In the \textit{active} model of replication for fault tolerance, the replica managers are state machines that play equivalent roles and are organized as a group. Front ends multicast their requests to the group of replica managers and all the replica managers process the request independently but identically and reply. If any replica manager crashes, this need have no impact upon the performance of the service, since the remaining replica managers continue to respond in the normal way. Under active replication, the sequence of events when a client requests an operation to be performed is as follows:
+\begin{enumerate}
+	\item \textit{Request:} the front end attaches a unique identifier to the request and multicasts it to the group of replica managers, using a totally ordered, reliable multicast primitive. The front end is assumed to fail by crashing at worst. It does not issue the next request until it has received a response.
+	\item \textit{Coordination:} the group communication system delivers the request to every correct replica manager in the same (total) order.
+	\item \textit{Execution:} every replica manager executes the request. Since they are state machines and since requests are delivered in the same total order, correct replica managers all process the request identically. The response contains the client’s unique request identifier.
+	\item \textit{Agreement:} no agreement phase is needed, because of the multicast delivery semantics.
+	\item \textit{Response:} each replica manager sends its response to the front end. The number of replies that the front end collects depends upon the failure assumptions and the multicast algorithm. If, for example, the goal is to tolerate only crash failures and the multicast satisfies uniform agreement and ordering properties, then the front end passes the first response to arrive back to the client and discards the rest (it can distinguish these from responses to other requests by examining the identifier in the response).
+\end{enumerate}
+\image{img/ActiveReplication}{The active replication model for fault tolerance.}{0.75}
+
+\subsection{High available services}
+In the following pages, we consider how to apply replication techniques to make services highly available. Our attention now is on giving clients access to the service for as much of the time as possible. We now examine the design of a system that provide highly available services: the \textbf{Gossip architecture}.
+
+\subsubsection{The gossip architecture}
+\textbf{Gossip architecture} was developed as a framework for implementing highly available services by replicating data close to the points where groups of clients need it. The name reflects the fact that the replica managers exchange \textit{"gossip"} messages periodically in order to convey the updates they have each received from clients.
+\image{img/GossipService}{Query and update operations in a gossip service.}{0.6}
+A gossip service provides two basic types of operation: \textit{queries} are read-only operations and \textit{updates} modify but do not read the state. A key feature is that front ends send queries and updates to any replica manager they choose, provided it is available and can provide reasonable response times. The system makes two guarantees, even though replica managers may be temporarily unable to communicate with one another:
+\begin{itemize}
+	\item \textit{Each client obtains a consistent service over time:} in answer to a query, replica managers only ever provide a client with data that reflects at least the updates that the client has observed so far.
+	\item \textit{Relaxed consistency between replicas:} all replica managers eventually receive all updates and they apply updates with ordering guarantees that make the replicas sufficiently similar to suit the needs of the application.
+\end{itemize}
+
+\paragraph*{The front end's version timestamp.} In order to control the ordering of operation processing, each front end keeps a vector timestamp that reflects the version of the latest data values accessed by the front end. This timestamp, denoted \textit{prev} in the above image, contains an entry for every replica manager. The front end sends it in every request message to a replica manager, together with a description of the query or update operation itself. When a replica manager returns a value as a result of a \textbf{query} operation, it supplies a new vector timestamp (\textit{new} in the above image), since the replicas may have been updated since the last operation. Similarly, an \textbf{update} operation returns a vector timestamp (\textit{Update ID} in the above image) that is unique to the update. Each returned timestamp is merged with the front end’s previous timestamp to record the version of the replicated data that has been observed by the client.
+\image{img/GossipArchitectureTimestamp}{Front ends propagate their timestamps whenever clients communicate directly}{0.5}
+
+\paragraph*{Replica manager state.} Regardless of the application, a replica manager contains the following main state components:
+\begin{itemize}
+	\item \textit{Value:} this is the value of the application state as maintained by the replica manager. Each replica manager is a state machine, which begins with a specified initial value and is thereafter solely the result of applying update operations to that state.
+	\item \textit{Value timestamp:} this is the vector timestamp that represents the updates that are reflected in the value. It contains one entry for every replica manager. It is updated whenever an update operation is applied to the value.
+	\item \textit{Update log:} all update operations are recorded in this log as soon as they are received.
+	\item \textit{Replica timestamp:} this vector timestamp represents those updates that have been accepted by the replica manager. It differs from the value timestamp in general, of course, because not all updates in the log are stable.
+	\item \textit{Executed operation table:} to prevent an update being applied twice, the \textit{"executed operation"} table is kept, containing the unique front-end-supplied identifiers of updates that have been applied to the value. The replica managers check this table before adding an update to the log.
+	\item \textit{Timestamp table:} this table contains a vector timestamp for each other replica manager, filled with timestamps that arrive from them in gossip messages. Replica managers use the table to establish when an update has been applied at all replica managers.
+\end{itemize}
+\image{img/GossipReplicaManager}{A gossip replica manager, showing its main state components.}{0.9}
+
+\subsection{Transactions with replicated data}
+An important aspects to deal with in replicated data is surely the \textit{transactions}. A transaction on replicated objects should appear the same as one with non-replicated objects. The effect of transactions performed by clients on replicated objects should be the same as if they had been performed one at a time on a single set of objects. This property is called \textbf{one-copy serializability}. It is similar to, but not to be confused with, sequential consistency. Sequential consistency considers valid executions without any notion of aggregating the client operations into transactions.\\
+The implementation of \textit{one-copy serializability} is illustrated by \textit{read-one/write-all}, a simple replication scheme in which \textit{read} operations are performed by a single replica manager and \textit{write} operations are performed by all of them.
+
+\subsubsection{Architectures for replicated transactions}
+A front end may either multicast client requests to groups of replica managers or send each request to a single replica manager, which is then responsible for processing the request and responding to the client. The replica manager that receives a request to perform an operation on a particular object is responsible for getting the cooperation of the other replica managers in the group that have copies of that object. Different replication schemes have different rules as to how many of the replica managers in a group are required for the successful completion of an operation. For example, in the \textit{read-one/write-all} scheme, a \textit{read} request can be performed by a single replica manager, whereas a \textit{write} request must be performed by all the replica managers in the group.
+\image{img/TransactionsOnReplicatedData}{Transactions on replicated data.}{0.8}
+
+\subsubsection{Available copies replication}
+Simple \textit{read-one/write-all} replication is not a realistic scheme, because it cannot be carried out if some of the replica managers are unavailable, either because they have crashed or because of a communication failure. The \textbf{available copies} scheme is designed to allow for some replica managers being temporarily unavailable.\\
+Normally, client requests are received and performed by a functioning replica manager. \textit{read} requests can be performed by the replica manager that receives them. \textit{write} requests are performed by the receiving replica manager and all the other
+available replica managers in the group.\\
+For example, in the below image, the \textit{getBalance} operation of transaction $T$ is performed by $X$, whereas its \textit{deposit} operation is performed by $M$, $N$ and $P$. Concurrency control at each replica manager affects the operations performed locally. For example, at $X$, transaction $T$ has read $A$ and therefore transaction $U$ is not allowed to update $A$ with the \textit{deposit} operation until transaction $T$ has completed.
+\image{img/AvailableCopies}{Available copies.}{0.8}
+
+\subsubsection{Network partitions}
+Replication schemes need to take into account the possibility of network partitions. A
+network partition separates a group of replica managers into two or more subgroups in
+such a way that the members of one subgroup can communicate with one another but
+members of different subgroups cannot communicate with one another. For example, in the following image, the replica managers receiving the \textit{deposit} request cannot send it to the replica managers receiving the \textit{withdraw} request.\\
+Replication schemes are designed with the assumption that partitions will eventually be repaired. Therefore, the replica managers within a single partition must ensure that any requests that they execute during a partition will not make the set of replicas inconsistent when the partition is repaired.
+\image{img/NetworkPartition}{Network partition.}{0.8}
+Many approaches were discussed, which they categorize as being either optimistic or pessimistic with regard to whether inconsistencies are likely to occur. The optimistic schemes do not limit availability during a partition, whereas pessimistic schemes do.
+\begin{itemize}
+	\item The \textbf{optimistic approach} allows updates in all partitions, this can lead to inconsistencies between partitions, which must be solved when partition is repaired.
+	
+	\item The \textbf{pessimistic approach} limits availability even when there are no partitions, but it prevents any inconsistencies occurring during partitions. When a partition is repaired, all that needs to be done is to update the copies of the objects. In other words it is based on the idea of \textbf{quorum}, only the partition that satisfy the quorum is available to the client. The problem here is that it can happen that does not exist a partition with quorum, and so no requests can be executed.
+	
+	\item The \textbf{Combined approach} is based on algorithm of virtual partition.
+\end{itemize}
+
+\subsubsection{Virtual partition}
+A \textbf{virtual partition} is an abstraction of a real partition and contains a set of replica managers. Note that the term \textit{"network partition"} refers to the barrier that divides replica managers into several parts, whereas the term \textit{"virtual partition"} refers to the parts themselves.
+\image{img/VirtualPartition}{Virtual partition.}{0.9}
+
+\newpage
+\subsubsection{Creating a virtual partition.}
+Phase 1:
+\begin{itemize}
+	\item The initiator sends a \textit{Join} request to each potential member. The argument of \textit{Join} is a proposed logical timestamp for the new virtual partition.
+	\item When a replica manager receives a \textit{Join} request, it compares the proposed logical timestamp with that of its current virtual partition.
+	\begin{itemize}
+		\item If the proposed logical timestamp is greater it agrees to join and replies \textit{Yes};
+		\item If it is less, it refuses to join and replies \textit{No}.
+	\end{itemize}
+\end{itemize}
+Phase 2:
+\begin{itemize}
+	\item If the initiator has received sufficient \textit{Yes} replies to have \textit{read} and \textit{write} quora, it may complete the creation of the new virtual partition by sending a \textit{Confirmation} message to the sites that agreed to join. The creation timestamp and list of actual members are sent as arguments.
+	\item Replica managers receiving the \textit{Confirmation} message join the new virtual partition and record its creation timestamp and list of actual members.
+\end{itemize}
+
+In other words: when a replica manager receives a request it tries to create a virtual partition as large as possible in order to reach the quorum. Replica managers can communicate using an alternative way. This strategy improves the availability since the virtual partition can be greater than the real one on the network.

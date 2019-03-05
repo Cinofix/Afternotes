@@ -1,0 +1,171 @@
+\section{Cloud computing}
+Cloud computing is a model for enabling ubiquitous, convenient, on-demand network access to a shared pool of configurable computing resources (e.g., networks, servers, storage, applications, and services) that can be rapidly provisioned and released with minimal management effort or service provider interaction. This cloud model is composed of \textbf{five essential characteristics}:
+\begin{itemize}
+	\item On-demand self service.
+	\item Measured service.
+	\item Broad network access.
+	\item Rapid elasticity.
+	\item Resource pooling.
+\end{itemize}
+It is composed of \textbf{three service models}:
+\begin{itemize}
+	\item Software as a service (\textit{SAAS})
+	\item Platform as a service (\textit{PAAS})
+	\item Infrastructure as a service (\textit{IAAS})
+\end{itemize}
+and finally it is composed by \textbf{four deployment models}:
+\begin{itemize}
+	\item Public cloud
+	\item Private cloud
+	\item Hybrid cloud
+	\item Community cloud
+\end{itemize}
+In the following pages, all these concepts will be explained in a deepl way. In a more concise definition, we can so say that Cloud computing is a specialized form of \textbf{distributed computing} that introduces utilization model for remotely provisioning scalable and measured resources.\\
+One possible error that can be made is to confuse \textit{cloud computing} and \textit{data center} concepts. The first one in fact has the goal of providing services, instead the second one can be considered only as a collection of a large amount of data stores and its main purpose is to provide data.
+
+\subsection{Terminology}
+The actual technologies is the result of an evolution of several pre-existing structures considered to be the primary influences on cloud computing.
+
+\paragraph*{Cluster of workstation.} A cluster is a group of independent IT resources that are interconnected and work as a single system. A general prerequisite of hardware clustering is that its component systems have reasonably identical hardware and operating systems to provide similar performance levels. Component devices that form a cluster are kept in synchronization through dedicated, high-speed communication links.
+
+\paragraph*{Grid computing.} A computing grid provides a platform in which computing
+resources are organized into one or more logical pools. Grid computing differs from clustering in that grid systems are much more loosely coupled and distributed. As a result, grid computing systems can involve computing resources that are heterogeneous and geographically dispersed, which is generally not possible with cluster computing-based systems.\\
+Grid computing is based on a middleware layer that is deployed on computing resources. These IT resources participate in a grid pool that implements a series of workload distribution and coordination functions. This middle tier can contain load balancing logic, failover controls, and autonomic configuration management, each having previously inspired similar cloud computing technologies. 
+
+\paragraph*{Virtualization.} Virtualization represents a technology platform used for the creation of virtual instances of IT resources. A layer of virtualization software allows physical IT resources to provide multiple virtual images of themselves so that their underlying processing capabilities can be shared by multiple users. As cloud computing evolved, a generation of modern virtualization technologies emerged to overcome the performance, reliability, and scalability limitations of traditional virtualization platforms.
+
+\paragraph*{Enabling cloud computing technologies.} Other areas of technology continue to contribute on the modern cloud-based platforms, these are distinguished as \textit{cloud-enabling technologies}:
+\begin{itemize}
+	\item Broadband Networks and Internet Architecture.
+	\item Data Center Technology.
+	\item Virtualization Technology.
+	\item Web Technology.
+	\item Service Technology.
+\end{itemize}
+
+\subsection{Motivations}
+The motivations that lead to the introduction of cloud computing are basically:
+\begin{itemize}
+	\item \textbf{Scalability needs}, there's the need of passing from a single PC to a data center because of the exponential growing of data and users. There's a massive data requirement by recent applications.
+	\item \textbf{Computation needs}, there's the need of extend the computing power adding many servers because of the increase of web pages, images, users and queries on the net.
+\end{itemize}
+
+\subsection{Definition}
+In this section, we will highlight the basic elements that represent the fundamental concepts belonging to the notion of cloud computing.
+
+\subsubsection{Cloud}
+A \textit{cloud} refers to a distinct IT environment that is designed for the purpose of remotely provisioning scalable and measured IT resources. As a specific environment, a cloud has a finite \textit{boundary} and there are many individual clouds that are accessible via the Internet. A cloud is typically privately owned and offers access to IT resources that is metered. IT resources provided by cloud environments are dedicated to supplying back-end processing capabilities and user-based access to these capabilities. A cloud can be based on the use of any protocols that allow for the remote access to its IT resources.
+
+\subsubsection{IT Resource}
+An \textit{IT resource} is a physical or virtual IT-related artifact that can be either software-based, such as a virtual server or a custom software program, or hardware-based, such as a physical server or a network device.
+\image{img/ItResource}{Examples of common IT resources and their corresponding symbols.}{0.9}
+The following image illustrates how the cloud symbol can be used to define a boundary for a cloud-based environment that hosts and provisions a set of IT resources. The displayed IT resources are consequently considered to be cloud-based IT resources.
+\image{img/ItResource2}{A cloud is hosting eight IT resources: three virtual servers, two cloud services, and three storage devices.}{0.65}
+
+\subsubsection{Cloud Consumers and Cloud Providers}
+The party that provides cloud-based IT resources is the cloud provider. The party that uses cloud-based IT resources is the cloud consumer. These terms represent roles usually assumed by organizations in relation to clouds and corresponding cloud provisioning contracts.
+
+\subsubsection{Scaling}
+Scaling represents the ability of the IT resource to handle increased or decreased usage demands. It is possible to have two types of scaling:
+\begin{itemize}
+	\item \textbf{Horizontal Scaling}, scaling out and scaling in.
+	\item \textbf{Vertical Scaling}, scaling up and scaling down.
+\end{itemize}
+
+\paragraph*{Horizontal Scaling.} It is referred to the allocating or releasing of IT resources that are of the same type. The horizontal allocation of resources is referred to as \textit{scaling out} and the horizontal releasing of resources is referred to as \textit{scaling in}. Horizontal scaling is a common form of scaling within cloud environments. An example of Horizontal scaling can be seen in the following image where an IT resource (Virtual Server A) is scaled out by adding more of the same IT resources (Virtual Servers B and C). 
+\image{img/HorizontalScaling}{Example of Horizontal scaling.}{0.75}
+
+\paragraph*{Vertical Scaling.} When an existing IT resource is replaced by another with higher or lower capacity, \textit{vertical scaling} is considered to have occurred. Specifically, the replacing of an IT resource with another that has a higher capacity is referred to as \textit{scaling up} and the replacing an IT resource with another that has a lower capacity is considered \textit{scaling down}. Vertical scaling is less common in cloud environments due to the downtime required while the replacement is taking place. An example of Vertical scaling can be seen in the following image, where an IT resource (a virtual server with two CPUs) is scaled up by replacing it with a more powerful IT resource with increased capacity for data storage (a physical server with four CPUs).
+\image{img/VerticalScaling}{Example of Vertical scaling.}{0.33}
+
+\paragraph*{Comparison.} A possible comparison can be found in the following table that provides a brief overview of common pros and cons associated with horizontal and vertical scaling.
+\begin{table}[H]
+	\centering
+	\begin{tabular}{| p{7.5cm} | p{7.5cm} |}
+		\hline
+		\textbf{Horizontal Scaling} & \textbf{Vertical Scaling} \\ 
+		\hline
+		Less expensive (through commodity hardware components) & More expensive
+		(specialized servers) \\
+		\hline
+		IT resources instantly available & IT resources normally instantly available \\
+		\hline
+		Resource replication and automated scaling & Additional setup is normally needed \\
+		\hline
+		Additional IT resources needed & No additional IT resources needed \\
+		\hline
+		Not limited by hardware capacity & Limited by maximum hardware capacity \\
+		\hline
+	\end{tabular}
+	\caption{A comparison of horizontal and vertical scaling.}
+\end{table}
+
+\subsection{Cloud Service}
+Although a cloud is a remotely accessible environment, not all IT resources residing within a cloud can be made available for remote access. A \textit{cloud service} is any IT resource that is made remotely accessible via a cloud. In the following image, it can be seen that a cloud service with a published technical interface is being accessed by a consumer outside of the cloud (left). A cloud service that exists as a virtual server is also being accessed from outside of the cloud’s boundary (right). The cloud service on the left is likely being invoked by a consumer program that was designed to access the cloud service’s published technical interface. The cloud service on the right may be accessed by a human user that has remotely logged on to the virtual server.
+\image{img/CloudService}{Example of Cloud Service.}{0.75}
+The \textit{cloud service consumer} is a temporary runtime role assumed by a software program when it accesses a cloud service. As shown in the below image,  common types of cloud service consumers can include software programs and services capable of remotely accessing cloud services with published service contracts.
+\image{img/CloudConsumer}{Examples of cloud service consumers.}{0.53}
+
+\subsection{Cloud Computing Advantages}
+Different benefits are associated with the usage of cloud computing, it is possible to highlight so, these benefits:
+\begin{itemize}
+	\item \textbf{Performance}.
+	\item \textbf{Cost reduction}, the number of investments is reduced and there's an access to powerful infrastructures without purchasing them (\textit{proportional costs}). In relation to cloud consumers these other benefits can be included:
+	\begin{itemize}
+		\item On-demand access to pay-as-you-go computing resources, such as processors by the hour, and the ability of release these computing resources when they are no longer needed.
+		\item The perception of having unlimited computing resources that are available on demand.
+		\item The ability to add or remove IT resources at a fine-grained level, such as modifying available storage disk space by single gigabyte increments.
+	\end{itemize}
+	\item \textbf{Scalability}, clouds can instantly and dynamically allocate IT resources to cloud consumers, on-demand or via the cloud consumer’s direct configuration. Similarly, cloud-based IT resources can be released as processing demands decrease. A simple example of usage demand fluctuations throughout a 24 hour period is provided by the following image.
+	\image{img/Advantages}{Examples of demand fluctuations.}{0.55}
+	\item \textbf{Availability} and \textbf{reliability}, cloud environment provides an extensive support for increasing the availability of a cloud-based IT resource to minimize or even eliminate outages, and for increasing its reliability so as to minimize the impact of runtime failure conditions.
+	\item Maximize resource utilization.
+\end{itemize}
+
+\subsection{Risks and Limits}
+Cloud computing can introduce distinct risks and limits that should be considered when we want to use it. In particular a cloud computing system:
+\begin{itemize}
+	\item Requires high and available connection between nodes, which is not always available.
+	\item Introduce security problems like authentication on the usage of shared resources and private resources.
+	\item Lack of industry standard, public cloud are usually proprietary.
+	\item Limited portability between cloud providers. In case of migration of the could provider from Cloud A to Cloud B it can happen that B does not support the same security technologies as Cloud A, this problem reduce portability between services.
+\end{itemize}
+
+\subsection{Cloud Delivery Models}
+A cloud delivery model represents a specific, pre-packaged combination of IT resources offered by a cloud provider. It refers to the types of services offered by cloud computing. Three common cloud delivery models have become widely established and formalized:
+
+\paragraph{Infrastructure as a Service (IaaS).} The cloud provider offers access to fully functioning software. The service provider owns the equipment and is responsible for housing, running and maintaining it and the client typically pays on a per-use basis. The general purpose of an IaaS environment is to provide cloud consumers with a high level of control and responsibility over its configuration and utilization. The IT resources provided by IaaS are generally not pre-configured, placing the administrative responsibility directly upon the cloud consumer. This model is therefore used by cloud consumers that require a high level of control over the cloud-based environment they intend to create. \\
+\textbf{Available functionality}: Full access to virtualized infrastructure related resources, and possibly to underlying physical resources. \\
+\textbf{Examples}: Amazon Web Services, Google Cloud Storage, DigitalOcean.
+
+	\image{img/iaas.png}{Infrastructure as a Service structure}{0.7}
+	
+\paragraph{Platform as a Service (PaaS).} The cloud provider give the way to rent hardware, operating systems, storage and network capacity over a network. The service delivery model allows the customer to rent virtualized servers and associated services for running existing applications or developing and testing new ones. The service provider offers a complete platform solution that the user runs software on. The platform usually consists of an operating system and an execution environment, often for a specific programming language.  In this model, customers don’t want to think about the server or its internals, they want to point to a virtual machine, tell their code or container to go live there, and let their application take over from there. It is a '\textbf{ready to use}’ environment with IT resources already deployed and configured. \\
+\textbf{Available functionality}: Some administrative control over resources relevant to cloud consumer’s usage of platform.\\
+\textbf{Examples}: Windows Azure, Google App Engine, Heroku.
+
+\image{img/paas.png}{Platform as a Service structure}{0.7}
+		
+\paragraph{Software as a Service (SaaS).} The cloud provided rents applications software, that are hosted by the provider in the cloud and it is available to customers over a network. The user rents access to a physical or virtual server that can either run a predefined operating system or, in some offerings, a customised operating system. The user then has full control and responsibility over the running operating system and can use it to run any software. It is a software program as a cloud service available as a ‘product’ or generic utility to many consumers. Cloud consumer has a very limited administrative control.  \\
+\textbf{Available functionality}: Access to front-end user interface. \\
+\textbf{Examples}: Google Apps, Yahoo!Mail, CRM software.
+
+\image{img/saas.png}{Software as a Service structure}{0.7}
+
+\subsection{Cloud Deployment Models}
+Cloud deployment model defines a specific type of cloud environment primarily distinguished by ownership, size and access.
+
+\begin{itemize}
+	\item \textbf{Public Cloud}: the owner is the cloud provider and services are accessible for everyone and much used for the consumer segment. Examples of public services are Facebook, Google and LinkedIn.
+	
+	\item  \textbf{Community Cloud}: the owner is a community of cloud consumers and it customers outside the community are not granted to access and use services and resources. A community cloud is similar to a public cloud except that its access is limited to a specific community of cloud consumers. 
+	
+	\item \textbf{Private Cloud}: the owner is a single organization and only its customers can access to services and resources. Private clouds enable an organization to use cloud computing technology as a means of centralizing access to IT resources by different parts, locations, or departments of the organization. 
+	
+	\item \textbf{Hybrid Cloud}: as the name suggests, a hybrid cloud deployment model consists of two or more cloud environments, most commonly private and public cloud. For example, a company may choose to deploy their sensitive and secure processing to a private cloud, while their less sensitive data is processed through a small public cloud. In other words, a cloud consumer may choose to deploy cloud services processing sensitive data to a private cloud and other, less sensitive cloud services to a public cloud
+\end{itemize}
+
+
+\subsection{Potentialities and concerns}
+Why use a cloud computing system? We have different reason and we have analyzed them, but just to remember some of them we have: cost, scalability and performance.\\
+In the contrary there are some cases in which a cloud computing system cannot be adopted like: legislative frameworks, medical records and data privacy.
