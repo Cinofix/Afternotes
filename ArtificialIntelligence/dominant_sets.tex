@@ -1,0 +1,257 @@
+\section{Dominant Sets}
+In some applications, data are more likely to be represented as weighted graphs rather than in a \textbf{features-based way}. In this context, a common approach is to construct a \textbf{similarity graph} of the data, in which data are represented by nodes in the graph and the edges represent the similarity relation between nodes. This way of presenting data is very common since it allows to codify and use complex structured and unstructured data, and, since we are using graphs, a very strong graph theory literature is provided.  \\
+Coming back to the clustering problem, some authors argue to the fact that a cluster can be seen as a \textbf{maximal clique}\footnote{A \textbf{clique} is a subset of mutually adjacent vertices.\\ A \textbf{maximal clique} is a clique that is not contained in a larger one.} of a graph, indeed the concept of clique is related to the internal cluster criteria, instead maximal clique responds to the external criteria. Problems raise because maximal clique problem cannot be applied to weighted graphs. For this reason, dominant set is introduced as an evolution of the continuous formulation of the maximal clique problem. \\
+
+The notion of \textbf{dominant set} provides measures of cohesiveness of a cluster and vertex participation of different clusters. Clusters can be found by using continuous optimization technique, the replicator. An interesting property that will be discussed later on, is that dominant set is strongly connected to the graph theory, game theory and quadratic optimization. Thanks to this strong connection it is possible to establish a connection between dominant sets and local extrema (max or min) of a quadratic form over the standard simplex. The other methods are not able to capture a particular cloud of data distinguishing it from the other points that are considered noise. In other words, a cluster is nothing else that a set of maximally homogeneous points.
+\imageb{img/dominant_init}{0.55}
+This new approach allows us, for example, also to consider nodes belonging to two different clusters considering so the hypothesis of overlapping clusters.
+\imageb{img/dominant_overlapping}{0.7}
+
+\subsection{Graph-theoretic definition of a cluster}
+Data to be clustered are represented as an undirected weighted graph with no self-loops: $G=(V, E, \omega)$, where $V=\{1,\dots,n\}$ is the vertex set, $E\subseteq V\times V$ is the edges set and $w: E\rightarrow \mathbb{R}^*_+$ is the positive weight function. Vertices represent data points, edges neighborhood relationships and edge-weights similarity relations. $G$ is then represented with an adjacency matrix $A$, such that $a_{ij} = \omega(i,j)$. Since there are not self-loops we have that $\omega(i,i) = 0$ (main diagonal equal to $0$).\\
+There is not a unique and well define definition of cluster, but in literature we agree that a cluster should satisfy two conditions:
+\begin{itemize}
+  \item \textbf{High internal homogeneity}, also named \textit{Internal criterion}. It means that all the objects inside a cluster should be highly similar(or low distance) to each other.
+  \item \textbf{High external in-homogeneity}, also named \textit{External criterion}. It means that objects coming from different clusters have low similarity (or high distance).
+\end{itemize}
+The idea of the criterion is that clusters are groups of objects which are strongly similar to each other if they become to the same cluster, otherwise they have an highly dissimilarity.\\
+Informally, a cluster is a set of entities which are alike, and entities from different clusters are not alike.
+
+Let $S\subseteq V$ be a nonempty subset of vertices and $i \in S$. The average weighted degree of $i$ with regard to $S$ is defined as:\\
+\begin{equation}
+  \text{awdeg}_S(i)=\frac{1}{|S|}\sum_{j\in S}a_{ij}
+\end{equation}
+Informally, it represents the average similarity between entity $i$ and the rest of the entities in $S$.
+It can be observed that $\text{awdeg}_{\{i\}}(i) = 0$  $\forall i \in V$, since we have no self-loops.\\
+We now introduce a new quantity $\phi$ such that if $j \notin S$:
+\begin{equation}
+  \phi_S(i, j)=a_{ij}-\text{awdeg}_S(i)
+\end{equation}
+\image{img/awdeg.png}{$\phi$ measure.}{0.25}
+Note that $\phi_{\{i\}}(i, j)=a_{ij}$ $\forall i, j\in V$ with $i \neq j$. $\phi_S(i, j)$ measures the relative similarity between $i$ and $j$ with respect to the average similarity between $i$ and its neighbors in $S$. This measures can be either positive or negative.
+
+\paragraph{Definition.} Let $S\subseteq V$ be a nonempty subset of vertices and $i \in S$. The weight of $i$ with regard to $S$ is:
+\begin{equation}
+  w_S(i)= \begin{cases}
+      1 & \text{if } |S| = 1 \\
+      \sum\limits_{j\in S\setminus \{i\}}\phi_{S\setminus \{i\}}(j, i)w_{S\setminus \{i\}}(j) & \text{otherwise}
+  \end{cases}
+\end{equation}
+
+Further, the total weight of $S$ is defined to be $W(S)=\sum_{i\in S}w_S(i)$.
+\image{img/ws.png}{Weight of i respect to elements in S.}{0.18}
+Note that $w_{\{i, j\}}(i)=w_{\{i, j\}}(j)=a_{ij}$ $\forall i, j \in V \land i\neq j$. Then, $w_S(i)$ is calculated simply as a function of the weights on the edges of the sub-graph induced by $S$.\\
+
+Intuitively, $w_S(i)$ gives a measure of the similarity between $i$ and $S\setminus \{i\}$ with respect to the overall similarity among the vertices of $S\setminus \{i\}$. In other words, how similar (important) is $i$ respect to the entities in $S$.
+An important property of this definition is that it induces a sort of natural ranking among vertices of the graph. 
+
+
+\imageLabel{img/graph.png}{Similarity graph example.}{0.15}{gex}
+
+Considering the graph proposed in Figure \ref{fig:gex}, we can put ranking: $$w_{\{1,2,3\}}(1) < w_{\{1,2,3\}}(2) < w_{\{1,2,3\}}(3)$$.
+
+\paragraph{Definition.} A nonempty subset of vertices $S\subset V$ such that $W(T)>0$ for any nonempty $T \subseteq S$, is said to be a \textbf{dominant set} if:
+\begin{itemize}
+  \item $w_S(i) > 0$ $\forall i \in S \qquad$ (\textit{internal homogeneity})
+  \item $w_{S \cup \{i\}}(i) < 0$ $\forall i \notin S \qquad$ (\textit{external homogeneity})
+\end{itemize}
+These conditions correspond to cluster properties (\textbf{internal homogeneity} and \textbf{external in-homogeneity}). Informally we can say that the first condition requires that all the nodes in the clusters are important for it. The second one assumes that if we consider a new point in the cluster, the cluster cohesiveness will be lower, meaning that the current cluster should be already maximal.\\
+By definition, dominant sets are expected to capture compact structures. Moreover, this definition is equivalent to the one of maximal clique problem when applied to unweighted graphs.
+\image{img/dominant_def}{The set \{1,2,3\} is dominant.}{0.2}
+
+
+\subsection{From dominant set to local optima}
+
+Clusters are commonly represented as an $n$-dimensional vector expressing the participation of each node to a cluster. Large numbers denote a strong participation, while zero values no participation. The cohesiveness of a cluster can be computed using:
+\begin{equation}
+f(x)=x^\top Ax
+\end{equation}
+where $A$ is a symmetric real-valued matrix with null diagonal.\\
+Clustering can be formulated now as the problem of finding $x$ that maximizes $f$. The objective function has to be normalized. For this aim simplex constraints are imposed. This yields the following standard quadratic problem which local solution corresponds to a maximally cohesive cluster:
+\begin{equation}\label{SPQ}
+\begin{array}{lcl}
+\text{maximize} & f(x) \\
+\text{subject to} & x \in \Delta
+\end{array}
+\end{equation}
+where
+\begin{equation}
+\Delta=\{x\in\mathbb{R}^n:x\geq 0 \land e^\top x = 1\}
+\end{equation}
+is the standard simplex of $\mathbb{R}^n$.\\
+
+\image{img/standardSimplex.png}{Standard Simple on $\mathbb{R}^3$.}{0.35}
+The entity $x$ is a strict local solution of problem \ref{SPQ} if there exists a neighborhood $U \subset	\Delta$ of $x$ such that $f(x) > f(z)$ $\forall z \in U\setminus\{x\}$. The support $\sigma(x)$ of $x\in\Delta$ is defined as the index set of the positive components in $x$.
+$$\sigma(x) = \{i\in V: x_i > 0\}$$
+
+
+\paragraph{Definition.} A non-empty subset $C \subseteq V$ and $C$ is a dominant set, admits a weighted \textbf{characteristic vector} $x^c\in \Delta$ if it has positive total weight $W(C)$, in which:
+
+$$
+  x_i^C= \begin{cases}
+	\frac{W_c(i)}{W(C)} & \text{if } i\in C\\
+	0 & \text{otherwise}
+\end{cases}
+$$
+Note that by definition dominant sets always admit a characteristic vector. In conclusion dominant sets can be put in one-to-one correspondence (modulo a technical condition) with strict local maximizers of a quadratic function over the simplex. As opposed to many other clustering algorithms, which try to find the global optimum of some energy function, dominant sets can be found by mining local solutions.
+
+
+
+\subsection{Link to Game theory}
+Game theory is the study of mathematical models of strategic interaction between rational decision-makers. In this sense we can model a new \textbf{clustering game} with the following properties:
+\begin{itemize}
+	\item \textbf{Symmetric game}, the payoffs for playing a particular strategy depend only on the other strategies employed, not on who is playing them. 
+	\item \textbf{Complete knowledge}, payoffs, strategies and types of players are known.
+	\item \textbf{Non-cooperative game}, players cannot form alliances or if all agreements need to be self-enforcing (e.g. through credible threats). Player takes independent decisions about the strategy to play.
+	\item Pre-existing set of \textbf{pure strategies}. Players do not behave “rationally” but act according to a pre-programmed behavioral pattern (pure strategy).
+\end{itemize}
+Data points $V$ are the pure strategies available to the players and the similarity matrix $A$ represents the \textbf{payoff matrix}, which resumes the revenues that each player obtains when a pair of strategies is played. The values $A_{ij}$ and $A_{ji}$ are the revenues obtained by player 1 and player 2 considering that they have player strategies $(i,j) \in V\times V$.
+A \textbf{mixed strategy} $x=(x_1, \dots, x_n)^T \in \Delta$ is a probability distribution over the set of pure strategies, which models a stochastic playing strategy of a player. If player 1 and 2 play mixed strategies $(x_1, x_2) \in \Delta \times \Delta$, then the expected payoffs for the players are: $\mathbf{x_1^TAx_2}$ and $\mathbf{x_2^TAx_1}$ respectively.
+The goal of the two players of course is to maximize as much as possible their resulting revenue. During the game each player extract an object $(i,j)$ and the resulting revenue is associated
+according to the payoff matrix $A$. Since we are considering $A$ equal to the similarity matrix we can say that in order to maximize their revenue the two players would coordinate their strategies so that the extracted objects belong to the same cluster. In other words, only by selecting objects belonging to the same cluster, each player is able to maximize his expected payoff. The unique difference is that the similarity between two equal entities is $0$, meaning that $A_{ii} = 0$. The desired condition is that the two players reach the \textbf{symmetric Nash equilibrium}, state in which the two players agree about the cluster membership. A \textbf{Nash Equilibrium} is a mixed-strategy profile $(x_1,x_2)\in \Delta\times \Delta$ such that no player can improve the expected payoff by changing his playing strategy, given the opponent's strategy being fixed. In other words, it's a configuration of strategies for which none player will deviate from it for its convenience since there is no incentive to change choice. This concept can be expressed with the following expression:
+$$y_1^TAx_2 \leq x_1^TAx_2 \qquad y_2^TAx_1 \leq x_2^TAx_1 \qquad \forall (y_1,y_2) \in (V\times V).$$ 
+A Nash equilibrium is \textbf{symmetric} if $x_1 = x_2$, meaning that considering a symmetric Nash Equilibrium $x \in \Delta$ the two conditions hold in a unique one:
+$$y^TAx \leq x^TAx$$
+
+This condition over here satisfies the internal homogeneity criterion required inside the dominant set definition, but it does not include any kind of constraint that guarantees the maximality condition. In order to satisfy this condition it is necessary to look for a different type of Nash Equilibrium, known as \textbf{Evolutionary Stable Strategy (ESS)}. 
+
+\paragraph{Definition.} A symmetric Nash equilibrium $x\in \Delta$ is an ESS if it satisfies also:
+$$y^TAx = x^TAx \implies x^TAy > y^TAy \qquad \forall y \in \Delta\setminus\{x\}$$
+
+$$y^TAx = x^TAx \implies x^TAy < x^TAx \qquad \forall y \in \Delta\setminus\{x\}$$
+Even if the strategy $y$ provides the same payoff of the strategy $x$, it is better to play $x$ since the payoff against itself is greater than the one provided by $y$. The two strategies $x$ and $y$ represents two Nash Equilibrium, but only $x$ is an ESS.\\
+In conclusion we can say that the ESSs of the clustering game with affinity matrix $A$ are in \textbf{correspondence} with dominant sets of the same clustering problem instance. However, we can also conclude that ESS’s are in one-to-one correspondence to (strict) local solutions of StQP.\\
+It is possible to say that ESS's abstract well the main characteristic of a cluster:
+\begin{itemize}
+	\item \textbf{Internal coherency:} High mutual support of all elements within the group.
+	\item \textbf{External incoherency:} Low support from elements of the group to elements outside the group.
+\end{itemize}
+
+
+\subsection{Extracting dominant sets}
+One of the major advantages of using dominant sets is that it can be written with few lines of code. There are several dominant set clustering approaches:
+\begin{itemize}
+	\item To get a single dominant set cluster use replicator dynamics.
+	\item To get a partition use a simple \textit{peel-off} strategy: iteratively find a dominant set and remove it from the graph, until all vertices have been clustered.
+	\item To get overlapping clusters, enumerate dominant sets. 
+\end{itemize}
+The \textbf{Replicator Dynamics} (RD) are deterministic game dynamics that have been developed in evolutionary game theory. It considers an idealized scenario whereby individuals are repeatedly drawn at random from a large, ideally infinite, population to play a two-player game. In contrast to classical game theory, here players are not supposed to behave rationally or to have complete knowledge of the details of the game. They act instead according to an inherited behavioral pattern, or pure strategy, and it is supposed that some evolutionary selection process operates over time on the distribution of behaviors.\\
+Let $x_i(t)$ the population share playing pure strategy $i$ at time $t$. The state of the population at time $t$ is: $x(t) = (x_1(t),\dots,x_n(t))\in\Delta$.\\
+We define an evolution equation, derived from Darwin's principle of nature selection:
+$$\dot{x_i} = x_i~g_i(x)$$
+where $g_i$ specifies the rate at which pure strategy $i$ replicates.
+$$\frac{\dot{x_i}}{x_i} \propto \text{payoff of pure strategy }i\text{ - average population payoff}$$
+which yields:
+$$\dot{x_i} = x_i[(Ax)_i - x^TAx]$$
+where $(Ax)_i$ is the $i$-th component of the vector and $x^TAx$ is the average payoff for the population. If we have a result better than the average strategy there's an improvement.
+
+\paragraph{Theorem.} A point $x\in\Delta$ is a Nash equilibrium if and only if $x$ is the limit point of a replicator dynamics trajectory starting from the interior of $\Delta$.
+Furthermore, if $x\in\Delta$ is an ESS, then it is an asymptotically stable equilibrium point for the replicator dynamics.\\
+
+Assuming that the payoff matrix $A$ is symmetric $(A = A^T)$, we call this type of game as a doubly symmetric game. Thanks to this assumption we can derive some conclusions:
+\begin{itemize}
+	\item (\textbf{\textit{Fundamental Theorem of Natural Selection}}.) For any doubly symmetric game, the average population payoff $f(x) = x^TAx$ is strictly increasing along any non-constant trajectory of replicator dynamics, meaning that $\frac{df(x(t))}{dt} \geq 0$ $\forall t \geq0$, with equality if and only if $x(t)$ is a stationary point.
+	\item (\textit{\textbf{Characterization of ESS's}}.) For any doubly symmetric game with payoff matrix $A$, the following statements are equivalent:
+	\begin{itemize}
+		\item $x\in \Delta^{ESS}$
+		\item $x \in \Delta$ is a strict local maximizer of $f(x) = x^TAx$ over the standard simplex $\Delta$.
+		\item $x\in\Delta$ is asymptotically stable in the replicator dynamics.
+	\end{itemize}
+\end{itemize}
+
+
+A well-known discretization of replicator dynamics, which assumes non-overlapping generations, is the following (assuming a non-negative $A$): 
+$$
+x_i(t+1) = x_i(t)\frac{A(x(t))_i}{x(t)^TAx(t)}
+$$
+which inherits most of the dynamical properties of its continuous-time counterpart.
+\image{img/rep_dynamics}{MATLAB implementation of discrete-time replicator dynamics}{0.4}
+The components of the \textbf{converged vector} give us a measure of the \textbf{participation} of the corresponding vertices in the cluster, while the value of the objective function provides of the cohesiveness of the cluster.
+
+\subsection{Application to Image Segmentation}
+An image is represented as an edge-weighted undirected graph, where vertices correspond to individuals pixels and edge-weights reflect the similarity between pairs of vertices.
+
+The clustering problem consists on extracting dominant sets from an input image, below is proposed the pseudo-code version of the solution with dominant sets:
+
+\image{img/dominantSetAlg.png}{Pseudo-code for Image Segmentation.}{0.5}
+Remember that to find a single dominant set we used replicator dynamics.
+
+Given an input image with $H \times W$ pixels we construct a similarity matrix $\omega$ such that the similarity between the pixels $i$ and $j$ is measured by:
+$$\omega(i,j) = \exp\Big(\frac{-||F(i)- F(j)||^2_2}{\sigma^2}\Big)$$
+where $\sigma$ is a positive real number which affects the decreasing rate of $\omega$ and:
+\begin{itemize}
+	\item $F(i)$, is the normalized intensity of pixel $i$ (for \textit{intensity segmentation}).
+	\item $F(i) = [v, vs\sin(h), vs\cos(h)](i)$ where $h,s,v$ are the HSV values of pixel $i$ (for \textit{color segmentation}).
+	\item $F(i) = [|I*f_1|, \dots, |I*f_k|](i)$ is a vector based on texture information at pixel $i$, the $f_i$ being DOOG filters at various scales and orientations (for \textit{texture segmentation}).
+\end{itemize}
+
+\subsection{Extensions}
+\paragraph{Path-based measure.} The similarity matrix can be computed in different ways, and a very well known application consists on using the \textbf{path-based measure}, which defines the distance between two entities $i$ and $j$ as:
+$$D_{ij}^{path} = \min\limits_{p\in\mathcal{P}_{ij}(O)}\Big\{\max\limits_{1\leq l \leq |p|}D_{p(l)l(l+1)}\Big\}$$
+where $\mathcal{P}_{ij}(O)$ is the set of all paths from $i$ to $j$. Thereby, the effective distance between $i$ and $j$ is the largest gap of the path $p*$, where $p*$ is the path with the minimum largest gap among all admissible paths between $i$ and $j$.
+
+\paragraph{Building a Hierarchy: A family of quadratic programs.} Another interesting extension is introduced re-formulating the optimization problem such that the goal of the clustering problem consists on:
+\begin{equation}\label{alphaSPQ}
+\begin{array}{lcl}
+\text{maximize} & f_\alpha(x) = x^\prime(A - \alpha I)x\\
+\text{subject to} & x \in \Delta
+\end{array}
+\end{equation}
+where $\alpha \geq 0$ is a parameter and $I$ is the identity matrix.\\
+The objective function $f_{\alpha}$ consists of:
+\begin{itemize}
+	\item a \textbf{data term} ($x'Ax$) which favors solutions with high internal coherency.
+	\item a \textbf{regularization term} ($-\alpha x'x$) which acts as an entropic factor: it is concave and, on the simplex $\Delta$, it is maximized at the barycenter and it attains its minimum value at the vertices of $\Delta$.
+\end{itemize}
+The effect of $\alpha$ can be seen in the number of different clusters found. With an huge value of $\alpha$ each point will be classified in the same cluster, instead decreasing the value of $\alpha$ the number of cluster will increase.\\
+For any fixed $\alpha$, the energy landscape of $f_{\alpha}$ is populated by two kinds of solutions:
+\begin{itemize}
+	\item solutions which correspond to dominant sets for original matrix $A$.
+	\item solutions which don't correspond to any dominant set for the original matrix $A$, although they are dominant for the scaled matrix $A+\alpha(ee' - I)$. In other words it allows to find subsets of points that are not sufficiently coherent to be dominant with respect to $A$, and hence they should by split.	
+\end{itemize}
+This algorithm has the basic idea of starting with a sufficiently large $\alpha$ and adaptively decrease it during the clustering process following these steps:
+\begin{enumerate}
+	\item Let $\alpha$ be a large positive value (ex: $\alpha > |V|-1$).
+	\item Find a partition of the data into $\alpha$-clusters.
+	\item For all the $\alpha$-clusters that are not 0-clusters recursively repeat step 2 with decreasing $\alpha$.
+\end{enumerate}
+
+\paragraph*{Dealing with High-Order Similarities.} Dominant set can be applied also to hypergraphs. A weighted hypergraph is a triplet $H = (V,E,\omega)$ where:
+\begin{itemize}
+	\item $V$ is a finite set of vertices.
+	\item $E \subseteq 2^V$ is the set of (hyper)-edges, where $2^V$ is the power set of $V$.
+	\item $\omega:E\rightarrow \mathbb{R}$ is a real-valued function assigning a weight to each edge.
+\end{itemize}
+We focus on a particular class of hypergraphs, called \textbf{k-graphs}, whose edges have fixed cardinality $k \geq 2$.
+\image{img/hypergraph.png}{A hypergraph where the vertices are flag colors and the hyperedges are flags.}{0.3}
+
+For solving this problem we come back to the clustering game. Given a weighted k-graph representing an instance of a hypergraph clustering problem, we cast it into a k-player (hypergraph) clustering game where:
+\begin{itemize}
+	\item There are K players;
+	\item The objects to be clustered are the pure strategies;
+	\item The payoff function is proportional to the similarity of the objects/strategies selected by the players;
+\end{itemize}
+
+\paragraph{Definition (ESS-cluster).} Given an instance of a hypergraph clustering problem $H = (V,E, \omega)$, an \textbf{ESS-cluster} of $H$ is an ESS of the corresponding hypergraph clustering game.
+
+
+\subsection{Properties}
+\begin{itemize}
+	\item \textbf{Well separation between structure and noise.} In such situations it is often more important to cluster a small subset of the data very well, rather than optimizing a clustering criterion over all the data points, particularly in application scenarios where a large amount of noisy data is encountered. 
+	
+	\item \textbf{Overlapping clustering}. In some cases we can have that two distinct clusters share some points, but partitional approaches impose that each element cannot be long to more than one cluster.
+	
+	\item Dominant sets can be found by mining \textbf{local solutions}, so it is not necessary to look for global solutions.
+	
+	\item Deal very well in presence of noise.
+	
+	\item Strong connection with theoretical results.
+	
+	\item Makes no assumptions on the structure of the affinity matrix, being it able to work with asymmetric and even negative similarity functions.
+	
+	\item Does not require a priori knowledge on the number of clusters (since it extracts them sequentially).
+	
+	\item Leaves clutter elements unassigned (useful, e.g., in figure/ground separation or one-class clustering problems).
+	
+	\item Generalizes naturally to hypergraph clustering problems.
+\end{itemize}

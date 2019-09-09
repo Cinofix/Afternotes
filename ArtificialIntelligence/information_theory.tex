@@ -1,0 +1,657 @@
+\section {Information Theory}
+Information theory studies the quantification, storage, and communication of information. It was originally proposed by Claude E. Shannon in 1948 and it includes the study of transmission, processing, extraction, and utilization of information. One of the first representation of a communication system, given by Shannon, can be seen in the following image:
+\image{img/channel1}{Shannon representation communication system.}{0.8}
+
+This representation is composed by some components as:
+\begin{itemize}
+	\item \textbf{Two agents} that, in general, are called \textit{sender} and \textit{receiver}. Normally, sender is the agent that enters a particular message in the channel, instead receiver is the entity that receives message. These two entities are not necessary different.
+	\item \textbf{Channel} is the means that allows the transmission of messages between two entities. It is possible that a message is written in a certain language but it travels in the channel with another understandable one (usually binary language).
+\end{itemize}
+
+Usually sender and receiver use a different language respect to the channel, and so it is necessary to expand the original model introducing some \textbf{translator} entities as following: 
+\image{img/channel2}{Extensive Shannon representation.}{0.9}
+\textbf{Coder} and \textbf{Encoder} are instruments that allow us to translate a language to another one. They should provide:
+\begin{itemize}
+	\item \textbf{efficiency}, senders sends a message as soon as possible, with a compression provided by the coder.
+	\item \textbf{reliability}, receiver is sure about the message received from sender.
+\end{itemize}
+Despite that, in real life this model is not completely true and reliability is not easy to reach. The final model, therefore, is provided in this way: 
+\image{img/channel3}{Shannon representation information theory.}{0.9}
+\textbf{Noise} is a known component of the channel that creates interference inside it and it can affect the communication. Several techniques are used in order to guarantee the correctness of transmissions.
+\image{img/channel4}{Noise effect on a communication system.}{1}
+
+As said in the previous lines, because of the presence of noise inside the channel, $coder$ and $decoder$ have the task to ensure efficiency and reliability of messages but, ensuring these two properties, another problem is introduced: \textbf{redundancy}.\\
+In order to have efficiency it is necessary to remove redundancy from the message, using compression, on the other hand, if we want to improve the reliability it is necessary that receiver will be able to make inference about the original message, this possibility is given only by adding redundancy.\\
+As we can see there is a kind of contrast for the two requirements and so it is necessary to find a good trade-off. A possible solution, for instance, is to send more bits (better if odd) to codify a single symbol, like \verb|"0"| is encoded in \verb|"000"|. In this way decoder will have greater possibility to correct the received message, this will increase reliability but also redundancy.
+
+\subsection{Information}
+We can consider 3 different levels of information:
+\begin{enumerate}
+	\item \textbf{Syntactical level} deals only with symbols and it does not consider the semantic (meaning) of the message. In this level we approach the information not from a syntactical point of view (set of rules), but from a statistical point of view. For example, if we have the letter \verb|"h"|, which is now the probability that the next letter will be an \verb|"e"|, an \verb|"i"| or a \verb|"q"|?
+	\image{img/probabilityAnalysis}{Probability Analysis.}{0.3}
+	\item \textbf{Semantic level} deals with the meaning of the sended message, it tries to understand the semantic. It is very complex.
+	\item \textbf{Pragmatic level} deals with the intention of the speaker. It's something more complex than a semantic level.
+\end{enumerate}
+Information theory works at syntactical level.
+\par \bigskip \noindent
+
+\subsection{Quantify Information}
+Quantify information refers to the necessity of finding a measure to quantify the \textbf{amount of information} that travels inside the channel. However, firstly, it is necessary to give a definition of information.
+One of the purposes of Shannon consists to tie the notion of $information$ with the notion of $"surprise"$ and the probability of an event.\\
+Suppose we have an event $E$ and associated with this event we have its probability $P(E)$. Let us consider two extreme situations:
+\begin{itemize}
+	\item $P(E) = 1$, we won't be surprised of the fact that this particular event happens. In this case the amount of information given by event E is 0.
+	\item $P(E) = 0$, it is impossible this fact happens. However we cannot consider the probability exactly equal to 0, but more or less equal to $10^{-..}$. We must left the possibility that in a rare case this fact could happen. In this case the amount of information given by the event E is $\infty$.
+\end{itemize}
+\subsubsection{Shannon function} After the premises made till now, we can consider information as a probability function, that mathematically speaking, we can write as $I(E)$. Where:
+\begin{itemize}
+	\item $E$ is the event.
+	\item $I(..)$ is the amount of information provided by the event. 
+\end{itemize}
+The function $I(E) = f(P(E))$ from a graphical point of view could be seen as below.
+
+\image{img/ieFunction1}{Possible configurations of function $I(E)$.}{0.5}
+Notice that writing $I(E)= f(P(E))$ we are saying that the information is a function of probability.
+The unique information that we have from the previously definition is that:
+$$\text{if }P(E) = 1 \text{ then } I(E)=0 \qquad \longrightarrow \qquad I(E)=0 \text{ iff } P(E)=1$$
+in the other extreme case we can say that:
+$$\lim_{P(E)\rightarrow 0} I(E) = +\infty$$
+We don't know however which is the behavior of the $I(E)$ in the middle but, surely, it must be positive and monotonically decreasing. Shannon provided that there is a \textbf{unique function} that satisfy these assumptions and respect its definition:
+$$I(E) = -\log(P(E)) = \log\left(\frac{1}{P(E)}\right)$$
+
+\image{img/ieFunction2}{Graphical representation of $I(E)$ ($-\log(P(E))$).}{0.46}
+
+\subsubsection{Definition of Entropy}
+Source is a random variable or, in a more precise way, it can be defined as a \textbf{stochastic process}. We know the source only if we know the probability distribution of its symbols.
+We define $X$ as a random variable valid in the following set:
+$$\mathcal{X} = \{x_1, x_2, \cdots, x_n\} \text{ with probabilities } \{P(x_1), P(x_2),\cdots, P(x_n)\} $$
+Given a source it can be interesting to evaluate the amount of information provided, and so we introduce the concept of \textbf{entropy}.\\
+The \textbf{entropy} $H(x)$ of a random variable represents an average of the amount of information provided by the source $\mathcal{X}$, or a measure of uncertainty, and it is defined as:
+$$H(x) = \sum_{x \in \mathcal{X}} P(x)I(x) = \sum_{x \in \mathcal{X}} p(x) \underbrace{\log\left( \frac{1}{p(x)}\right)}_{I(x)} = - \sum_{x \in \mathcal{X}} p(x) \log(p(x))$$
+As said before, we can see that entropy is nothing else than the expected value of $X$.
+The base of logarithm define the measure of information:
+\begin{table}[H]
+	\centering
+	\begin{tabular}{| c | c |}
+		\hline
+		$\log_2$ & bit\\
+		\hline
+		$\log_e$ & nat\\
+		\hline
+		$\log_{10}$ & Hartley\\
+		\hline
+	\end{tabular}
+	\caption{Measure of Entropy.}
+\end{table}
+
+A problem that rises immediately dealing with logarithmic functions is the handling of $p(x) = 0$, indeed, in this case we will have the problem with $\log(0)$ and at least two possible solutions can be adopted. The first one consists in removing the symbol from the source, since $p(x) = 0$ this operation doesn't affect the communication. The other solution, instead, is to adopt an internal convention: $\lim\limits_{x\rightarrow 0}x \log x = 0 	\qquad 0 \cdot \log(0) = 0$.
+
+\begin{exmp} Thinking at the flip of a coin, we can say that the random variable associated with this event follows the following distribution:
+$$
+\text{FAIR COIN} =
+\begin{cases}
+0 \qquad p("\text{Tail}") = p(0) = 0.5\\
+1 \qquad p("\text{Head}") = p(1) = 0.5
+\end{cases}
+$$
+Thanks to the function $H(x)$, it is possible to compute the entropy of this random variable, which means how much information we can get. Entropy can be defined as a measure of uncertainty.
+$$H(x) = \frac{1}{2} \underbrace{\log 2}_{1} + \frac{1}{2} \underbrace{\log 2}_{1} = 1 \text{ bit}$$
+This is a case in which we have a fair coin but if we had an unfair coin (unbalanced), the $entropy$ function will change. As in the previous case the set of possible outcomes will be similar to the previous case, $\mathcal{X} = \{x_1, x_2\}$ and it will follow this distribution:
+$$
+\text{UNFAIR COIN} =
+\begin{cases}
+x_1 \qquad p("\text{Tail}") = p(x_1) = p\\
+x_2 \qquad p("\text{Head}") = p(x_2) = 1-p
+\end{cases}
+$$
+\end{exmp}
+\par \bigskip \noindent
+Now, the $entropy$ function $H(x)$ will be equal to:
+$$H(x) = -p \cdot \log p - (1-p) \cdot \log (1-p) = H(p)$$
+A general graphical representation of the entropy function is:
+
+\image{img/symmetricFunc}{$H(p)$ in relation to $p$.}{0.5}
+
+As it is possible to see, we have a symmetric and concave function, in which the maximum is reached in the point of maximum uncertainty $p = 0.5$. This is reasonable since there is more surprise for the receiver. Imagine instead that $p(x) = 0.8$, the receiver is likely to expect tail, since it has a large probability, and so the surprise tend to $0$.
+
+\subsubsection{Entropy properties}
+In the previous section we have introduced the concept of entropy and its relation to uncertainty, measure of uncertainty of a source. We now want to discuss its properties:
+$$X \text{ source} \qquad \mathcal{X} = \{x_1, x_2, \cdots, x_n\} \qquad P(x_1), P(x_2),\cdots, P(x_n) $$
+$$P_r(X = x_i) = p(x_i) \qquad n = |\mathcal{X}|$$
+At a first glance, we can notice that function $H(x)$ is limited inside the following interval:
+$$0 \leq H(x) \leq \log(n)$$
+First of all, it is obviously to ask us which is the meaning of $H(x)$ when it reaches the extreme values of $0$ or $\log(n)$.
+\par \bigskip \noindent
+$\mathbf{H(x) = 0}$:\\
+this limit is reached when there's no uncertainty and from a statistically point of view, we've got a probability distribution with only one point with value equal to 1 and the others have $p(x) = 0$. Formally we can say:
+$$H(x) = 0 \iff \exists x \in \mathcal{X} \text{ such that } p(x)=1$$
+
+$\mathbf{H(x) = \log(n)}$:\\
+this limit is reached when the probability distribution is uniform and in this way, the maximum level of uncertainty is provided. Every solution has probability $\frac{1}{n}$. Geometrically speaking, the point in which function reaches the maximum value ($\log(n)$) is the \textbf{baricentre} of the probability space.\\
+$$H(X) =  - \sum_{x \in \mathcal{X}}p(x)\log(p(x)) =  \sum_{x \in \mathcal{X}}\frac{1}{n}\log\Big(\frac{1}{n}\Big) = \log n$$
+
+According to the possible number of outcomes, different probability space can be created inside a space $\mathbb{R}^n$.
+$$\bigtriangleup = \{p \in \mathbb{R}^n \text{  } |\text{  } p_i \geq 0 \quad	\forall i = 1, \cdots n \text{ and } \sum_i p_i = 1\}$$
+When we have only two outcomes, \textbf{n=2}. This is the space of all possible probability distributions:
+\image{img/2spacedim}{Probability space with n=2.}{0.3}
+In case we will have three outcomes, this will generate a space in which each vertex is the point with the minimum information value. It will have the following structure:
+\image{img/3spacedim}{Probability space with n=3.}{0.45}
+
+
+
+\subsubsection{Entropy of two random variables} If we talk about the entropy of two random variables, we have so, $X$ and $Y$ that are defined in the following set of solutions:
+$$\mathcal{X} = \{x_1, \cdots, x_n\} \quad \text{and} \quad \mathcal{Y} = \{y_1, \cdots, y_n\}$$
+$p(x)$ and $p(y)$ represent the two marginal probability distributions for source $X$ and $Y$.\\
+Given two random variables $X$ and $Y$, it is possible to consider:
+\begin{itemize}
+	\item \textbf{Marginal entropy:} $H(X)$ and $H(Y)$.
+	\item \textbf{Joint entropy:} $H(X, Y)$ provides the amount of information given by joint of the two distributions. It is defined as:
+	
+	$$H(X,Y) = -\sum_{x \in \mathcal{X}} \sum_{y \in \mathcal{Y}} p(x,y) \cdot \log p(x,y) \quad \text{where} \quad p(x,y) = p(x) \cdot p(y|x) = p(y) \cdot p(x|y)$$
+	
+	\item \textbf{Conditional entropy:} $H(y|x)$ provides the amount of information given by $y$ fixed a value of $x$. In the particular case in which $x$ has a precise constant value, the conditional entropy is:
+	$$H(Y|X=x) = - \sum_y p(y|x) \cdot \log(p(y|x))$$
+	On the average, the information that we obtain from $X$ is:
+	\begin{equation*}
+	\begin{split}
+	H(Y|X) &= \sum_x p(x) \cdot H(Y|X=x)\\
+	&= - \sum_x \sum_y p(x) \cdot p(y|x) \cdot \log p(y|x)\\
+	&= - \sum_x \sum_y p(x,y) \cdot \log p(y|x)		
+	\end{split}
+	\end{equation*}
+	Regarding the average conditional entropy is possible to notice that values can vary in a precise range, in fact:
+	$$0 \leq H(X|Y) \leq H(X)$$
+	
+	$\mathbf{H(X|Y) = 0}$ when $X$ is a deterministic function of $Y$ such that:
+	$$\forall y \in \mathcal{Y} \qquad \exists!\text{ }x \in \mathcal{X} \text{ such that } p(x|y) = 1$$
+	Choosing the value of $y$, we know the result of $x$. 
+	
+	$\mathbf{H(X|Y) = H(X)}$ when $X$ and $Y$ are two independent random variables.
+	$$p(x,y) = p(x)\cdot p(y)$$
+	\item \textbf{Chain rule:} it defines a relationship between joint entropy, marginal entropy and condition entropy. It is defined as:
+	$$H(X,Y) = H(X) + H(Y|X) = H(Y) + H(X|Y)$$
+	%TODO: da rivedere
+	This chain rule is derived from the fact that:
+	$$p(x,y) = p(x) \cdot p(y|x) = p(y) \cdot p(x|y)$$
+	and applying a $\log(\cdots)$ products become sums. 
+\end{itemize} 
+
+\subsubsection{Entropy of n random variables} What is possible to say instead if we deal with $n$ random variables? Considering $n$ different sources $X_1, X_2, \cdots, X_n$, the entropy function is so defined:
+\begin{equation*}
+\begin{split}
+H(X_1, X_2, \cdots, X_n) &= -\sum_{x_1 \in \mathcal{X}_1} \sum_{x_2 \in \mathcal{X}_2} \cdots \sum_{x_n \in \mathcal{X}_n} p(x_1, \cdots, x_n) \cdot \log p(x_1, \cdots, x_n)\\
+&=H(X_1) + H(X_2|X_1) + H(X_3| X_1, X_2) + \cdots + H(X_n | X_1, \cdots, X_{n-1})\\
+&=\sum_{i=1}^n H(x_i| x_1, \cdots, x_{i-1})
+\end{split}
+\end{equation*}
+
+\subsection{Mutual information}
+The mutual information of two random variables is a measure of the \textbf{mutual dependence} between the two variables. More specifically, it quantifies the "amount of information" (in units such as shannons, commonly called bits) obtained about one random variable through observing the other random variable.
+
+In a space $\mathbb{R}^n$ it is possible to have two points $\bar{x}$ and $\bar{y}$ where:
+$$\bar{x} = (x_1, \cdots, x_n) \in \mathbb{R}^n \qquad \text{and} \qquad \bar{y} = (y_1, \cdots, y_n) \in \mathbb{R}^n$$
+
+
+\paragraph{Euclidean distance} The distance between this two points can be computed using the \textbf{euclidean distance}:
+$$E(\bar{x}, \bar{y}) = || \bar{y} - \bar{x}||^2 = \sum_{i=1}^n (x_i - y_i)^2$$
+
+\image{img/euclideanDistance}{Euclidean distance.}{0.34}
+
+This value represents the length of the segment that connects the point $\bar{x}$ to $\bar{y}$. In relation to euclidean distance, four properties can be defined:
+\begin{enumerate}
+	\item $E(\bar{x}, \bar{y}) \geq 0$
+	\item $E(\bar{x}, \bar{y}) = 0 \iff \bar{x} = \bar{y}$
+	\item $E(\bar{x}, \bar{y}) = E(\bar{y}, \bar{x})$
+	\item $E(\bar{x}, \bar{z}) \leq E(\bar{x}, \bar{y}) + E(\bar{y}, \bar{z})$ (Triangular inequality)
+	\image{img/triangularInequality}{Triangular inequality property.}{0.37}
+\end{enumerate}
+Only if these four properties are satisfied then we can consider any measure as a \textbf{metric}, so in this case Euclidean distance is a metric.
+
+\paragraph{Kullback-Leibler divergence} 
+Kullback-Leibler defines a distance between probability distributions. If we have two points $\bar{p}$ and $\bar{q} \in \bigtriangleup$.
+\image{img/kld}{Point $\bar{p}$ and $\bar{q} \in \bigtriangleup$.}{0.5}
+The \textbf{Kullback-Leibler divergence} between $\bar{p}$ and $\bar{q}$ is defined as:
+$$D(\bar{p} || \bar{q}) = \sum_{i=1}^n p_i \cdot \log\left( \frac{p_i}{q_i}\right)$$
+As in the euclidean distance case, \textit{KLD} has properties like:
+\begin{enumerate}
+	\item $D(\bar{p} || \bar{q}) \geq 0$
+	\item $D(\bar{p} || \bar{q}) = 0 \iff \bar{p} = \bar{q}$
+\end{enumerate}
+On the other hand \textit{KLD} doesn't hold other properties as:
+\begin{enumerate}
+	\item $D(\bar{p} || \bar{q}) \neq D(\bar{q} || \bar{p})$ (KLD is not symmetric)
+	\item $D(\bar{p} || \bar{r}) \nleq D(\bar{p} || \bar{q}) + D(\bar{q} || \bar{r})$ (Triangular inequality doesn't always hold) 
+\end{enumerate}
+\par \bigskip \noindent
+
+\subsubsection{Compute Mutual Information}
+Through the computation of mutual information between $X$ and $Y$, we can have access to different interpretations. One of them is surely understanding if two random variables are dependent or not. 
+\begin{equation*}
+\begin{split}
+I(x;y) &= D(p(x,y)||p(x)p(y))\\
+&=\sum_x \sum_y p(x,y) \cdot \log\left(\frac{p(x,y)}{p(x)p(y)} \right)
+\end{split}
+\end{equation*}
+As seen above, it is possible to compute the mutual information applying the concept of \textit{Kullback-Leibler divergence}. Paying attention at the ending part of the computed formula we can understand an important property that is, the lower is $\log\left(\frac{p(x,y)}{p(x)p(y)} \right)$ and the more independent are the two random variables.\\
+The mutual information of two random variables is 0 if and only if the two random variables are independent.
+
+$D(p(x,y)||p(x)p(y)) = 0$ when $x$ and $y$ are independent $p(x,y) = p(x)\cdot p(y)$, meaning that: 
+$$\log \frac{p(x,y)}{p(x)p(y)} = \log 1 = 0 $$
+
+\textbf{Mutual information} is also useful when we want to measure how much information travels on the channel.
+\subsection{Channel}
+\image{img/channelAgents.png}{Channel model.}{0.45}
+When we deal with the transmission of information, it is important to take into account two different moments: \textit{before} transmission arrives to receiver and \textit{after} transmission is arrived to receiver. 
+\begin{itemize}
+	\item \textbf{Before:} uncertainty of the receiver before to see the output from the channel. In this phase the value of information is $H(X)$.
+	\item \textbf{After:} uncertainty of the receiver given the channel output $Y$. It is $H(X|Y)$, it could be 0 if we don't consider noise on the channel.
+\end{itemize}
+Computing the difference between $before$ and $after$ information it is possible to obtain the mutual information that travels in the channel.
+$$I(X,Y) = H(X) - H(X|Y)$$
+If $X \perp Y$ we have $H(X|Y) = H(X)$ so $I(X,Y) = 0$. 
+\begin{thm}[Before - After information] Taking into account the before and after information, it is possible to define the mutual information as:
+	$$I(X,Y) = H(X) - H(X|Y) \qquad \text{if we consider the role of the receiver}$$
+	$$or$$
+	$$I(X,Y) = H(Y) - H(Y|X) \qquad \text{if we consider the role of the sender}$$
+\end{thm}
+\begin{thm}
+	$$H(X) = I(X,X)$$
+\end{thm}
+\begin{thm}
+	$$I(X,Y) = H(X) + H(Y) - H(X,Y)$$
+\end{thm}
+We will see later further meanings of these values, especially we can say that:
+\begin{itemize}
+	\item $H(X)$ is related to the \textbf{efficiency} of the information channel.
+	\item $I(X,Y)$ is related to the \textbf{reliability} of the information channel.
+	\item $I(X,Y) \geq 0$.
+	\item $I(X,Y) = 0$ if and only if $X$ and $Y$ are independent.
+\end{itemize}
+Since $I(X,Y) \geq 0$ we have $H(X) - H(X|Y) \geq 0 \rightarrow H(X) \geq H(X|Y)$  with equality if and only if $X$ and $Y$ are independent.
+
+\subsection{Data compression - Source coding theorem}
+In the following subsection we will focus on the first part of the communication, that is related to sender and encoder entities. We want so introduce the notion of \textbf{source code}.
+\image{img/sourceCoding}{Souce coding theorem is focused on the first part of the channel.}{0.7}
+Suppose we have a random variable (source) $X$ and $\mathcal{X}$ is the range of all possible symbols.
+$$\mathcal{X} = \{x_1, \cdots, x_n\} \qquad and \qquad p(x) = Pr\{X=x\}$$
+We define $\mathcal{D}$ as the channel alphabet and we define a code such a function that executes the following transformation:
+$$c : \mathcal{X} \rightarrow \mathcal{D}^*$$
+Code is a map that maps strings from the source code to the channel code $\mathcal{D}$.
+\begin{exmp} Suppose you have the following data:
+	$$\mathcal{X} = \{a, b, c, d\} \qquad \mathcal{D} = \{0,1\}$$
+	with the following probabilities:
+	$$p(a) = \frac{1}{2} \qquad p(b) = \frac{1}{4} \qquad p(c) = \frac{1}{8} \qquad p(d) = \frac{1}{8}$$
+	With this conditions it is possible to generate a pretty large number of codes, for example, we can generate two codes as $\mathcal{D}^*_1$ and $\mathcal{D}^*_2$ as we can see in the below table.
+	\begin{table}[H]
+		\centering
+		\begin{tabular}{| c | c | c |}
+			\hline
+			$\mathcal{X}$ & $\mathcal{D}^*_1$ & $\mathcal{D}^*_2$\\\hline
+			$\verb|a|$ & $\verb|0|$ & $\verb|111001|$ \\
+			$\verb|b|$ & $\verb|10|$ & $\verb|01|$ \\
+			$\verb|c|$ & $\verb|110|$ & $\verb|111|$ \\
+			$\verb|d|$ & $\verb|111|$ & $\verb|01000|$ \\
+			\hline
+		\end{tabular}
+		\caption{Coding example.}
+	\end{table}
+\end{exmp}
+
+From the previous example it is possible to understand that not all codes can be defined as a good code but, there are some rules that can help us in order to define a good one:
+\begin{itemize}
+	\item It must be as \textbf{short} as possible in order to ensure the \textit{efficiency} of transmission.
+	\item There must not be presence of codes that are prefixes of other ones. For example, in code $\mathcal{D}^*_2$, letter $\verb|"b"|$ is encoded into $\verb|"01"|$ and letter $\verb|"d"|$ into $\verb|"01000"|$. As we can see, one encoding is \textbf{prefix} of the other one. This leads problems with \textit{efficiency} because receiver must wait until the third bit in order to understand if sender has sent letter $\verb|"b"|$ or $\verb|"d"|$.
+\end{itemize}  
+It is also possible to have an efficient code that is useless, because receiver can't understand what is transmitted in the channel. An example is the following table in which \textbf{ambiguity} appears.
+\begin{table}[H]
+	\centering
+	\begin{tabular}{| c | c |}
+		\hline
+		$\mathcal{X}$ & $\mathcal{D}^*$\\\hline
+		$\verb|a|$ & $\verb|0|$ \\
+		$\verb|b|$ & $\verb|0|$ \\
+		$\verb|c|$ & $\verb|0|$ \\
+		$\verb|d|$ & $\verb|0|$ \\
+		\hline
+	\end{tabular}
+	\caption{Ambiguous code.}
+\end{table}
+\par
+In a more general way we can say that a particular coding function must be \textbf{injective}.
+
+\subsubsection{Non-singular codes}
+Non-singular codes are codes in which the coding function is injective. Is it possible, in this case, to have again ambiguity?\\
+An example of this can be seen below.
+\begin{table}[H]
+	\centering
+	\begin{tabular}{| c | c |}
+		\hline
+		$\mathcal{X}$ & $\mathcal{D}^*$\\\hline
+		$\verb|a|$ & $\verb|a|$ \\
+		$\verb|b|$ & $\verb|c|$ \\
+		$\verb|c|$ & $\verb|ad|$ \\
+		$\verb|d|$ & $\verb|abb|$ \\
+		$\verb|e|$ & $\verb|bad|$ \\
+		$\verb|f|$ & $\verb|deb|$ \\
+		$\verb|g|$ & $\verb|bbcde|$ \\
+		\hline
+	\end{tabular}
+	\caption{Example of ambiguous non-singular code.}
+\end{table}
+\par
+A code like this can generate a message as $\verb|"abbcdebad"|$, in which decoder can generate more than one decoded message. It is possible to generate for example:
+$$\underbrace{\texttt{abb}}_{\verb|d|}\underbrace{\texttt{c}}_{\verb|b|}\underbrace{\texttt{deb}}_{\verb|f|}\underbrace{\texttt{ad}}_{\verb|c|}$$
+$$or$$
+$$\underbrace{\texttt{a}}_{\verb|a|}\underbrace{\texttt{bbcde}}_{\verb|g|}\underbrace{\texttt{bad}}_{\verb|e|}$$
+As we can see, even if we are in an optimal situation without noise, the receiver can't understand the message send (two configurations are possible).\\
+We can define so, as \textbf{unique decodable codes}, all the codes in which receiver is always sure of the decomposition done.
+
+\subsubsection{Prefix code}
+With a \textbf{prefix code}, none code is prefix of other codes. Any prefix code is also a \textit{uniquely decodable code}.
+\image{img/codesClassification}{Codes classification.}{0.7}
+As we can see also from the previous picture all the prefix codes are also unique decodable codes.
+An example of a non prefix code is so provided:
+%\newpage
+\begin{table}[H]
+	\centering
+	\begin{tabular}{| c | c | c |}
+		\hline
+		$\mathcal{X}$ & $\mathcal{D}^*_1$ & $\mathcal{D}^*_2$\\\hline
+		$\verb|a|$ & $\verb|0|$ & {\color{red}$\verb|111|$}$\verb|001|$ \\
+		$\verb|b|$ & $\verb|10|$ & {\color{blue}$\verb|01|$} \\
+		$\verb|c|$ & $\verb|110|$ & {\color{red}$\verb|111|$} \\
+		$\verb|d|$ & $\verb|111|$ & {\color{blue}$\verb|01|$}$\verb|000|$ \\
+		\hline
+	\end{tabular}
+	\caption{Non-prefix code.}
+\end{table}
+\par
+We can see that there are two pairs of codewords that have the same prefix. 
+
+\subsection{Quantify Efficiency}
+While we define a code, it is also useful to consider the efficiency given by it. If we consider a code like this:
+\begin{table}[H]
+	\center
+\begin{tabular}{| c | c | c |}
+	\hline
+	$\mathcal{X}$ & $\mathcal{D}^*_1$ & $\mathcal{D}^*_2$\\\hline
+	$\verb|a|$ & $\verb|0|$ & $\verb|0|$ \\
+	$\verb|b|$ & $\verb|10|$ & $\verb|10001|$ \\
+	$\verb|c|$ & $\verb|110|$ & $\verb|1100110|$ \\
+	$\verb|d|$ & $\verb|111|$ & $\verb|1110010|$ \\
+	\hline
+\end{tabular}
+\caption{Non-efficient code.}
+\end{table}
+We can see immediately that the codewords use too many bits to codify the original symbol of the source. So we could consider the length of codewords as a possible metric to quantify efficiency of a code, but we will find out in the next example that this is not a good metric.
+\begin{exmp} Consider the following example:
+	$$\mathcal{X} = \{a, b, c, d\} \qquad \mathcal{D} = \{0,1\}$$
+	with the following probabilities:
+	$$p(a) = \frac{1}{2} \qquad p(b) = \frac{1}{4} \qquad p(c) = \frac{1}{8} \qquad p(d) = \frac{1}{8}$$
+	We can define two possible codes to convert symbols from $\mathcal{X}$ to $\mathcal{D}$.
+	\begin{table}[H]
+		\centering
+		\begin{tabular}{| c | c | c |}
+			\hline
+			$\mathcal{X}$ & $\mathcal{D}^*_1$ & $\mathcal{D}^*_2$\\\hline
+			$\verb|a|$ & $\verb|0|$ & $\verb|111|$ \\
+			$\verb|b|$ & $\verb|10|$ & $\verb|110|$ \\
+			$\verb|c|$ & $\verb|110|$ & $\verb|10|$ \\
+			$\verb|d|$ & $\verb|111|$ & $\verb|0|$ \\
+			\hline
+		\end{tabular}
+		\caption{Comparing codes.}
+	\end{table}
+\end{exmp}
+The second code is the reversed version of the first one. If we consider only the length of the codewords we can say that in terms of efficiency they are equal, but this is not true. When we talk about efficiency it is necessary to consider also the probability distribution. In this case the symbol $\verb|a|$ is very likely to appears and the second code associates the largest codeword to it, instead symbol $\verb|d|$ is very unlikely and it is associated to the smallest one. The first code is more efficient since $p(a)$ is the greater probability, instead, the second code uses a lot of bit to codify it.\\
+So we can define the \textit{measure of efficiency of a code} with the following formula:
+		$$L(c)=\sum_{x \in \mathcal{X}} p(x)\cdot l(x)$$
+where $l(x)$ is the length of the codeword associated to the symbol $x$.
+
+\begin{exmp} Considering the previous example we want to compute the efficiency of each code:
+	$$
+		L(c_1) = \frac{1}{2} \cdot 1 + \frac{1}{4} \cdot 2 + \frac{1}{8} \cdot 3 + \frac{1}{8} \cdot 3 = \frac{7}{4} = 1.75
+	$$
+	On average the codewords sent using the first code have length $1.75$.
+	$$	
+		L(c_2) = \frac{1}{2} \cdot 3 + \frac{1}{4} \cdot 3 + \frac{1}{8} \cdot 2 + \frac{1}{8} \cdot 1 = \frac{21}{8} = 2.625
+	$$
+	On average the codewords sended using the second code have length $2.625$. This bring us to consider the first code as the more efficient one, since, considering the same symbols and probabilities, it spends less bits to codify them, improving in this way the speed of transmission.
+\end{exmp}
+
+Another interesting consideration is given by the relationship between efficiency of a code and the entropy given by the source.
+
+\begin{exmp} Considering the previous example we want to compute entropy, on base 2, of source $X$ and compare it with the length of the code:
+	$$
+		H(x) = \frac{1}{2} \cdot \log2 + \frac{1}{4} \cdot \log4 + \frac{1}{8} \cdot \log8 + \frac{1}{8} \cdot \log8 = \frac{7}{4} = 1.75
+	$$
+\end{exmp}
+
+We can see that $H(x) = L(c_1)$. There is a theorem which affirms that entropy is a lower bound for $L(c)$, considering a \textbf{noise free channel}.
+\begin{thm}[Relationship between $H(x)$ and $L(c)$] 
+	Let $X$ be a random variable (source), with range $\mathcal{X}$ and probability distribution $p(x)$. 
+	Let $\mathcal{D}$ be the channel's alphabet, $c \cdot \mathcal{X} \rightarrow \mathcal{D}^*$ an uniquely decodable code for X and $D = |\mathcal{D}|$.\\
+	Then, with the assumption of noise free channel: 
+	$$ L(c) \geq H_D(x)$$
+	where $D$ indicate the base of the logarithm. 
+	
+	Moreover:
+	$$ L(c) = H_D(x) \iff \forall x \in \mathcal{X}: \quad l(x) = -\log_D p(x) = \log_D \frac{1}{p(x)} $$
+\end{thm}
+
+\begin{exmp}
+$$\mathcal{X} = \{a, b, c, d\} \qquad \mathcal{D} = \{0,1\}$$
+with the following probabilities:
+$$p(a) = \frac{1}{2} \qquad p(b) = \frac{1}{4} \qquad p(c) = \frac{1}{8} \qquad p(d) = \frac{1}{8}$$
+
+$$ p(a) = \frac{1}{2} \quad \log_2 2 = 1$$
+$$ p(b) = \frac{1}{4} \quad \log_2 4 = 2$$
+$$ p(c) = \frac{1}{8} \quad \log_2 8 = 3$$
+$$ p(d) = \frac{1}{8} \quad \log_2 8 = 3$$
+\end{exmp}
+
+When the probability distribution $p(x)$ has the property:
+$$ \log_D \frac{1}{p(x)} \in \mathbb{N}\setminus\{0\}$$
+the probability distribution $p(x)$ is called \textbf{D-Adic}.
+
+\subsection{Fano-Shannon Coding}
+Fano-Shannon coding is a technique for constructing a prefix code based on a set of symbols and their probabilities.
+
+$$\ceil[\bigg]{\log_D \frac{1}{p(x)}} = l(x)$$
+If $\log_D \frac{1}{p(x)}$ is not an integer value, it is approximated to the upper integer value.
+
+\begin{exmp} Fano-Shannon Algorithm:
+	$$\mathcal{X} = \{1, 2, 3\} \qquad \mathcal{D} = \{0,1\} \qquad |\mathcal{D}| = 2$$
+	
+	\begin{table}[H]
+		\centering
+		\begin{tabular}{| c | c | c | c | c | c |}
+			\hline
+			$\mathcal{X}$ & $p(x)$ & $-\log_2p(x)$ & $l(x)$ & $c_{sf}$ & $c^*$ \\\hline
+			$1$ & $2/3$ & $0.58$& 1 & $0$& $0$\\
+			$2$ & $2/9$ & $2.17$& 3 & $110$& $10$\\
+			$3$ & $1/9$ & $3.17$& 4 & $1111$& $11$\\
+			\hline
+		\end{tabular}
+		\caption{Comparing codes.}
+	\end{table}
+\end{exmp}
+Where $l(x)$ is computed considering Fano-Shannon approximation. We can see that p(x) is not 2-Adic.
+$$ H(x) = 1.22$$
+$$ L(c_{sf}) = 1.78 \qquad L(c_{sf}) >  H(x)$$
+$$ L(c_{sf}) = 1.33 \qquad L(c^*) >  H(x)$$
+Code $c_{sf}$ is not optimal but it is a good approximation, the length of $c^*$ is lower meaning that is more efficient.
+
+\subsection{Huffman Coding}
+Huffman coding is a greedy algorithm used to build/define the best code. 
+\begin{exmp} Huffman coding with $\mathcal{X} = \{x_1, \dots, x_6\}$ and $p(x) = (0.4,0.3,0.1,0.1,0.06,0.04)$.
+	
+	\begin{table}[H]
+		\centering
+		\begin{tabular}{| c | c | c | c | c | c | c | c | c | c | c |}
+			\hline
+			$\mathcal{X}$ & $p(x)$ & $c_5$ & $p(x)^1$ & $c_4$ & $p(x)^2$ & $c_3$ & $p(x)^3$& $c_2$ & $p(x)^4$&$c_1$ \\\hline
+			$x1$ & $0.4$ & $1$ & $0.4$ & $1$ & $0.4$ & $1$ & $0.4$& $1$ & $0.6$& $0$ \\
+			$x2$ & $0.3$ & $0$ & $0.3$ & $00$ & $0.3$ & $00$ & {\color{red}{*$0.3$}}& $00$ & $0.4$& $1$ \\
+			$x3$ & $0.1$ & $011$ & {\color{red}{*$0.1$}} & $011$ & {\color{red}{*$0.2$}} & $010$ & {\color{red}{*$0.3$}}& $01$ & &  \\
+			$x4$ & $0.1$ & $010$ & {\color{red}{*$0.1$}} & $0100$ & {\color{red}{*$0.1$}} & $011$ & & & & \\
+			$x5$ & {\color{red}{*$0.06$}} & $01010$ & $0.1$ & $0101$ & & & & & &\\
+			$x6$ & {\color{red}{*$0.04$}} & $01011$ &  &  &  & & & & & \\
+			\hline
+		\end{tabular}
+		\caption{Comparing codes.}
+	\end{table}
+\end{exmp}
+
+\subsection{Channel}
+In the previous sections, we covered the topic of coding. However, two different definitions of codes can be indicated:
+\begin{itemize}
+	\item \textbf{Lossless codes:} codes that don't lose any information from the initial source. It is possible to reconstruct completely the original message.
+	\item \textbf{Lossy codes:} codes that lose information. After compression some information are lost (jpg, $\dots$).
+\end{itemize}
+Related to coding, we have talk about \textbf{source coding} which is related to \textit{efficiency} and \textbf{channel coding}, that is, instead, related to \textit{reliability}. In the following lines, we will focus exactly on this last topic. 
+
+\subsubsection{Definition of channel}
+A channel can be formally defined as:
+$$\mathcal{C} = (\mathcal{X}, p(y|x), \mathcal{Y})$$
+where:
+\begin{itemize}
+	\item $\mathcal{X}$ is the input alphabet.
+	\item $p(y|x)$ is the channel's probability distribution. It represents the probability that symbol $x$ is translated into $y$. It is the most important component of the channel and it is defined as:
+	$$p(y|x) = Pr(Y=y | X = x)$$
+	\item $\mathcal{Y}$ is the output alphabet.
+\end{itemize}
+\image{img/channelDef}{Channel definition.}{0.6}
+
+\subsubsection{Channel representation}
+In order to graphically represent and analyze a channel there are two possible ways, a \textbf{channel graph} or a \textbf{channel matrix}.
+
+\paragraph*{Channel graph.} This kind of representation is defined according to the acronym \textbf{BSC}, that stands for \textbf{Binary Symmetric Channel}.\\
+\textit{Binary} means that both the input and the output alphabets are binary.
+$$\mathcal{X} = \mathcal{Y} = \{0,1\}$$
+
+%%% In teoria BSC è un esempio che lui ha preso! I'm not sure, we will discuss about it.
+
+Instead \textit{symmetric} means that the probability that an error occurs in the channel is the same for every possibles input message. Probability that an error occurs is the same both in the case input is 0 or 1.\\
+With this properties, we generate a \textbf{bipartied graph} as:
+\image{img/channelGraph}{Channel graph representation.}{0.4}
+In this representation we can see the probability that in $90\%$ of the cases symbols $0$ and $1$ are translated respectively into $0$ and $1$, they represent the probability of a right transmission. With only $10\%$ of probability the transmission is affected by noise and symbols $0$ and $1$ are translated into $1$ and $0$.
+On this representation if there is no arc from $x_1$ to $y_1$ we assume that $P(y_1| x_1) = 0$. 
+\paragraph*{Channel matrix.} Another possible representation of the channel is provided by a matrix usage. As it is possible to see, $p$ is the probability that during transmission an error occurs.
+\image{img/channelMatrix}{Channel matrix representation.}{0.35}
+%% Uhmm non me gusta molto l'immagine
+
+\subsubsection{n-th extension of the channel}
+Before moving to a more general topic, we need to define the \textbf{n-th extension} of $\mathcal{C}$ which is an additional definition of the channel. It can be defined as:
+$$\mathcal{C}^n = (\mathcal{X}^n, p(y^n|x^n), \mathcal{Y}^n) \qquad where \qquad p(y^n|x^n) = \prod_{i=1}^n p(y_i| x_i)$$
+Now $\mathcal{X}^n$  represents a packet of symbols transmitted by the source $X$. 
+Knowing that several products of $p(y_i| x_i)$ are made, it is possible to understand that an important assumption of independence has been made, meaning that the channel has no memory of the past messages and each packet is independent from the others.
+
+\subsubsection{Capacity of a channel}
+Let us consider a channel $\mathcal{C}$, we want to analyze the mutual information $I(X;Y)$. We have defined the mutual information as:
+$$I(X;Y) = H(X) - H(X|Y)$$
+where:
+\begin{itemize}
+	\item $H(X)$ is considered as $f(p(x))$ function of the probability distribution of the source.
+	\item $H(X|Y) = -\sum_x \sum_y p(x,y) \log{p(x|y)}$, where:
+		\begin{itemize}
+			\item $p(x,y) = p(x)p(y|x)$ in which $p(x)$ is related to the \textit{source} and $p(y|x)$ is related to the \textit{channel}. Generally, it is possible to say that $p(x,y)$ depends both on the source and on the channel.
+			\item From Bayes Theorem we also know that $$p(x|y) = \frac{p(y|x) p(x)}{p(y)}$$ in which again $p(y|x)$ is related to the \textit{channel} and instead $p(x)$ is related to the \textit{source}.
+			$$p(y) = \sum_x p(x,y) = \sum_x \underbrace{p(x)}_{source}\underbrace{p(y|x)}_{channel}$$
+		\end{itemize} 
+\end{itemize}
+The mutual information that travels on the channel depends both on the source and on the channel.
+$$I(X;Y) = f(p(x), p(y|x)) = f(source, channel)$$
+where:
+\begin{itemize}
+	\item $p(x)$ is the a priori probability.
+	\item $p(y|x)$ is the posteriori probability.
+\end{itemize}
+So we can't use mutual information to give capacity information of the channel since $I(x,y)$ depends also from the source.	
+After all these premises, we are able to define the \textbf{capacity of channel} as:
+$$C = max_{p(x)} I(X;Y)$$
+
+\textbf{Capacity} is the maximum value of mutual information given by all the possible probability distributions (source). 
+\begin{exmp}
+	Compute the capacity of the following BSC:\\
+	\image{img/exampleCapacity}{Channel representation.}{0.6}
+	We know that $Pr\{X=0\} = \pi$ and $Pr\{X=1\} = 1-\pi$ (with $\pi \in [0,1]$), so starting from the classic definition of \textit{mutual information} $$I(X;Y) = H(Y)-H(Y|X)$$ we can compute:
+	\begin{itemize}
+		\item $H(Y) \text{ where } Pr\{Y=0\} = \pi(1-p) + (1-\pi)p \text{ and } Pr\{Y=1\} = \pi p + (1-\pi)(1-p)$\\
+		$H(Y)$ can be defined so as:
+		$$H(Y) = H(\pi p + (1-\pi)(1-p),\pi(1-p) + (1-\pi)p )$$
+		But since here $H(Y)$ is a function of only one variable we can simply write:
+		$$H(Y) = H(\pi p + (1-\pi)(1-p))$$
+		
+		\item $H(Y|X) = \sum_x p(x) H(Y|X=x) = \pi \underbrace{H(Y|X=0)}_{\text{first matrix row}} + (1-\pi)\underbrace{H(Y|X=1)}_{\text{second matrix row}}$\\
+		
+		Since rows of the matrix are written in function of parameter $p$ we can simply write:
+		$$H(Y|X) = \pi H(p) + (1-\pi) H(p) = H(p)$$
+		From the result, we can understand that $H(Y|X)$ depends only on their probabilities and not on the input.
+	\end{itemize}
+	After computing the values of $H(Y)$ and $H(Y|X)$ we can finally write:
+	$$I(X;Y) = \underbrace{H(\pi p + (1-\pi)(1-p))}_{H(Y)} - \underbrace{H(p)}_{H(Y|X)}$$\\
+	The \textbf{capacity} of the channel is computed as:
+	$$C_{BSC} = max_{0 \leq \pi \leq 1} I(X;Y)$$
+	The maximum is reached when $H(\pi p + (1-\pi)(1-p))$ is maximum, which is given in correspondence of 0.5, when so $\pi p + (1-\pi)(1-p) = 1/2$, for which the solution is $\pi = 1/2$. 
+	\image{img/plotExample}{Channel Capacity as a function of the source X.}{0.61}
+\end{exmp}
+After this example, it is possible to specify the general capacity for BSC with $\pi = 1/2$ that is:
+$$C_{BSC} = 1-H(p)$$
+At point $\pi = 1/2$ the entropy of $H(y)$ is maximum, equal to 1. 
+Below it is possible to see the graphical representation of $C_{BSC}$ compared to the mutual information representation.
+\image{img/capacityGraph}{(a) Entropy graph - (b) Channel capacity graph.}{0.8}
+What could happen in the different extreme cases, it is explained in the following lines:
+\begin{itemize}
+	\item $p = 0$, we have that the channel is \textbf{perfect} and its capacity is 1. This represent the ideal case in which the channel is not affected by noise and receiver knows that the messages are correct. No loosing of information.
+	\image{img/p0}{Channel representation when $p=0$.}{0.3}
+	
+	\item $p = 1$, we have that the channel is again \textbf{perfect}. Receiver always knows how to reconstruct the right message. The message is always modified during the transmission on the channel. The channel's capacity is again 1.
+	\image{img/p1}{Channel representation when $p=1$.}{0.3}
+	
+	\item $p=0.5$ is the worst scenario for the receiver. We can consider the starting message $X$ and the final message $Y$ as independent messages.
+	\image{img/p05}{Channel representation when $p=0.5$.}{0.3}
+\end{itemize}
+Here there is a strong assumption: \textbf{Receiver knows the probability distribution of the channel.}
+The best case for receiver is to know channel distribution and sender distribution, but this is not always available.
+Probabilities of the channel, in fact, can be specified only after several trials and they are not fixed, they could change during the time.
+
+\subsection{Reliability}
+How is it possible to use the channel in such a way that reliability is ensured?\\
+Considering a channel with an error probability of 0.1, it is possible that, because of noise intervention, some errors could occur. A basic channel, as the one below, does not ensure, indeed, any form of reliability.
+\image{img/unreliable_channel.png}{Unreliable communication channel.}{0.5}
+
+Receiver can make an error when it takes a decision based on its inference about the right message transmitted by the source. This probability to make a mistake can be quantified and can be improved. One possibility is surely the technique of code replication, in order to improve the probability of success \textit{coder} includes \textbf{redundancy}. Instead of transmitting a single bit, a packet of bits is sent. In this way we will use a third extension of the channel.
+\image{img/bsc3.png}{Third extension Binary Symmetric Channel: 1 bit.}{1}
+
+This strategy improve the \textbf{reliability}, since the probability of making a mistake for the receiver is lower. The drawback is that this strategy reduces the rate, speed of sending data. Here we have a rate of $1/3$, instead of transmitting one single bit coder extends the codewords and it transmits 3 bit.
+
+
+%%% PARTE DEL M / N
+\image{img/bsc3_2.png}{Third extension Binary Symmetric Channel: 2 bit.}{1}
+Now we want to consider the case in which the sender's alphabet is composed by couples of bits $\mathcal{X} = \{\verb|00|,\verb|01|,\verb|10|,\verb|11|\}$, and instead of considering only codewords $\verb|111|$ and $\verb|000|$ to codify $\verb|1|$ and $\verb|0|$ now 4 possible choices are available: $\{\verb|000|, \verb|010|, \verb|101|, \verb|111|\}$.
+
+Now respect to the previous case the sender transmit messages of 2 bits, for which the coder select $M = 4$ possible choices to codify them. The channel transmits $n = 3$ bits instead of $n = 2$ in order to improve the reliability. The final rate of this communication system is given by:
+$$R = \frac{\log_2 M}{n} = \frac{\log_2 4}{3} = \frac{2}{3}$$
+With $M$ equal to the number of possible choices made by the coder and $n$ number of bits sent by the channel. Respect to the previous case the rate is greater.
+
+What if we consider $n \rightarrow \infty$? We define $P_e$ as the probability of making a mistake:
+When $n \rightarrow \infty$ we have that $P_e \rightarrow 0$ but $R \rightarrow 0$, meaning that a more reliable code produces a slower communication system.
+It is necessary to find a right trade-off to maintain a good level of reliability and speed.
+\subsection{Channel Coding Theorem - Shannon's 2nd Theorem}
+\textit{Shannon Theorem} says that if $R < C$ ($R$ is the transmission rate), it is possible to define a reliable code with fixed $R$. Instead, if $R > C$ it's impossible to guarantee that the information is transmitted in a reliable way.\\
+The capacity of the channel is an upper bound for $R$ if we want to define a reliable code.
+
+\begin{thm}[Channel Coding Theorem]
+	Let $\mathcal{C}$ be a channel with capacity $C$.
+	\begin{itemize}
+		\item If $R < C$ then there exists a sequence of $(2^{nR}, n)$ codes such that:
+		$$P_e  \underset{n \rightarrow \infty}{\rightarrow} 0$$
+		$(2^{nR}, n) = (M,n)$ represents codes with the same rate R: $R = \frac{\log_2 M}{n} = \frac{\log_2 2^{nR}}{n} = \frac{nR}{n} = R$ 
+		
+		\item $\forall \varepsilon > 0 \quad \exists n_0 \in \mathcal{N} \quad s.t. \quad \forall n \geq n_0:\quad P_e < \varepsilon$\\
+		We choose $\varepsilon$ as the maximum error probability. Shannon Theorem says that it is possible to define a code with redundancy $n > n_0$.
+		
+		\item Any sequence of $(2^{nR}, n)$ codes such that $P_e  \underset{n \rightarrow \infty}{\rightarrow} 0$ must have $R < C$. Comparing this with point 1 we can see that it is an \textit{if and only if}. 
+	\end{itemize}
+\end{thm}

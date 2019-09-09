@@ -1,0 +1,67 @@
+\section{Supplementary material}
+\subsection{Evolutionary Stable Strategy (ESS)}
+An ESS is an extension of the Nash equilibrium definition. In a Nash equilibrium, if all players adopt their respective parts, no player can benefit by switching to any alternative strategy. In a two player game, it is a strategy pair. Let $P(S,T)$ represent the payoff for playing strategy $S$ against strategy $T$.  The strategy pair $(S, S)$ is a Nash equilibrium in a two player game if and only if this is true for both players and: 
+$$\forall_{T\neq S} \quad P(S,S) \geq P(T,S)$$
+
+In this definition, strategy $T$ can be a neutral alternative to $S$, scoring equally well. A Nash equilibrium is presumed to be \textbf{stable} even if $T$ scores equally, on the assumption that there is no long-term incentive for players to adopt $T$ instead of $S$.  This fact represents the point of departure of the ESS.
+
+We have two definition of ESS:
+\paragraph{John Maynard Smith and George R. Price} $S$ is an ESS if $\forall_{T\neq S}$:
+	\begin{itemize}
+		\item $P(S,S) > P(T,S)$, \textbf{OR}
+		\item $P(S,S) = P(T,S)$ and $P(S,T) > P(T,T)$.
+	\end{itemize}
+The first condition is sometimes called a \textbf{strict Nash equilibrium}. The second is sometimes called \textbf{Maynard Smith's second condition}. The second condition means that although strategy $T$ is neutral with respect to the payoff against strategy $S$, the population of players who continue to play strategy $S$ has an advantage when playing against $T$.
+
+\paragraph{Bernhard Thomas} $S$ is an ESS if $\forall_{T\neq S}$:
+\begin{itemize}
+	\item $P(S,S) \geq P(T,S)$ \textbf{AND}
+	\item $P(S,T) > P(T,T)$
+\end{itemize}
+The payoff of the first player when both players play strategy S is higher than (or equal to) the payoff of the first player when he changes to another strategy T and the second players keeps his strategy S and the payoff of the first player when only his opponent changes his strategy to T is higher than his payoff in case that both of players change their strategies to T.
+In this formulation, the first condition specifies that the strategy is a Nash equilibrium, and the second specifies that Maynard Smith's second condition is met. Note that the two definitions are not precisely equivalent. \\
+
+\image{img/harm-thy-neighbor.png}{Harm thy neighbor payoff matrix.}{0.25}
+
+Considering the example of the harm thy neighbor game, we have two Nash equilibrium $(A, A)$ and $(B, B)$, since players cannot do better by switching away from either.  However, only $B$ is an ESS and a strong Nash. $A$ is not an ESS, so $B$ can neutrally invade a population of $A$ strategists and predominate, because $B$ scores higher against $B$ than $A$ does against $B$.
+
+\subsection{Replication Equation}
+In mathematics, the \textbf{replicator equation} is a deterministic monotone non-linear and non-innovative game dynamic used in evolutionary game theory.This important property allows the replicator equation to capture the essence of selection, does not incorporate mutation and so is not able to innovate new types or pure strategies (strategies are fixed).
+The most general continuous form is given by the differential equation:
+
+$$ \dot{x_i} = x_i [ f_i(x) - \phi(x)], \quad \phi(x) = \sum_{j=1}^{n}{x_j f_j(x)}$$
+
+where $x_i$ is the proportion of type $ i $ in the population, $x=(x_1, \ldots, x_n)$ is the vector of the distribution of types in the population, $f_i(x)$ is the fitness of type $i$ (which is dependent on the population), and $\phi(x)$ is the average population fitness (given by the weighted average of the fitness of the $n$ types in the population). 
+\begin{itemize}
+	\item $\dot{x_i}$, grow rate of strategy $i$.
+	\item $x_i$, current fit for strategy $i$.
+	\item $[ f_i(x) - \phi(x)]$,fit for i relative to the average fit.
+\end{itemize}
+If $x_i > 0$ and $f_i(x) > \phi(x)$ then the grow rate of strategy $i$ increase, meaning that $i$ will be increased in the population.
+Since the elements of the population vector $x$ sum to unity by definition, the equation is defined on the n-dimensional simplex. In application, populations are generally finite, making the discrete version more realistic, but in contrast it is more expensive to compute.
+To simplify analysis, fitness is often assumed to depend linearly upon the population distribution, which allows the replicator equation to be written in the form:
+$$\dot{x_i}=x_i\left(\left(Ax\right)_i-x^TAx\right)$$
+where the payoff matrix $A$ holds all the fitness information for the population: the expected payoff can be written as $\left(Ax\right)_i$ and the mean fitness of the population as a whole can be written as $x^TAx$.
+
+\newpage
+\subsection{Spectral Clustering}
+In the following lines is possible to find other important notions linked to the spectral clustering chapter.
+
+\begin{thm}[The $k$ smallest eigenvalue]{If $A$ is an $n \times n$ real symmetric matrix, then for all $1 \leq k \leq n$, we have:
+	$$\lambda_k(A) = \min_{x \in \mathbb{R}^n \setminus \{0\}} \frac{x^T A x}{x^T x} $$}
+\end{thm}
+
+\begin{thm}[Properties for Laplacian matrices and normalized ones]{} In relation to Laplacian matrices, it is possible to notice that, let $L$ be the Laplacian of a graph $G=(V,E)$. Then, $L \geq 0$, indeed:\\
+$\forall x = (x_1, \dots, x_n),$
+$$\begin{aligned} x^{T}Lx &= x^{T} \sum_{e \in E} L_{e} x \\ &=\sum_{e \in E} x^T L_{e} x \\ &=\sum_{i, j \in E}\left(x_{i}-x_{j}\right)^{2} \geq 0 \end{aligned}$$
+In relation instead to the normalized Laplacian Matrix we have that:
+$$\forall x \in \mathbb{R}^n \quad x^TLx = \sum_{i,j} \left(\frac{x(i)}{\sqrt{d(i)}} - \frac{x(j)}{\sqrt{d(j)}} \right)^2 \geq 0$$
+\end{thm}
+\par \bigskip \bigskip \noindent
+The following proof will explain how we come to the fact that $\min_x \text{Ncut}(x) = \min_y \frac{y'(D-W)y}{y'Dy}$
+\begin{thm}[Solving Ncut proof]{}
+$$\lambda_2 = \min_x \frac{x^TLx}{x^Tx} = \min_x \frac{x^TD^{-1/2}LD^{-1/2}x}{x^Tx} \qquad \text{Remember } L_{sym} = D^{-1/2}LD^{-1/2}$$
+\text{Considering the change of variables obtained by setting} $y=D^{-1/2}x$ \text{ and } $x = D^{1/2}y$:
+$$\lambda_2 = \min_y \frac{y^TLy}{(D^{1/2}y)^T(D^{1/2}y)} = \min_y \frac{y^TLy}{y^TDy}$$
+\end{thm}
+
