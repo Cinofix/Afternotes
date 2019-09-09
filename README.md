@@ -4,6 +4,8 @@ Afternotes for the attended courses at University Ca' Foscari of Venice, master 
 
 ## Table of contents
 * [Cloud Computing and Distributed Systems](./Cloud_Computing_and_Distributed_Systems/cloud_computing_afternotes.pdf)
+* [Artificial Intelligence and Knowledge Representation](./ArtificialIntelligence/AI_afternotes.pdf)
+* [Bioinformatics](./Bioinformatics/BIO_afternotes.pdf)
 
 
 ## Sources & Copyright
@@ -11,5 +13,5 @@ All the material is taken from my personal notes, the material given by our Prof
 
 
 ## Contacts
-* Write me an email: 854866 at stud.unive.it
+* Write me an email: 854866 at stud.unive.it  | acina04 at gmail.com
 
