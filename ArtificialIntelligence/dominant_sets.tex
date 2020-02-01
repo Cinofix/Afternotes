@@ -14,7 +14,7 @@ There is not a unique and well define definition of cluster, but in literature w
   \item \textbf{High internal homogeneity}, also named \textit{Internal criterion}. It means that all the objects inside a cluster should be highly similar(or low distance) to each other.
   \item \textbf{High external in-homogeneity}, also named \textit{External criterion}. It means that objects coming from different clusters have low similarity (or high distance).
 \end{itemize}
-The idea of the criterion is that clusters are groups of objects which are strongly similar to each other if they become to the same cluster, otherwise they have an highly dissimilarity.\\
+The idea of the criterion is that clusters are groups of objects which are strongly similar to each other if they belong to the same cluster, otherwise they have an highly dissimilarity.\\
 Informally, a cluster is a set of entities which are alike, and entities from different clusters are not alike.
 
 Let $S\subseteq V$ be a nonempty subset of vertices and $i \in S$. The average weighted degree of $i$ with regard to $S$ is defined as:\\
@@ -113,7 +113,7 @@ $$y_1^TAx_2 \leq x_1^TAx_2 \qquad y_2^TAx_1 \leq x_2^TAx_1 \qquad \forall (y_1,y
 A Nash equilibrium is \textbf{symmetric} if $x_1 = x_2$, meaning that considering a symmetric Nash Equilibrium $x \in \Delta$ the two conditions hold in a unique one:
 $$y^TAx \leq x^TAx$$
 
-This condition over here satisfies the internal homogeneity criterion required inside the dominant set definition, but it does not include any kind of constraint that guarantees the maximality condition. In order to satisfy this condition it is necessary to look for a different type of Nash Equilibrium, known as \textbf{Evolutionary Stable Strategy (ESS)}. 
+This condition satisfies the internal homogeneity criterion required by the dominant set definition, but it does not include any kind of constraint that guarantees the maximality condition. In order to satisfy this condition it is necessary to look for a different type of Nash Equilibrium, known as \textbf{Evolutionary Stable Strategy (ESS)}. 
 
 \paragraph{Definition.} A symmetric Nash equilibrium $x\in \Delta$ is an ESS if it satisfies also:
 $$y^TAx = x^TAx \implies x^TAy > y^TAy \qquad \forall y \in \Delta\setminus\{x\}$$
