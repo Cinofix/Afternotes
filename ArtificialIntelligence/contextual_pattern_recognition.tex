@@ -1,0 +1,118 @@
+\section{Contextual Pattern Recognition}
+\subsection{Consistent labeling problem}
+The \textbf{labeling problem} involves:
+\begin{itemize}
+\item A set of $n$ \textbf{objects} $B = {b_1, ..., b_n}$
+\item A set of $m$ \textbf{labels} $\Lambda = {\lambda_1, ..., \lambda_n}$
+\end{itemize}
+The goal is to label each object of $B$ with a label from $\Lambda$. To this end two
+sources of information are exploited:
+\begin{itemize}
+\item Local measurement, which capture the salient features of each object viewed in
+  isolation. $$ p_i = (p_i(\lambda_1), ... p_i(\lambda_m)) $$ with $p_i \ge 0$ $\forall
+  \lambda \in \Lambda$ and $\sum_{\lambda}p_i(\lambda) = 1$.
+\item Contextual information, expressed in terms of a real-valued $n^2 \times m^2$
+  matrix of \textbf{compatibility coefficients} $R = { r_{ij}(\lambda, \mu) }$
+\end{itemize}
+The coefficient $p_i(\lambda)$ measures the initial (non-contextual) confidence of
+the hypothesis \textit{``$b_i$ is labeled $\lambda$''}.
+The coefficient $r_{ij}(\lambda, \mu)$ measures the strength of compatibility between
+the two hypotheses: \textit{``$b_i$ is labeled $\lambda$''} and \textit{``$b_j$ is labeled
+  $\mu$''}
+
+A \textbf{relaxation labeling} process receives as input an initial labeling
+$p_i^{(0)}(\lambda)$ and updates it iteratively considering the compatibility matrix
+$R$. In a now classic 1976 paper, Rosenfeld, Hummel and Zucker introduced the
+following update rule (assuming a non-negative compatibility matrix):
+$$ p_i^{(t+1)}(\lambda) = \frac{ p_i^{(t)}(\lambda)q_i^{(t)}(\lambda)}
+{\sum_\mu p_i^{(t)}(\mu)q_i^{(t)}(\mu)} $$
+where
+$$ q_i^{(t)}(\lambda) = \sum_j \sum_\mu r_{ij}(\lambda, \mu) p_i^{(t)}(\mu) $$
+quantifies the \textbf{support} that the context gives to the hypothesis
+\textit{``$b_i$ is labeled with label $\lambda$''}.
+
+In 1983, Hummel and Zucker developed an elegant theory of consistency in labeling
+problems.
+
+A \textbf{unambiguous assignment} assigns a single label with probability 1 to each
+object. An unambiguous assignment $p$ is \textbf{consistent} if the label assigned to
+each object by $p$ receives the highest support from the context.
+
+By analogy with the unambiguous case, a weighted labeling assignment $p$ is
+\textbf{consistent} if:
+$$ \sum_\lambda p_i(\lambda)q_i(\lambda) \ge \sum_\lambda v_i(\lambda)q_i(\lambda)
+\qquad i= 1...n $$
+for all assignments $v$.
+
+\subsubsection{Relaxation labeling as a game of strategy}
+As observed by Miller and Zucker (1991) the consistent labeling problem is equivalent
+to a non-cooperative game, where:
+\begin{itemize}
+\item Objects = players
+\item Labels = pure strategies
+\item Weighted labeling assignments = mixed strategies
+\item Compatibility coefficients = payoffs
+\end{itemize}
+And
+\begin{itemize}
+\item \textbf{Consistent labeling = Nash equilibrium}
+\end{itemize}
+
+Further, the Rosenfeld-Hummel-Zucher update rule corresponds to discrete-time
+multi-population replicator dynamics.
+
+\subsection{Graph transduction}
+Graph transduction is a class of semi-supervised learning techniques that aim to
+estimate a classification function on a graph of labeled and unlabeled points.
+
+Given a set of data points grouped into:
+\begin{itemize}
+\item labeled data $D = {(x_1, y_1), ..., (x_l, y_l)}$
+\item unlabeled data $D_u = {x_{l+1}, ..., x_n}$
+\end{itemize}
+with $l \ll n$.
+
+The relationships between these objects is given as a weighted graph $G = (V,E,w)$
+\begin{itemize}
+\item $V$: nodes representing labeled and unlabeled points
+\item $E$: pairwise edges weighted by the similarity between the corresponding pairs
+  of points
+\end{itemize}
+
+The goal is to propagate the information available at the labeled nodes to the
+unlabeled ones in a ``consistent'' way. This is done on the assumption (cluster
+assumption) that (1) the data forms distinct clusters and that (2)  two points in the
+same cluster are expected to be in the same class.
+
+\subsubsection{A special case: graph transduction as CSP}
+In the case that the graph $G$ is an unweighted undirected graph:
+\begin{itemize}
+\item The adjacency matrix of $G$ is a binary 0/1 matrix
+\item An edge denotes perfect similarity between points
+\end{itemize}
+Given the cluster assumption that each node in a connected component of the graph
+should have the same class label, the problem can be written as a \textbf{constraint
+  satisfaction problem}.
+
+The standard graph transduction problem is a generalization of the CSP, where at each
+binary constraint is assigned a weight that describes its level of confidence.
+
+\subsubsection{The graph transduction game}
+Given a weighted graph $G = (V, E, w)$, the graph transduction game is as follows:
+\begin{itemize}
+\item Nodes = players
+\item Labels = pure strategies
+\item Weighted labeling assignments = mixed strategies
+\item Compatibility coefficients = payoffs
+\end{itemize}
+The transduction game is in fact played among the unlabeled players to choose their
+membership.
+\begin{itemize}
+\item \textbf{Consistent labeling = nash equilibrium}
+\end{itemize}
+This can be solved using standard relaxation labeling / replicator dynamics.
+
+Graph transduction can be formulated as a \textbf{consistent labeling} problem. The
+proposed framework can cope with \textbf{symmetric, negative and asymmetric
+  similarities} (none of the existing techniques is able to deal with all three types
+of similarities).
