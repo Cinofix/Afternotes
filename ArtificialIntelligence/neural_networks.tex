@@ -120,7 +120,7 @@ $$\text{net}_i = \sum_i w_ix_i \rightarrow \begin{cases}
 \end{cases}$$
 \image{img/perceptron_algorithm}{Perceptron learning algorithm procedure.}{0.65}
 From a geometrical point of view, finding $w$ means find the line (or hyperplane) which separates the two regions.
-As it is possible to see from the previous image, some examples can be misclassified. Each time a precise error is corrected but other mistakes can be produced, continuing to correct the errors found, the final situation can be reached.\\
+As it is possible to see from the previous image, some examples can be misclassified. Each time a specific error is corrected but other mistakes can be produced, continuing to correct the errors found, the final situation can be reached.\\
 It is possible to define a \textbf{decision region} as an area wherein all examples of ones class fall. A classification problem is said to \textbf{linearly separable} if the decision regions can be separated by an hyperplane. These concepts allows us to introduce the fact that one important \textbf{limitation of perceptrons} is that they can only solve linearly separable problems.
 
 \paragraph*{The Perceptron Convergence Theorem.} This theorem was formulated by Rosenblatt in 1960. It said that:\\
@@ -384,7 +384,7 @@ The  algorithm instead of computing all the system considers only the initial co
 $$h1: \vert \vert A_1x_1 - b_1 \vert \vert  = 0.1 \hspace{9.7em} $$
 $$h2: \vert \vert A_2x_1 - b_2 \vert \vert  = 1.6 \hspace{9.7em} $$
 $$h3: \vert \vert A_3x_1 - b_3 \vert \vert  = 7.6 \hspace{9.7em} $$
-From this example we can see that $h_1$ should be removed since the contribution of that neuron is the smallest one and it is very small. We can see that $ \vert \vert A_hx_h - b_h\vert \vert$ measures how different it the network after removing the neuron $h$.
+From this example we can see that $h_1$ should be removed since the contribution of that neuron is the smallest one and it is very small. We can see that $ \vert \vert A_hx_h - b_h\vert \vert$ measures how different is the network after removing the neuron $h$.
 The problem of this procedure is that we have to compute a lot of linear systems, one for each neuron.
 
 
