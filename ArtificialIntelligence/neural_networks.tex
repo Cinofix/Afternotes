@@ -120,7 +120,7 @@ $$\text{net}_i = \sum_i w_ix_i \rightarrow \begin{cases}
 \end{cases}$$
 \image{img/perceptron_algorithm}{Perceptron learning algorithm procedure.}{0.65}
 From a geometrical point of view, finding $w$ means find the line (or hyperplane) which separates the two regions.
-As it is possible to see from the previous image, some examples can be misclassified. Each time a precise error is correct but other mistakes can be produced, continuing to correct the errors found, the final situation can be reached.\\
+As it is possible to see from the previous image, some examples can be misclassified. Each time a specific error is corrected but other mistakes can be produced, continuing to correct the errors found, the final situation can be reached.\\
 It is possible to define a \textbf{decision region} as an area wherein all examples of ones class fall. A classification problem is said to \textbf{linearly separable} if the decision regions can be separated by an hyperplane. These concepts allows us to introduce the fact that one important \textbf{limitation of perceptrons} is that they can only solve linearly separable problems.
 
 \paragraph*{The Perceptron Convergence Theorem.} This theorem was formulated by Rosenblatt in 1960. It said that:\\
@@ -131,7 +131,7 @@ If the training set is \textbf{not linearly separable}, after a certain number o
 \subsection{Multi-Layer Feedforward Networks}
 In the following image it is possible to find some properties of the different structures that can create a neural network.
 \image{img/role_units}{A view of the Role of Units}{0.86}
-A single layer represents the structure of a perceptron and as we said before it can implement only linearly separable functions. In order to overcome these limitations, the introduction of multi-layer feedforward networks allows us to improve our networks through the adding of \textbf{hidden layers} between the input and the output layer. This can allow us to reach a good approximation of our classification problem, it is possible to notice that a network with just one hidden layer can represent any Boolean functions including XOR. From the \textbf{Universal approximation power} we also know that a two-layer network (only one hidden layer) can approximate any smooth function (valid for regression problem). But this power does not give us information about how large should be this network. This model here is static, meaning that we have no feedback.
+A single layer represents the structure of a perceptron and as we said before it can implement only linearly separable functions. In order to overcome these limitations, the introduction of multi-layer feedforward networks allows us to improve our networks through the addition of \textbf{hidden layers} between the input and the output layer. This can allow us to reach a good approximation of our classification problem, it is possible to notice that a network with just one hidden layer can represent any Boolean functions including XOR. From the \textbf{Universal approximation power} we also know that a two-layer network (only one hidden layer) can approximate any smooth function (valid for regression problem). But this power does not give us information about how large should be this network. This model here is static, meaning that we have no feedback.
 $$f: I \rightarrow \mathbb{ R }^m \qquad I \subseteq \mathbb{ R }^n$$
 $$f(x_1,\dots,x_n) = \bar{y}\in \mathbb{ R }^m$$
 We want that the estimated function $NN(X)$ satisfies the following property:
@@ -143,7 +143,7 @@ Note that the Universal approximation power works only for regression problems, 
 \textbf{Sigmoid} (or logistic), this is the rate of firing of the neurons, they can fire more or less, so they are not Boolean 0 or 1 but instead they are float values from 0 to 1. They are often interpreted as probabilities.
 $$g \rightarrow \sigma(x) = \frac{1}{1+e^{-f(x)}} \in (0,1)$$
 \image{img/sigmoid}{Sigmoid function.}{0.51}
-Continuous-Valued discriminant functions allows us to have a confidence about the prediction. We will see later one that they are used for finding optimal solutions using the gradient descent technique. In particular, when the $g(z)$ is close to zero (less confidence about the prediction) the gradient will be greater then the situation in which $|g(x)| >> 0$ (more confidence, weights could remain stable).\\
+Continuous-Valued discriminant functions allows us to have a confidence about the prediction. We will see later on that they are used for finding optimal solutions using the gradient descent technique. In particular, when the $g(z)$ is close to zero (less confidence about the prediction) the gradient will be greater then the situation in which $|g(x)| >> 0$ (more confidence, weights could remain stable).\\
 
 \textbf{Hyperbolic tangent} is a rescaling of the logistic sigmoid such that its output range is from -1 and 1. This type of function could be better because the length of the interval has length 2 and so it has more degrees of freedom.
 $$g \rightarrow \sigma(x) = \frac{e^{f(x)} - e^{-f(x)}}{e^{f(x)} + e^ {-f(x)}} \in (- 1,1)$$
@@ -209,8 +209,8 @@ We have that the partial derivative is:
 &= w_ { i j } \frac { \partial  V_ { j } ^ { \mu } } { \partial  w _ { j k } }\\
 &= w_{ i j } \frac { \partial g \left( h _ { j } ^ { \mu } \right) } { \partial w _ { j k } }\\
 &= w_{ i j } g ^ { \prime } \left( h _ { j } ^ { \mu } \right) \frac { \partial h _ { j } ^ { \mu } } { \partial w _ { j k } }\\
-&=\frac { \partial } { \partial w _ { j k } } \sum _ { m } w _ { j m } x _ { m } ^ { \mu }\\
-&= x _ { k } ^ { \mu }
+&= w_{ i j } g ^ { \prime } \left( h _ { j } ^ { \mu } \right) \frac { \partial } { \partial w _ { j k } } \sum _ { m } w _ { j m } x _ { m } ^ { \mu }\\
+&=  w_{ i j } g ^ { \prime } \left( h _ { j } ^ { \mu } \right) x _ { k } ^ { \mu }
 \end{split}
 \end{equation}
 Hence coming back to the original equation we have that:
@@ -256,12 +256,12 @@ One of the most important problem is the fact that $\eta$ (learning step) should
 In the following image four trajectories can be found, the only significant difference between them is the value of $\eta$ they used. From left to right they are $0.02, 0.0476, 0.049, 0.0505$.
 \image{img/learning_rate}{The Role of the Learning Rate. The minimum is at the $+$ and the ellipse shows a constant error contour.}{0.9}
 The first case is too slow in reaching the minimum, in the second and in the third case the oscillation becomes smaller and smaller, instead in the last case the algorithm won't converge, the oscillation is larger and larger.\\
-As said before, one of the most limitations of the \textbf{gradient descent} method is the fact that:
+As said before, one of the main limitations of the \textbf{gradient descent} method is the fact that:
 \begin{itemize}
 	\item It converges too slowly if $\eta$ is too small.
 	\item It oscillates if $\eta$ is too large.
 \end{itemize}
-One possible remedy to this problem is in introducing the \textbf{momentum term}, a simple heuristic that can help to find a good value for learning rate. One of the most advantages of this improvement is the fact that it will introduce a correction that is based also on the step at time $t-1$, on the contrary the original idea produces a correction related only to the current point.
+One possible remedy to this problem is in introducing the \textbf{momentum term}, a simple heuristic that can help to find a good value for learning rate. One of the main advantages of this improvement is the fact that it will introduce a correction that is based also on the step at time $t-1$, on the contrary the original idea produces a correction related only to the current point.
 $$\Delta \omega_{pq}(t+1) = -\eta \frac{\partial E}{\partial w_{pq}}+\underbrace{\alpha \Delta w_{pq} (t)}_{\text{momentum }}$$
 
 \begin{itemize}
@@ -384,7 +384,7 @@ The  algorithm instead of computing all the system considers only the initial co
 $$h1: \vert \vert A_1x_1 - b_1 \vert \vert  = 0.1 \hspace{9.7em} $$
 $$h2: \vert \vert A_2x_1 - b_2 \vert \vert  = 1.6 \hspace{9.7em} $$
 $$h3: \vert \vert A_3x_1 - b_3 \vert \vert  = 7.6 \hspace{9.7em} $$
-From this example we can see that $h_1$ should be removed since the contribution of that neuron is the smallest one and it is very small. We can see that $ \vert \vert A_hx_h - b_h\vert \vert$ measures how difference it the network removing the neuron $h$.
+From this example we can see that $h_1$ should be removed since the contribution of that neuron is the smallest one and it is very small. We can see that $ \vert \vert A_hx_h - b_h\vert \vert$ measures how different is the network after removing the neuron $h$.
 The problem of this procedure is that we have to compute a lot of linear systems, one for each neuron.
 
 

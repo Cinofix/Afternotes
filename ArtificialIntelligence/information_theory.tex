@@ -8,7 +8,7 @@ This representation is composed by some components as:
 	\item \textbf{Channel} is the means that allows the transmission of messages between two entities. It is possible that a message is written in a certain language but it travels in the channel with another understandable one (usually binary language).
 \end{itemize}
 
-Usually sender and receiver use a different language respect to the channel, and so it is necessary to expand the original model introducing some \textbf{translator} entities as following: 
+Usually sender and receiver use a different language respect to the channel, and so it is necessary to expand the original model introducing some \textbf{translator} entities as follows: 
 \image{img/channel2}{Extensive Shannon representation.}{0.9}
 \textbf{Coder} and \textbf{Encoder} are instruments that allow us to translate a language to another one. They should provide:
 \begin{itemize}
@@ -29,7 +29,7 @@ We can consider 3 different levels of information:
 \begin{enumerate}
 	\item \textbf{Syntactical level} deals only with symbols and it does not consider the semantic (meaning) of the message. In this level we approach the information not from a syntactical point of view (set of rules), but from a statistical point of view. For example, if we have the letter \verb|"h"|, which is now the probability that the next letter will be an \verb|"e"|, an \verb|"i"| or a \verb|"q"|?
 	\image{img/probabilityAnalysis}{Probability Analysis.}{0.3}
-	\item \textbf{Semantic level} deals with the meaning of the sended message, it tries to understand the semantic. It is very complex.
+	\item \textbf{Semantic level} deals with the meaning of the sent message, it tries to understand the semantic. It is very complex.
 	\item \textbf{Pragmatic level} deals with the intention of the speaker. It's something more complex than a semantic level.
 \end{enumerate}
 Information theory works at syntactical level.
@@ -56,7 +56,7 @@ The unique information that we have from the previously definition is that:
 $$\text{if }P(E) = 1 \text{ then } I(E)=0 \qquad \longrightarrow \qquad I(E)=0 \text{ iff } P(E)=1$$
 in the other extreme case we can say that:
 $$\lim_{P(E)\rightarrow 0} I(E) = +\infty$$
-We don't know however which is the behavior of the $I(E)$ in the middle but, surely, it must be positive and monotonically decreasing. Shannon provided that there is a \textbf{unique function} that satisfy these assumptions and respect its definition:
+We don't know however which is the behavior of the $I(E)$ in the middle but, surely, it must be positive and monotonically decreasing. Shannon proved that there is a \textbf{unique function} that satisfy these assumptions and respect its definition:
 $$I(E) = -\log(P(E)) = \log\left(\frac{1}{P(E)}\right)$$
 
 \image{img/ieFunction2}{Graphical representation of $I(E)$ ($-\log(P(E))$).}{0.46}
@@ -344,10 +344,10 @@ $$\underbrace{\texttt{abb}}_{\verb|d|}\underbrace{\texttt{c}}_{\verb|b|}\underbr
 $$or$$
 $$\underbrace{\texttt{a}}_{\verb|a|}\underbrace{\texttt{bbcde}}_{\verb|g|}\underbrace{\texttt{bad}}_{\verb|e|}$$
 As we can see, even if we are in an optimal situation without noise, the receiver can't understand the message send (two configurations are possible).\\
-We can define so, as \textbf{unique decodable codes}, all the codes in which receiver is always sure of the decomposition done.
+We can define so, as \textbf{unique decodable codes}, all the codes in which receiver is always sure of the decomposition.
 
 \subsubsection{Prefix code}
-With a \textbf{prefix code}, none code is prefix of other codes. Any prefix code is also a \textit{uniquely decodable code}.
+With a \textbf{prefix code}, no code is prefix of other codes. Any prefix code is also a \textit{uniquely decodable code}.
 \image{img/codesClassification}{Codes classification.}{0.7}
 As we can see also from the previous picture all the prefix codes are also unique decodable codes.
 An example of a non prefix code is so provided:
@@ -416,7 +416,7 @@ where $l(x)$ is the length of the codeword associated to the symbol $x$.
 	$$	
 		L(c_2) = \frac{1}{2} \cdot 3 + \frac{1}{4} \cdot 3 + \frac{1}{8} \cdot 2 + \frac{1}{8} \cdot 1 = \frac{21}{8} = 2.625
 	$$
-	On average the codewords sended using the second code have length $2.625$. This bring us to consider the first code as the more efficient one, since, considering the same symbols and probabilities, it spends less bits to codify them, improving in this way the speed of transmission.
+	On average the codewords sent using the second code have length $2.625$. This bring us to consider the first code as the more efficient one, since, considering the same symbols and probabilities, it spends less bits to codify them, improving in this way the speed of transmission.
 \end{exmp}
 
 Another interesting consideration is given by the relationship between efficiency of a code and the entropy given by the source.

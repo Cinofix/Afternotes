@@ -131,7 +131,7 @@ For all $f \in \mathcal{ F }$, with probability at least $1-\delta$, we have:
 $$
 R ( f ) \leq R _ { \mathrm { emp } } ( f ) + \underbrace{\sqrt { \frac { h ( \log ( 2 n / h ) + 1 ) - \log ( \delta / 4 ) } { n } }}_{\text{VC confidence}}
 $$
-where $h=VC(\mathcal{ F })$ is the VC dimension of the family $F$, $\delta$ is a tolerant parameter, and $n$ is the sample size. We can read this results as:\\
+where $h=VC(\mathcal{ F })$ is the VC dimension of the family $F$, $\delta$ is a tolerance parameter, and $n$ is the sample size. We can read this results as:\\
 
 \textit{With probability approaching  1, no matter what the unknown probability distribution, given more and more data, the expected error for the functions that ERM endorses at each stage eventually approaches the minimum value of expected error of the functions in $\mathcal{ F }$ if and only if $\mathcal{ F }$ has finite VC dimension. If VC dimension is equal to $\infty$, like in the KNN case, we have that $R_\text{emp}(f) = 0$ and so $R(f) \leq \infty$ which is meaningless.}\\
 
@@ -160,7 +160,7 @@ g(z)=
 -1\qquad \text{otherwise}\\
 \end{cases}
 $$
-Where $w^T + b$ represents a \textbf{separating hyperplane} for the two classes, and $g(z)$ is the decision function which returns the predicted class for the observation $x$.
+Where $w^Tx + b$ represents a \textbf{separating hyperplane} for the two classes, and $g(z)$ is the decision function which returns the predicted class for the observation $x$.
 In our problem the classifier would then predict $1$ if $h_{w,b}(x) \geq 0$, which is equivalent of considering $w^Tx + b \geq 0$, and $-1$ otherwise.
 We define the probability of classification given an observation $x$ as:
 $$p(y = 1 | x; w,b)$$
