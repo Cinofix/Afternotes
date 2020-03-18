@@ -2,7 +2,7 @@
 A Neural Network is an information processing paradigm that is inspired by the way biological nervous systems, such as the brain, process information. The key element of this paradigm is the new structure of the information processing system. It is composed of a large number of highly interconnected processing elements (\textbf{neurons}) working in unison to solve specific problems. A NN is configured for a specific application, such as pattern recognition or data classification, through a learning process.\\
 Two key features distinguish neural networks from any other sort of computing developed:
 \begin{itemize}
-	\item \textbf{Neural networks are adaptive or trainable}. Neural networks are not so much programmed as they are trained with data, the more data they are fed, the more accurate or complete is their response.
+	\item \textbf{Neural networks are adaptive or trainable}. Neural networks are not so much programmed as they are trained with data. The more data they are fed, the more accurate or complete is their response.
 	\item \textbf{Neural network are naturally massively parallel}. This suggests they should be able to make decisions at high-speed and be fault tolerant (information is stored in a distributed fashion). There are more interconnections than processing units and the processing power of a neural network corresponds to the number of interconnection updates per second. 
 \end{itemize}
 
@@ -11,6 +11,7 @@ Two key features distinguish neural networks from any other sort of computing de
 	\item \textbf{Cell body (Soma)}: 5-10 microns in diameter, it is the \textit{computational unit}.
 	\item \textbf{Axon}: Output mechanism for a neuron.
 	\item \textbf{Dendrites}: Receive incoming signals from other nerve axons via synapse.
+	\item \textbf{Synapses}: Junctions (``connecting points'') between neurons.
 \end{itemize}
 
 \paragraph*{The neural dynamics.} The transmission of signal in the cerebral cortex is a complex process:
@@ -25,14 +26,14 @@ Simplifying:
 In other words computations by neuron are performed thanks to a combination of electrical and chemical processes. 
 \image{img/neural_dynamics}{Neural dynamics.}{0.6}
 
-\paragraph*{Synaptic Efficacy.} Synapses are connecting point between neurons. It’s the amount of electricity that enters into the post-synaptic neuron, compared to the action potential of the pre-synaptic neuron. The \textbf{learning step} takes place by modifying the synaptic efficacy. Two different types of synapses are present:
+\paragraph*{Synaptic Efficacy.} It is the amount of electricity that enters into the post-synaptic neuron, compared to the action potential of the pre-synaptic neuron. The \textbf{learning step} takes place by modifying the synaptic efficacy. Two different types of synapses are present:
 \begin{itemize}
 	\item \textbf{Excitatory}: favor the generation of action potential in the post-synaptic neuron.
 	\item \textbf{Inhibitory}: hinder the generation of action potential.
 \end{itemize}
 
 \subsection{The McCulloch and Pitts Model}
-Neural network simulations appear to be a recent development, however, this field was established before the advent of computers and the first model was created in the 1943, it is called \textbf{McCulloch and Pitts Model}.\\
+Neural network simulations appear to be a recent development, however, this field was established before the advent of computers and the first model, which was created in 1943, is the \textbf{McCulloch and Pitts Model}.\\
 The McCulloch-Pitts (MP) neuron is a simple process unit modeled as a binary threshold unit.
 \image{img/MP_neuron}{McCulloch and Pitts neuron representation.}{0.55}
 The unit fires if the \textbf{net input} $\sum_j w_jI_j$ reaches (or exceeds) the unit's threshold $T$:
@@ -63,6 +64,8 @@ The weight $w_{ij}$ represents the strength of the synapse between neuron $j$ an
 	\end{tabular}
 \end{table} 
 \image{img/feedforward}{\textit{(a)} feedforward network - \textit{(b)} feedback network}{0.65}
+
+
 \subsection{Classification problems}
 Given:
 \begin{enumerate}
@@ -74,34 +77,35 @@ What we desire is to classify our objects according to its features. A neural ne
 	\item The \textit{input} of the network are the object's features to classify.
 	\item The \textit{output}, returned by the network, is the class predicted for the input object.
 \end{itemize}
-Before going on we assume that features are numbers, and remember that we cannot mapping categorical features into numbers, since otherwise we can introduce an order which can make confusion or error. Example: red = 0, blu = 1, green = 2, is not a correct coding since we are imposing an incorrect order between colors. We propose a simple model of neural network:
+Before going on we assume that features are numbers, and remember that we cannot map categorical features into numbers, since we would introduce an order, which would lead to mistakes. For instance: red = 0, blu = 1, green = 2 would not be a correct coding since we would be imposing a non-existent order between colors. We propose a simple model of neural network:
 
 \image{img/NN_1}{Example of NN with 3 features input and 2 class labels as output.}{0.4}
-The application of a learning algorithm of a network configuration consists on finding the best configuration of weights of the income connection and the threshold.
-In these classification problems we can get rid of the \textbf{thresholds} (also called bias) associated to neurons by adding an extra unit \textbf{permanently clamped at -1}. Doing this, thresholds become weights and can be adaptively adjusted during learning phase, otherwise we have to tune manually the right threshold. Since it is just a simple parameter we can learn it taking advantage on the learning procedure. 
+The application of a learning algorithm of a network configuration consists in finding the best configuration of weights of the incoming connection and the threshold.
+In these classification problems we can get rid of the \textbf{thresholds} (also called biases) associated to neurons by adding an extra input \textbf{permanently clamped at -1}. By doing so, thresholds become weights and can be adaptively adjusted during learning phase, otherwise we would have to manually tune the right threshold. Since it is just a simple parameter we can learn it by taking advantage of the learning procedure. 
 $$NET_i = \sum w_{ij} x_j -1w_0$$
 \image{img/NN_thresholds}{Thresholds}{0.4}
 
 \subsection{The Perceptron}
-The perceptron is an algorithm for \textbf{supervised learning} of binary classifiers (functions that can decide whether an input, represented by a vector of numbers, belongs to some specific class or not). It is a type of linear classifier, that is a classification algorithm that makes its predictions based on a linear predictor function combining a set of weights with the feature vector. A simple perceptron can only solve linearly separable problems, this make the model very limited in terms of computational power. However, it is possible to say that for the problems that it can solve, it is able to learn from example and it can be considered as the \textbf{simplest feedforward neural network}. It is implemented as a network of one layer of M\&P neurons connected in a feedforward way.
+The perceptron is an algorithm for \textbf{supervised learning} of binary classifiers (functions that can decide whether an input, represented by a vector of numbers, belongs to some specific class or not). It is a type of linear classifier, i.e. it is a classification algorithm that makes its predictions based on a linear predictor function, by combining a set of weights with the (input) feature vector. A simple perceptron can only solve linearly separable problems. This makes the model very limited in terms of computational power. However, if we consider the problems that it can solve, we know that it is able to learn from examples and it can be considered as the \textbf{simplest feedforward neural network}. It is implemented as a network of one layer of M\&P neurons connected in a feedforward way.
 
-\paragraph*{The Perceptron Learning Algorithm.} It is an iterative algoritnm characterized by the following variables and parameters:
+\paragraph*{The Perceptron Learning Algorithm.} It is an iterative algorithm characterized by the following variables and parameters:
 \begin{itemize}
-	\item Inputs vector: $x(n) = (m+1)\text{-by-1 input vector} = [-1, x_1(n), x_2(n), \dots, x_m(n)]^T$\\
-	Objects are described with $m$ features and -1 as the  threshold, that is the reason of the $m+1$.
+	\item Input vectors: $x(n) = (m+1)\text{-by-1 input vector} = [-1, x_1(n), x_2(n), \dots, x_m(n)]^T$\\
+	Objects are described with $m$ features and -1 as the threshold, which is the reason why the input vectors have size $m+1$.
 	\item Weights vector: $w(n) = (m+1)\text{-by-1 weight vector} = [b, w_1(n), w_2(n), \dots, w_m(n)]^T$
 	\item $b$ = bias
 	\item $y(n)$ = actual response (quantized). $\quad +1/-1$
 	\item $d(n)$ = desired response. $\quad +1/-1$
-	\item $\eta$ = learning-rate parameter, a positive constant less than unity. It affects the convergence of the learning algorithm. 
+	\item $\eta$ = learning-rate parameter, a positive constant strictly smaller than $1$. It affects the convergence of the learning algorithm. 
 \end{itemize}
+
 It is structured with the following steps:
 \begin{enumerate}
 	\item \textbf{Initialization.} Set $w(0) = 0$ and then perform the following computations for time-step $n=1,2,\dots$.
-	\item \textbf{Activation.} At time-step $n$, activate the perceptron by applying continuous-valued input vector $x(n)$ and desired response $d(n)$. Pick element from the training set.
+	\item \textbf{Activation.} At time-step $n$, activate the perceptron by applying continuous-valued input vector $x(n)$ and desired response $d(n)$ (both picked from the training set).
 	\item \textbf{Computation of Actual Response.} Compute the actual response of the perceptron as:
 	$$y(n) = sgn[w^T(n)x(n)] \qquad w^Tx = \sum_iw_ix_i$$
-	where $sgn(\cdot)$ is the signum function. Until this phase there's not learning.
+	where $sgn(\cdot)$ is the signum function. Notice that, so far, no learning phase has taken place.
 	\item \textbf{Adaptation of Weight Vector.} Update the weight vector of the perceptron to obtain.
 	$$w(n+1) = w(n) + \eta[d(n) - y(n)]x(n)$$
 	where
@@ -110,58 +114,65 @@ It is structured with the following steps:
 	+1 \qquad \text{if } x(n) \text{ belongs to class } \varphi_1\\
 	-1 \qquad \text{if } x(n) \text{ belongs to class } \varphi_2 
 	\end{cases}$$
-	In this point there's the learning phase. In case of wrong classification, the current configuration will change modifying $d(n) - y(n)$. The convergence of the algorithm is ensured by $x(n)$.If the network classify correctly then there is no learning $d(n)-y(n) = 0$. Note that $x(n)$ is included to be sure that the new prediction is correct but it can fail with the previous one.
+	This is where the learning phase takes place. In case of wrong classification, the current configuration will change modifying $d(n) - y(n)$. The convergence of the algorithm is ensured by $x(n)$. If the network classifies $x(n)$ correctly, then there is no learning as $d(n)-y(n) = 0$. Note that $x(n)$ is included to be sure that the new prediction is correct, but the updated weights could fail to classify another input vector (even an already seen one).
 	\item \textbf{Continuation.} Increment time step $n$ by one and go back to step 2.
 \end{enumerate}
-Through this algorithm we are looking for a straight line which separates the good examples from bad ones. The decision boundary is described such that $w_1x_1 + w_2x_2 = 0$ and in a general way each point is classified according the following formula:
+
+In practice, this algorithm is trying to find the best possible straight line (or hyperplane) which separates the ``good'' examples from the ``bad'' ones. The decision boundary is described such that $w_1x_1 + w_2x_2 = 0$ and, in general, each point is classified according to the following formula:
 $$\text{net}_i = \sum_i w_ix_i \rightarrow \begin{cases}
 \text{if } >0 \rightarrow +1\\
 \text{if } <0 \rightarrow -1
 \end{cases}$$
 \image{img/perceptron_algorithm}{Perceptron learning algorithm procedure.}{0.65}
-From a geometrical point of view, finding $w$ means find the line (or hyperplane) which separates the two regions.
-As it is possible to see from the previous image, some examples can be misclassified. Each time a specific error is corrected but other mistakes can be produced, continuing to correct the errors found, the final situation can be reached.\\
-It is possible to define a \textbf{decision region} as an area wherein all examples of ones class fall. A classification problem is said to \textbf{linearly separable} if the decision regions can be separated by an hyperplane. These concepts allows us to introduce the fact that one important \textbf{limitation of perceptrons} is that they can only solve linearly separable problems.
+From a geometrical point of view, finding $w$ means finding the line (or hyperplane) which separates the two regions.
+As we can see from the previous image, some examples can be misclassified. For each weights update, a specific error is corrected but other mistakes in classification may arise because of the changes in the weights. By iteratively adjusting the weights, a final and ``stable'' solution can be reached.\\
+It is possible to define a \textbf{decision region} as an area in which all the samples of one class fall. A classification problem is said to be \textbf{linearly separable} if the decision regions can be separated by an hyperplane. These concepts allow us to introduce one important \textbf{limitation of perceptrons}: they can only solve linearly separable problems.
 
-\paragraph*{The Perceptron Convergence Theorem.} This theorem was formulated by Rosenblatt in 1960. It said that:\\
-If the training set is \textbf{linearly separable}, the perceptron learning algorithm \textbf{always converges} to a consistent hypothesis after a \textbf{finite} number of epochs, for any $\eta > 0$ (It doesn't say anything about the number of steps).\\
-If the training set is \textbf{not linearly separable}, after a certain number of epochs the weights start oscillating. In this situation surely some points will be misclassified. The learning algorithm will never converge to a stable configuration, due to the fact that perceptron can't solve non-linear classification problem.
+\paragraph*{The Perceptron Convergence Theorem.} This theorem was formulated by Rosenblatt in 1960. It states the following:\\
+If the training set is \textbf{linearly separable}, the perceptron learning algorithm \textbf{always converges} to a consistent hypothesis after a \textbf{finite} number of epochs, for any $\eta > 0$ (Note: nothing is said with respect to the number of steps).\\
+If the training set is \textbf{not linearly separable}, after a certain number of epochs the weights will start oscillating. In this situation some points will surely be misclassified. The learning algorithm will never converge to a stable configuration, due to the fact that the perceptron can't solve non-linear classification problems.
 
 \par \bigskip \noindent
 \subsection{Multi-Layer Feedforward Networks}
 In the following image it is possible to find some properties of the different structures that can create a neural network.
 \image{img/role_units}{A view of the Role of Units}{0.86}
-A single layer represents the structure of a perceptron and as we said before it can implement only linearly separable functions. In order to overcome these limitations, the introduction of multi-layer feedforward networks allows us to improve our networks through the addition of \textbf{hidden layers} between the input and the output layer. This can allow us to reach a good approximation of our classification problem, it is possible to notice that a network with just one hidden layer can represent any Boolean functions including XOR. From the \textbf{Universal approximation power} we also know that a two-layer network (only one hidden layer) can approximate any smooth function (valid for regression problem). But this power does not give us information about how large should be this network. This model here is static, meaning that we have no feedback.
+A single layer represents the structure of a perceptron and as we said before it can implement only linearly separable functions. In order to overcome these limitations, the introduction of multi-layer feedforward networks allows us to improve our networks through the addition of \textbf{hidden layers} between the input and the output layer. This allows us to reach a good approximation on our classification problem: it is possible to notice that a network with just one hidden layer can represent any Boolean function, including XOR. From the \textbf{Universal approximation power} we also know that a two-layer network (one input layer, one hidden layer) can approximate any smooth function (valid for regression problems). This statement, however, does not give us information about how large this network should be. The model is static, meaning that we have no feedback.
 $$f: I \rightarrow \mathbb{ R }^m \qquad I \subseteq \mathbb{ R }^n$$
 $$f(x_1,\dots,x_n) = \bar{y}\in \mathbb{ R }^m$$
-We want that the estimated function $NN(X)$ satisfies the following property:
+We want the estimated function $NN(X)$ to satisfy the following property:
 $$||\text{NN}(\bar X)- f(\bar X)|| \leq \varepsilon$$
-\image{img/fNN.png}{Neural Network function model.}{0.65}		\image{img/data-bias-variance.png}{Neural Network function approximation.}{0.65}
-Note that the Universal approximation power works only for regression problems, since usually classification problems are more difficult (3 layers instead of 2).
+for some small $\varepsilon$.
 
-\paragraph*{Continuous-Valued Units.} The usage of continuous-valued units allows us to introduce calculus and derivatives procedures that will give us several advantages.\\ 
-\textbf{Sigmoid} (or logistic), this is the rate of firing of the neurons, they can fire more or less, so they are not Boolean 0 or 1 but instead they are float values from 0 to 1. They are often interpreted as probabilities.
+\image{img/fNN.png}{Neural Network function model.}{0.65}		\image{img/data-bias-variance.png}{Neural Network function approximation.}{0.65}
+
+Note that the Universal approximation power works only for regression problems, since classification problems are usually more difficult as they often need 3 layers instead of 2.
+
+\paragraph*{Continuous-Valued Units.} The usage of continuous-valued units allows us to introduce calculus and derivative procedures that will give us several advantages.\\ 
+The ``rate of firing'' of the neurons is \textbf{sigmoid} (or logistic), which means they can fire with different intensities. Their output is not boolean; instead, it belongs to the continuous range between $0$ and $1$. These values are often interpreted as probabilities.
 $$g \rightarrow \sigma(x) = \frac{1}{1+e^{-f(x)}} \in (0,1)$$
 \image{img/sigmoid}{Sigmoid function.}{0.51}
-Continuous-Valued discriminant functions allows us to have a confidence about the prediction. We will see later on that they are used for finding optimal solutions using the gradient descent technique. In particular, when the $g(z)$ is close to zero (less confidence about the prediction) the gradient will be greater then the situation in which $|g(x)| >> 0$ (more confidence, weights could remain stable).\\
+Continuous-Valued discriminant functions allow us to have some measure of confidence about the prediction. We will see later on that they are used for finding optimal solutions through the gradient descent technique. In particular, when the $g(z)$ is close to zero (less confidence about the prediction) the gradient will be greater then the situation in which $|g(x)| >> 0$ (more confidence, weights could remain stable).\\
 
-\textbf{Hyperbolic tangent} is a rescaling of the logistic sigmoid such that its output range is from -1 and 1. This type of function could be better because the length of the interval has length 2 and so it has more degrees of freedom.
-$$g \rightarrow \sigma(x) = \frac{e^{f(x)} - e^{-f(x)}}{e^{f(x)} + e^ {-f(x)}} \in (- 1,1)$$
+\textbf{Hyperbolic tangent} ($tanh$) is a rescaling of the logistic sigmoid such that its output range is from -1 and 1. This type of function could be more useful than $tanh$ because the interval has length 2 and therefore it has more degrees of freedom.
+$$g \rightarrow \sigma(x) = \frac{e^{f(x)} - e^{-f(x)}}{e^{f(x)} + e^ {-f(x)}} \in (-1, 1)$$
 \image{img/hyperbolic}{Hyperbolic tangent function.}{0.45}
 
+
+
 \subsection{Back-propagation Learning Algorithm}
-It is an algorithm for learning the weights in a feed-forward network, solving the learning in multilayers neural networks (respect to the one provided by the perceptron). We've got a training set $\mathcal{L} = \{(x_1, y_1), \dots, (x_n,y_n) \}$ in which each pair is an input/output behavior. The algorithm is based on gradient descent method, it can be considered as a greedy algorithm with infinite possible solutions where each time the best solution is chosen. The algorithm is guarantee to converge only to a local maximum and during the execution we move along the gradient through a predetermined step-size. This property is due to the fact that this algorithm is just an approximation based on a greedy solution.
+Backpropagation is an algorithm for learning the weights in a feed-forward network, solving the learning in multilayers neural networks (with respect to the one provided by the perceptron). Let a training set $\mathcal{L} = \{(x_1, y_1), \dots, (x_n,y_n) \}$, in which each pair is an input/output tuple, be given. The algorithm is based on gradient descent and can be seen as a greedy algorithm with infinite possible solutions, in which at each step the best solution is chosen. The algorithm is guaranteed to converge only to a local maximum and during the execution we move along the gradient through a predetermined step-size. This property is due to the fact that this algorithm is just an approximation based on a greedy solution.
 \image{img/backpropagation}{Back-propagation schema. $W^l_{ij}$ represents the weight on connection between the $i^{th}$ unit in layer $(l-1)$ to $j^{th}$ unit in layer $l$.}{0.70}
 
-\paragraph*{Supervised Learning.} Supervised learning algorithms require the presence of a previous knowledge that makes possible to provides the right answers to the input questions. Technically this means that we need a \textbf{training set} of the form:
+
+\paragraph*{Supervised Learning.} Supervised learning algorithms require the presence of previous knowledge that makes it possible to provide the right answers to the input ``questions''. Technically this means that we need a \textbf{training set} of the form:
 $$\mathcal{L} =\left\{\left(x^1, y^1 \right), \dots , \left(x^p, y ^p \right) \right\}$$
 where:
 $$x^\mu (\mu=1,\dots, p) \text{ is the network input vector}$$
 $$y^\mu (\mu=1,\dots, p) \text{ is the desired network output vector}$$
-The learning (or training) phase consists of determining a configuration of weights in such a way that the network output be as close as possible to the desired output, for all the examples in the training set. Normally, this amounts to minimizing an \textbf{error function} such as:
+The learning (or training) phase consists in determining a configuration of weights such that the network output should be as close as possible to the desired output as many times as possible, for all the examples in the training set. Normally, this amounts to minimizing an \textbf{error function} such as the MSE (Mean Squared Error) function:
 $$E(w) = \frac{1}{2} \sum_{\mu} \sum_{k} \left(y_k^\mu - O_k^\mu(w)\right)^2$$
-where $O_k^\mu(w)$ is the output provided by the output unit $k$ when the network is given example $\mu$ as input. In other words, $O_k^\mu(w)$ represents the prediction of the $k^{th}$ unit when the input is $\mu$. The loss function computes the difference between the network output and the expected output and of course, our aim is to \textbf{minimize the loss function} $min_w E(w)$ that means finding the set of weights that minimize the function. It is possible to say so that we are in a minimization (optimization) problem. If the network is performing well $E(\omega)$ is close to zero.\\
-In order to minimize the error function $E$, we can use the classic \textbf{gradient-descent} algorithm. Gradient gives information about the best path to follow in order to increase/decrease our objective function. Without any kind of direction information it would be extremely complex to find the solution since we have to search along an infinite number of directions in a continuous domain. Gradient descent is a very well-known greedy algorithm, but it does not guarantee to find an optimal solution, but at least a local one. It is a first-order iterative optimization algorithm for finding the minimum of a function. It can be defined as:
+where $O_k^\mu(w)$ is the output provided by the output unit $k$ when the network is given example $\mu$ as input. In other words, $O_k^\mu(w)$ represents the prediction of the $k^{th}$ unit when the input is $\mu$. The loss function computes the difference between the network output and the expected output and of course, our aim is to \textbf{minimize the loss function} (i.e. solve $min_w E(w)$), which means finding the set of weights that minimizes the function. The learning algorithm can thus be seen as an optimization problem. If the network is performing well, then $E(\omega)$ is close to zero.\\
+In order to minimize the error function $E$, we can use the classic \textbf{gradient-descent} algorithm. The gradient gives information about the best path to follow in order to increase/decrease our objective function. Without any kind of direction information it would be extremely complex to find the solution since we have to search along an infinite number of directions in a continuous domain. Gradient descent is a very well-known greedy algorithm. It is not guaranteed to find a globally optimal solution, but it works well in finding local optima. It is a first-order iterative optimization algorithm for finding the minimum of a function. It can be defined as:
 $$w_{ji} \leftarrow w_{ji} - \eta \frac{\partial E_k}{\partial w_{ji}} \qquad \text{where } \eta \text{ is the learning rate.}$$
 In back-propagation algorithm, we have an initial configuration of the network and at each step we update the weights as:
 $$w_{new} = w_{old} - \eta \nabla E(w_{old})$$
@@ -170,29 +181,32 @@ To compute the partial derivatives we use the \textbf{error back propagation} al
 	\item \textbf{Forward pass}: the input of the network is propagated layer after layer in forward direction.
 	\item \textbf{Backward pass}: the "error" made by the network is propagated backward and weights are updated properly.
 \end{itemize}
-In a more informal way it is possible to say that we determine the gradient direction and then we will move in the opposite direction since we want to minimize the error.
+Intuitively, we could say that we determine the gradient direction and then we move in the opposite direction since we want to minimize the error.
 
-\paragraph*{Notations.} Before start understanding in which way the weights are updated, it is important to fix some notations that will be used later.\\
+
+\paragraph*{Notation.} Before understanding how the weights are updated, it is important to introduce some notation that will be used later.\\
 Given a pattern $\mu$, hidden unit $j$ receives a net input
 $$h _ { j } ^ { \mu } = \sum _ { k } w _ { j k } x _ { k } ^ { \mu }$$
 and produces as output:
 $$V _ { j } ^ { \mu } = g \left( h _ { j } ^ { \mu } \right) = g \left( \sum _ { k } w _ { j k } x _ { k } ^ { \mu } \right)$$
+The output of a neuron in the output layer is defined as:
+$$O _ {i} ^ {\mu} = g(\sum _ k w_{ik} \cdot V _ {k} ^ {\mu})$$
 \imageb{img/notations}{0.5}
 
-\paragraph*{Updating Hidden-to-Output Weights.} The updating rules of the back-propagation algorithm are nothing but a long series of chain rules, for this reason, the objective function is not linear and so the output is highly non linear, indeed, it is a product of chain of non linear functions.\\
+\paragraph*{Updating Hidden-to-Output Weights.} The updating rules of the back-propagation algorithm are nothing but a long series of chain rules. For this reason, the objective function is not linear, hence the output is highly non linear. Indeed, the output is a chain of products of non-linear functions.\\
 \begin{equation} \notag
 \begin{split}
-\Delta w_{ij} &= -\eta \frac{\partial E}{\partial w_{ij}}\\
-&= -\eta \frac{\partial}{\partial w_{ij}} \left[\frac{1}{2} \sum_{\mu} \sum_k (y_k^\mu - O_k^\mu)^2\right] \quad \text{First application of the chain rule}\\
-&= \eta \sum _{\mu} \sum_{k} \left(y_{k}^{\mu} - O_{k}^{\mu} \right) \frac{\partial O_{k}^{\mu}} {\partial w_{ij}} \quad \text{The sum over } k \text{ disappers because the partial derivative is}\\
+\Delta W_{ij} &= -\eta \frac{\partial E}{\partial W_{ij}} \quad \text{Replace the error function with its actual expression}\\
+&= -\eta \frac{\partial}{\partial W_{ij}} \left[\frac{1}{2} \sum_{\mu} \sum_k (y_k^\mu - O_k^\mu)^2\right] \quad \text{First application of the chain rule}\\
+&= \eta \sum _{\mu} \sum_{k} \left(y_{k}^{\mu} - O_{k}^{\mu} \right) \frac{\partial O_{k}^{\mu}} {\partial W_{ij}} \quad \text{The sum over } k \text{ disappers because the partial derivative is}\\
 & \hspace*{13.5em} \text{different from 0 only when }k=i \\
-&= \eta \sum_{\mu} \left(y_{i}^{\mu} - O_{i}^{\mu} \right) \frac{\partial O_{i}^{\mu}} {\partial w_{ij}} \qquad \text{Again we apply the chain rule. Partial derivative can be}\\
-& \hspace*{12.5em} \text{written as } w_{ij} \rightarrow h_i^\mu \rightarrow g'(h_i^\mu)\\
-&= \eta \sum _ { \mu } \left( y _ { i } ^ { \mu } - O _ { i } ^ { \mu } \right) g ^ { \prime } \left( h _ { i } ^ { \mu } \right) V _ { j } ^ { \mu } \qquad \text{That is } \frac{\partial h_i^\mu}{\partial w_{ij}} = \frac{\partial}{\partial w_{ij}}\left(\sum_l w_{il} V_l \right) = V_j \frac{\partial w_{ij}}{\partial w_{ij}} = V_j\\
+&= \eta \sum_{\mu} \left(y_{i}^{\mu} - O_{i}^{\mu} \right) \frac{\partial O_{i}^{\mu}} {\partial W_{ij}} \qquad \text{Again we apply the chain rule. Partial derivative can be}\\
+& \hspace*{12.6em} \text{written as } W_{ij} \rightarrow h_i^\mu \rightarrow g'(h_i^\mu)\\
+&= \eta \sum _ { \mu } \left( y _ { i } ^ { \mu } - O _ { i } ^ { \mu } \right) g ^ { \prime } \left( h _ { i } ^ { \mu } \right) V _ { j } ^ { \mu } \qquad \text{That is } \frac{\partial h_i^\mu}{\partial W_{ij}} = \frac{\partial}{\partial W_{ij}}\left(\sum_l W_{il} V_l \right) = V_j \frac{\partial W_{ij}}{\partial W_{ij}} = V_j\\
 &= \eta \sum _ { \mu } \delta _ { i } ^ { \mu } V _ { j } ^ { \mu } \qquad \qquad where: \quad \delta _ { i } ^ { \mu } = \left( y _ { i } ^ { \mu } - O _ { i } ^ { \mu } \right) g ^ { \prime } \left( h _ { i } ^ { \mu } \right)
 \end{split}	
 \end{equation}
-In $\eta \sum_{\mu} \delta_{i}^{\mu} V_{j}^{\mu}$, the component $\delta_{i}^{\mu}$ represents the error made by the $i$-th neuron and instead $V_{j}^{\mu}$ is the output of the neuron.  
+In $\eta \sum_{\mu} \delta_{i}^{\mu} V_{j}^{\mu}$, component $\delta_{i}^{\mu}$ represents the error made by the $i$-th neuron, whilst $V_{j}^{\mu}$ is the output of the neuron.  
 
 \paragraph*{Updating Input-to-Hidden Weights.}
 \begin{equation} \notag
@@ -222,57 +236,58 @@ Hence coming back to the original equation we have that:
 \end{split}
 \end{equation}
 $\sum_{i} \delta_{i}^{\mu} W_{ij}$ is the average error performed by the output layer and $i$ is the reference to the $i$-th neuron.\\
-In the following image it is possible to understand the error back-propagation in which the black line means the forwarded signal instead the red lines indicate the error that is back-propagated.
+In the following image it is possible to understand the error back-propagation. The black lines correspond to the forwarded signals, while the red lines indicate the error that is back-propagated.
 \image{img/error_backpropagation}{Error Back-propagation representation.}{0.6}
 
 \paragraph*{Locality of Back-Propagation.} Another important aspect is the locality of the back-propagation.
 \image{img/locality_backpropagation}{Locality of back-propagation}{0.2}
-\textbf{Off-line:} In this way we compute the gradient exactly. It is done a sum over all the possible $\mu$. Normally this procedure is not used because it is computational expensive and also because if we start search in a bad region we can't escape from it.
+\textbf{Off-line:} In this way we compute the gradient exactly. We compute a sum over all the possible $\mu$. This procedure is not generally used because it is computationally expensive and because cannot escape ``bad'' regions in which we may start the search procedure.
 $$\Delta \omega_{pq} = \eta \sum_{\mu} \delta_{p}^{\mu} V_{q}^{\mu} \qquad \qquad \text{off-line}$$
 $$\delta_{p}^{\mu} = \text{Error} \quad V_{q}^{\mu} = \text{Output of neurons}$$
-\textbf{On-line:} In this other situation some noise is introduced. It allows to escape a bad region and to reach a better solution through the exploration of regions that otherwise we won't visit.
+\textbf{On-line:} In this situation some noise is introduced. The noise allows escaping from bad regions and reaching better solutions through the exploration of regions that otherwise we would not visit.
 $$\Delta \omega_{pq} = \eta\delta_ {p}^{\mu} V_{q}^{\mu} \qquad \qquad \text{on-line}$$
-A possible compromise between the two techniques is to use the first technique with a small training set, this third option is called (\textbf{stochastic gradient descent}).
+A possible compromise between the two techniques is to use the first technique with a small training set; this third option is called (\textbf{stochastic gradient descent}).
 
 %TODO: Da commentare
 \paragraph*{The Back-Propagation Algorithm.} In this algorithm we will use the on-line rule.\\
-The general structure of the algorithm:
+The general structure of the algorithm is the following:
 \begin{enumerate}
-	\item Initialize the weight to (\textit{small}) random values. Small because otherwise derivative of logistic function will be all zeros.
+	\item Initialize the weight to (\textit{small}) random values. They must be small to avoid the derivative of the logistic function being all zeros.
 	%TODO: Immagine
 	\item Choose a pattern $\bar{x}^\mu$ and apply it to the input layer $(m=0)$.
 	$$V _ { k } ^ { 0 } = x _ { k } ^ { \mu } \qquad \forall k$$
-	\item Propagate the signal forward, remember that $g$ is a continuous function:
+	\item Propagate the signal forward. (Remember that $g$ is a continuous function):
 	$$V _ {i} ^ { m } = g \left( h _ { i } ^ { m } \right) = g \left( \sum _ { j } w _ { i j } V _ { j } ^ { m - 1 } \right)$$
-	\item Compute the $\delta$'s for the output layer:
+	\item Compute the $\delta$s for the output layer:
 	$$\delta _ { i } ^ { m } = g ^ { \prime } \left( h _ { i } ^ { m } \right) \left( y _ { i } ^ { m } - V _ { i } ^ { m } \right)$$
-	\item Compute the $\delta$'s for all preceding layers (for each neuron):
+	\item Compute the $\delta$s for all preceding layers (for each neuron):
 	$$\delta _ { i } ^ { m - 1 } = g ^ { \prime } \left( h _ { i } ^ { m - 1 } \right) \sum _ { j } w _ { j i } ^ { m } \delta _ { j } ^ { m }$$
 	\item Update connection weights according to the error, with learning rate $\eta$:
 	$$w _ { i j } ^ { N E W } = w _ { i j } ^ { O L D } + \Delta w _ { i j } \qquad \text { where } \quad \Delta w _ { i j } = \eta \delta _ { i } ^ { m } V _ { j } ^ { m - 1 }$$
 	\item Go back to step 2 until convergence.
 \end{enumerate}
-One of the most important problem is the fact that $\eta$ (learning step) should be initialized in a correct way. When $\eta$ is small the algorithm will converge but it will be too slow, on the other hand when it is too big, there will be an oscillating problem that won't bring the algorithm to the convergence. \\
-In the following image four trajectories can be found, the only significant difference between them is the value of $\eta$ they used. From left to right they are $0.02, 0.0476, 0.049, 0.0505$.
+
+One of the most challenging problems is that $\eta$ (learning step) should be initialized in a correct way. When $\eta$ is small the algorithm will converge but it will be too slow; on the other hand, when it is too big, there will be an oscillating problem that won't bring the algorithm to the convergence. \\
+In the following image we can see the difference in convergence between the same algorithm run with different values of $\eta$. From left to right, they are $0.02, 0.0476, 0.049, 0.0505$.
 \image{img/learning_rate}{The Role of the Learning Rate. The minimum is at the $+$ and the ellipse shows a constant error contour.}{0.9}
-The first case is too slow in reaching the minimum, in the second and in the third case the oscillation becomes smaller and smaller, instead in the last case the algorithm won't converge, the oscillation is larger and larger.\\
+We can observe that the first case is too slow in reaching the minimum, while in the second and in the third case the oscillation becomes smaller and smaller. Finally, in the last case, the algorithm won't converge, as the oscillation becomes larger and larger.\\
 As said before, one of the main limitations of the \textbf{gradient descent} method is the fact that:
 \begin{itemize}
 	\item It converges too slowly if $\eta$ is too small.
 	\item It oscillates if $\eta$ is too large.
 \end{itemize}
-One possible remedy to this problem is in introducing the \textbf{momentum term}, a simple heuristic that can help to find a good value for learning rate. One of the main advantages of this improvement is the fact that it will introduce a correction that is based also on the step at time $t-1$, on the contrary the original idea produces a correction related only to the current point.
+One possible remedy to this problem is in introducing the \textbf{momentum term}, a simple heuristic that can help in finding a good value for $\eta$. This improvement has the advantage of introducing a correction that is based on the step at time $t-1$, while the original algorithm produces a correction which is only related to the current point.
 $$\Delta \omega_{pq}(t+1) = -\eta \frac{\partial E}{\partial w_{pq}}+\underbrace{\alpha \Delta w_{pq} (t)}_{\text{momentum }}$$
 
 \begin{itemize}
 	\item If $\alpha = 0$ we come back to the original formula $\Delta = f(w^T)$
 	\item Otherwise $\Delta = f(w^T, w^{t-1})$
 \end{itemize}
-The momentum term introduces dependency with the previous step. Surely, a negative aspect is the fact that we need to set two parameters but on the other hand the momentum term allows us to use large values of $\eta$ avoiding the introduction of the oscillatory phenomena. The application of the momentum term can be seen in the following image.
+The momentum term introduces dependency on the previous step. The obvious disadvantage is the need to set two parameters instead of one. On the other hand the momentum term allows us to use large values of $\eta$ avoiding the introduction of the oscillatory phenomena. The application of the momentum term can be seen in the following image.
 \image{img/momentum_term}{Momentum term application.}{0.45}
-Both trajectories uses $\eta=0.0476$ that is the best value of learning rate in the absence of momentum. On the left example there is not application of momentum $(\alpha=0)$, while on the right $\alpha=0.5$. The application of momentum, hence, brings a clear improvement in the convergence.
+Both trajectories use $\eta=0.0476$ that is the best value of learning rate in the absence of momentum. In the left example, no momentum is applied $(\alpha=0)$, while in the right one we have $\alpha=0.5$. The application of momentum, hence, brings a clear improvement in convergence.
 
-\paragraph*{The Problem of Local Minima.} One of the most important disadvantages is the fact that back-propagation cannot avoid the problem of local minima. For this reason the choice of initial weights is very important, if they are too large the nonlinearities tend to saturate since the beginning of the learning process. \\
+\paragraph*{The Problem of Local Minima.} One of the toughest disadvantages to overcome is the fact that back-propagation cannot avoid the problem of local minima. For this reason the choice of initial weights is of uttermost importance. If the weights are too large, the nonlinearities tend to saturate since the beginning of the learning process. \\
 A common heuristic for the choice of the initial weights is: 
 $$w_{ij} \simeq 1/\sqrt{K_i} \qquad \text{Where } k_i \text{ is the number of units that feed unit }i \text{ (the "fan-in" of }i \text{)}$$
 \image{img/problem_local_minima}{The problem of local minima.}{0.4}
@@ -280,40 +295,41 @@ $$w_{ij} \simeq 1/\sqrt{K_i} \qquad \text{Where } k_i \text{ is the number of un
 \subsection{Theoretical / Practical Questions}
 \begin{itemize}
 	\item How many layers are needed for a given task?
-	\item How many units per layer?
+	\item How many units should per layer should we use?
 	\item To what extent does representation matter?
 	\item What do we mean by generalization?
-	\item What can we expect a network to generalize?
+	\item What can we expect from a network as far as generalization is concerned?
 	\begin{itemize}
-		\item \textbf{Generalization:} performance of the network on data not included in the training set. One of the major advantages of neural nets is their ability to generalize. This means that a trained net could classify data from the same class as the learning data that it has never seen before. In real world applications developers normally have only a small part of all possible patterns for the generation of a neural net. To reach the best generalization, the dataset should be split into three parts: training set, validation set and test set.\\
-		The learning should be stopped in the minimum of the validation set error. At this point the net generalizes best. When learning is not stopped, overtraining occurs and the performance of the net on the whole data decreases, despite the fact that the error on the training data still gets smaller. After finishing the learning phase, the net should be finally checked with the third data set, the test set.
+		\item \textbf{Generalization:} performance of the network on data not included in the training set. One of the major advantages of neural nets is their ability to generalize. This means that a trained net could classify data (belonging to the same class as the learning data) that it has never seen before. In real world applications, developers usually have a small part of all the possible patterns for the generation of a neural network. To reach the best generalization, the dataset should be split into three parts: training set, validation set and test set.\\
+		The learning should be stopped when the minimum of the validation set error is reached. At this point the net should be generalizing in the best possible way. When learning is not stopped, ``overtraining'' occurs and the performance of the net on the dataset as a whole decreases, despite the fact that the error on the training data still gets smaller. In this case, we say the network is \textit{overfitting}. As a matter of fact, after finishing the learning phase the net should be evaluated on the third data set, the test set.
 		\item Size of the training set: how large a training set should be for "good" generalization?
-		\item Size of the network: too many weights in a network result in poor generalization.
+		\item Size of the network: too many weights in a network may result in poor generalization.
 	\end{itemize}
 \end{itemize}
 
 \subsection{Model evaluation}
-When we talk about the model evaluation, it is important to understand specially in which way the goodness of the model can be evaluated. Surely the lower is the error generated by the model and the best is the fit created by the model. It is possible to differentiate between two different types of errors:
+When we talk about model evaluation, it is important to understand how the performance of a model can be evaluated. An intuitive idea is that the lower the error generated by the model is, the better the model is. It is possible to discern between two different types of errors:
 \begin{itemize}
 	\item The \textbf{true error} (denoted $error_{\mathcal{D}}(h)$) of hypothesis $h$ with respect to target function $f$ and distribution $\mathcal{D}$, is the probability that $h$ will misclassify an instance drawn at random according to $\mathcal{D}$.
 	$$error_{\mathcal{D}}(h) \equiv \operatorname{Pr}_{x \in \mathcal{D}} \left[f(x) \neq h(x)\right]$$ 
-	In other words it measures the probability of committing error in the real life, but notice that for computing this quantity it is necessary to have knowledge of the probability distribution (which in general in unknown).
+	In other words, the true error measures the probability of making a mistake in real life. However, notice that for computing this quantity it is necessary to have knowledge of the probability distribution (which is usually unknown).
 	
 	\item The \textbf{sample error} (denoted $error_{s}(h)$) of hypothesis $h$ with respect to target function $f$ and data sample $S$ is:
 	$$error_{S}(h) \equiv \frac{1}{n} \sum_{x \in S} \delta (f(x) , h(x))$$ 
-	Where $n$ is the number of examples in $S$, and the quantity $\delta(f(x), h(x))$ is $1$ if $f(x) \neq h(x)$, and $0$ otherwise. It comes from the idea that since in general we don't know the probability distribution of our data we estimate it using the samples.
+	Where $n$ is the number of samples in $S$, and the quantity $\delta(f(x), h(x))$ is $1$ if $f(x) \neq h(x)$, and $0$ otherwise. The sample error comes from the idea of estimating the probability distribution of the data from the samples available, since the distribution is generally unknown.
 \end{itemize}
-The true error is unknown (and will remain so forever$\dots$). In order to compute the sample error, it is possible to subdivide the dataset in a percentage for the training set and a percentage for the test set.
+
+The true error is unknown (and will remain so forever$\dots$). In order to compute the sample error, it is possible to split the dataset, keeping a percentage for the training set and a percentage for the test set.
 \image{img/train_test}{Training set vs Test set.}{0.4}
-\paragraph{Cross-Validation} Cross-validation is a technique to evaluate predictive models by partitioning the original sample into a training set to train the model, and a test set to evaluate it. It avoids that test and training set affect the model evaluation. 
+\paragraph{Cross-Validation} Cross-validation is a technique to evaluate predictive models by partitioning the original sample into a training set to train the model, and a test set to evaluate it. It avoids the chance that the test and training sets affect the model evaluation. 
 \image{img/cross_validation}{Cross validation example using
 \textbf{leave-one-out} technique (size of the test fold = 1).}{0.6}
 Cross validation is an useful method to evaluate the performance of a neural network. The drawback is the time required to run it.
 
 \paragraph{Overfitting}
-Even if the cross-validation technique can give us a good evaluation of the model, it is possible that this score is due to a particular problem called \textbf{overfitting}. In the following image, it is possible to see in the right image its phenomenon.
+Even though cross-validation can give us a good evaluation of the model, it is possible that this score is due to a particular problem called \textbf{overfitting}. In the following image, it is possible to see in the right image its phenomenon.
 \image{img/overfitting}{Example of overfitting.}{0.65}
-In the image \textbf{(a)}, a good fit to noisy data and the model uses less parameters capturing the general trend behavior. Instead in the image \textbf{(b)} overfitting of the same data is performed, the fit is perfect on the "training set", but it is likely to be poor on "test set" represented by the circle. Following the concept of the \textbf{Occam's razor} the simplest model is preferable.\\
+In the image \textbf{(a)}, we notice a good fit to noisy data and the model seems to be using fewer parameters to capture the general behavior. In image \textbf{(b)}, instead, an overfitted model can be seen: the fit is perfect on the training set, but it is likely to be poor on the test set represented by the circle. \textbf{Occam's razor} intuitively explains why the simplest model is to be preferred.\\
 The different steps in the model definition are reached through the separation of the starting set in:
 \begin{itemize}
 	\item \textbf{Training set:} for the execution of the learning algorithm.
@@ -321,17 +337,19 @@ The different steps in the model definition are reached through the separation o
 	\item \textbf{Test set:} to evaluate the performance of the learning algorithm.
 \end{itemize}
 \image{img/early_stopping}{Early stopping.}{0.5}
-Epoches of a learning algorithms represents the steps of machine learning algorithm. After the green line (overfitting line) during the next epochs the model start to learn noisy. Note also that the greater global optimum represents the overfit of the model, meaning that the error function is equal to zero since the model works well with training data points.
-The stop of the learning algorithm is executed when the fit starts deteriorating.
+Epochs of a machine learning algorithm represent the steps taken by the algorithm. Starting from the green line (overfitting line), the model will start to overfit on the training data. Notice also that the global optimum consists in an overfitted model, with the error function approaching zero.
+The learning algorithm is stopped when the fit starts deteriorating.
 
-\paragraph*{The size of the NN.} The size of a NN (the number of hidden neurons) affects both its functional capabilities and its generalization performance.
+\paragraph*{The size of a Neural Network} 
+The size of a NN (the number of hidden neurons) affects both its functional capabilities and its generalization performance.
 \begin{itemize}
-	\item A \textbf{big network} leads to poor generalization performance. It has a lot of parameters and for this reason it's a too complex model.
-	\item A \textbf{small network} could not be able to realize the desired input/output mapping and for this reason it won't be able to learn nothing.
+	\item A \textbf{big network} leads to poor generalization performance. It has a many parameters and may prove to be an overly complex model.
+	\item A \textbf{small network} could not be able to model the desired input/output mapping and for this reason it would not actually learn anything.
 \end{itemize}
-However, it is hard to tell when the algorithm should stop because it is impossible to tell if the addiction of a further unit will dramatically decrease the error. This problem is known as \textbf{horizon effect}. A common strategy is called \textbf{growing}, it starts with one neuron and then it tries to train. It will add neurons until we will reach the right size.
 
-\paragraph*{The Pruning Approach.} This approach is based on the idea of training an over-dimensioned network and then removing \textbf{redundant} nodes and connections. In pruning, indeed, we have a large number of neurons than the necessary and we will search to reduce the size. Pruning reduces the final complexity of the classifier and hence, it improves predictive accuracy by the reduction of overfitting.\\
+In general, it is hard to tell when the algorithm should stop because it is impossible to foresee if increasing the number of neurons would significantly decrease the error. This problem is known as the \textbf{horizon effect}. A common strategy is called \textbf{growing}: the procedure starts with one neuron and trains it. Going on, it will iteratively adds neurons until satisfying results are obtained.
+
+\paragraph*{The Pruning Approach.} This approach is based on the idea of training an over-dimensioned network and then removing \textbf{redundant} nodes and connections. The idea of pruning is to start with a large number of neurons and reduce it as much as possible. Pruning reduces the final complexity of the classifier, hence improving the network's predictive accuracy by avoiding overfitting.\\
 The most important advantages of this technique are:
 \begin{itemize}
 	\item Arbitrarily complex decision regions.
@@ -339,17 +357,17 @@ The most important advantages of this technique are:
 	\item Independence of the training algorithm.
 \end{itemize}
 
-The pruning approach has anyway some disadvantages: in a network with the perfect number of neurons backpropagation can fail, since the number of degree of freedom is limited. In general it is not a good idea to apply learning algorithms on a network with the exact number of neurons due to the limitation on the degrees of freedom. If we have more degrees of freedom we have more chance and different ways to reach the desired objective.\\
-We can have two types of pruning algorithm:
+The pruning approach has some disadvantages: in a network with the ``perfect'' number of neurons, backpropagation can fail because of the limited number of degrees of freedom. Usually it is not a good idea to apply learning algorithms on networks with the exact number of neurons due to the limitation imposed by the degrees of freedom. Having more degrees of freedom implies higher chances and more different ways to reach the desired goal.\\
+We can have two types of pruning algorithms:
 \begin{itemize}
-	\item \textbf{Online pruning:} during the training process it will decrease the size of the network.
-	\item \textbf{Offline pruning:} it's preferable because it is possible to train the network in whatever way and the pruning is done only after the training process. 
+	\item \textbf{Online pruning:} decreases the size of the network during the training process.
+	\item \textbf{Offline pruning:} preferable because it does not put limits on how the network should be trained, since the pruning is done only after the training process. 
 \end{itemize}
-Suppose (for simplicity) a network with one hidden layer and suppose that unit $h$ is to be removed. 
+Suppose (for simplicity) we have a network with one hidden layer and suppose that unit $h$ is to be removed. 
 \image{img/pruning}{Example of the pruning approach.}{0.5}
-As a consequence of this action we have to remove the incoming/outgoing connections and update the weights of the other connections such that the output remains the same. We focus on the input because if the input remains the same also the output remains unchanged.
+As a consequence of this action we have to remove the incoming/outgoing connections and update the weights of the other connections such that the output remains the same. We focus on the input, since if the input remains the same also the output remains unchanged.
 
-This is equivalent to solving the system:
+This is equivalent to solving the following system of equations:
 $$\underbrace{\sum_{j=1}^{n_{h}} w_{ij} y_{j}^{(\mu)}}_{\text{Before removing }h} = \underbrace{\sum_{j=1 \atop j\neq h}^{n_{h}} \left( w_{ij} + \delta_{ij} \right) y_{j}^{ (\mu)}}_{\text{After removing }h} \qquad i=1 \dots n_0 \text{ (\# output nodes)},~\mu=1 \dots P \text{ (network levels)}$$
 Which is equivalent to the following linear system (in the unknown $\delta$'s):
 $$\sum_{j \neq h} \delta_{ij} y_{j}^{(\mu)} = w_{ih} y_{h}^{(\mu)} \qquad i=1, \dots n_0, ~ \mu=1,\dots, P$$
@@ -367,9 +385,9 @@ $$Ax = b \qquad \text{where } A \in \mathbb { R } ^ { P n _ { o } \times n _ { o
 $A$ is a matrix that represents the weights of the nodes in the output layer fed by the node $h$, $x$ are the feature vectors and $b$ means the contribution to the network.\\
 The \textbf{Least Squares solution} is:
 $$min_{\bar{x}} \vert \vert A \bar{x} - b \vert \vert$$
-A solution not always exists.\\
+Notice that a solution may not always exist.\\
 %TODO: Da spiegare meglio detecting excessive units
-An important aspect is to detect which is the right neuron to prune. Residual reducing-methods start with an initial solution $x_0$ and produces some sequences of points $\{x_k\}$ so that the residuals are computed as:
+An important aspect is to detect which is the right neuron to prune. Residual-reducing methods start with an initial solution $x_0$ and produce some sequences of points $\{x_k\}$ so that the residuals are computed as:
 $$\vert \vert Ax_0 - b \vert \vert  = r_0 \hspace{9.7em} $$
 $$\vert \vert Ax_1 - b \vert \vert  = r_1 \hspace{9.7em}$$
 $$\vdots \hspace{9em}$$
@@ -377,15 +395,15 @@ $$\vert\vert Ax_k - b \vert \vert = r_k \qquad \text{ where } r_k \leq r_{k-1}$$
 The starting point is in $x_0 = 0 \rightarrow r_0=||b||$.
 From this previous observation it is possible to say that excessive units can be detected so that $|| b ||$ is minimum.\\
 
-The  algorithm instead of computing all the system considers only the initial contribution $||b||$ for each neuron, and then uses it as an estimate of the true contribution. Once the neuron with the smallest contribution is detected, the real linear system is computed and weights on the net are updated. It is an heuristic procedure that hopes that the initial contribution $||b||$ will be not to far from the real one.
+Instead of solving the whole system, the algorithm considers only the initial contribution $||b||$ for each neuron, and then uses it as an estimate of the true contribution. Once the neuron with the smallest contribution is detected, the real linear system is computed and weights on the net are updated. All in all, this is an heuristic procedure that hopes that the initial contribution $||b||$ won't be too far from the real one.
 
 \paragraph{Example} $b = w_{ih}y_n$ and $A= \sum\delta_{ij}y_j^{(\mu)}$
 
 $$h1: \vert \vert A_1x_1 - b_1 \vert \vert  = 0.1 \hspace{9.7em} $$
 $$h2: \vert \vert A_2x_1 - b_2 \vert \vert  = 1.6 \hspace{9.7em} $$
 $$h3: \vert \vert A_3x_1 - b_3 \vert \vert  = 7.6 \hspace{9.7em} $$
-From this example we can see that $h_1$ should be removed since the contribution of that neuron is the smallest one and it is very small. We can see that $ \vert \vert A_hx_h - b_h\vert \vert$ measures how different is the network after removing the neuron $h$.
-The problem of this procedure is that we have to compute a lot of linear systems, one for each neuron.
+From this example we can see that $h_1$ should be removed since the contribution of that neuron is the smallest one and it is very small. We can see that $ \vert \vert A_hx_h - b_h\vert \vert$ measures how different the network is after removing neuron $h$.
+The problem of this procedure is that we have to solve many linear systems, one for each neuron.
 
 
 
@@ -402,39 +420,41 @@ The pruning algorithm follows these steps:
 	Until $\text{Perf(pruned)} - \text{Perf(original)} < \varepsilon$
 	\item Reject the last reduced network.
 \end{enumerate}
-We can formulate the goal al the pruning algorithm in this way:
+We can fomalize the goal of the pruning algorithm in this way:
 $$\min_x \vert\vert Ax + b \vert\vert$$
+
+
 \subsection{Deep Neural Networks}
-The philosophy based on Deep Learning is to learn a feature hierarchy from the initial pixel image in order to obtain a classifier. Each layer extracts features from the output of previous layer and it trains all layers jointly.
+The philosophy on which Deep Learning relies is to learn a feature hierarchy from the initial pixel image in order to obtain a classifier. Each layer extracts features from the output of previous layer. The training phase involves all the layers, jointly.
 \image{img/deep_learning}{Example of deep learning process.}{0.75}
 
-\paragraph*{Shallow vs Deep Networks.} Shallow architectures are inefficient at representing deep functions. A shallow network, indeed, has less number of hidden layers. A shallow network with a large enough single hidden layer can fit any function (universal approximator), but on the other hand this produces a very large hidden layer and increase a lot the number of parameters. A deep network can fit functions better with less parameters than a shallow network, increasing the number of hidden layers but decreasing the number of required parameters. Deep networks try to simulate the brain behavior, in which the electronic signals traversal different layers.
+\paragraph*{Shallow vs Deep Networks.} Shallow architectures are inefficient at representing deep functions. A shallow network, indeed, has less number of hidden layers. A shallow network with a large enough single hidden layer can fit any function (universal approximator), but on the other hand this produces a very large hidden layer and increases significantly the number of parameters. A deep network can fit functions better with less parameters than a shallow network, increasing the number of hidden layers but decreasing the number of required parameters. Deep networks try to simulate the brain's behavior, in which the electric signals propagate across different layers.
 \image{img/shallow_vs_deep}{Shallow vs Deep Networks.}{0.78}
 
-Another important aspect to notice is the fact that there's an improvement of the performances with the presence of more data.
+Another important aspect to notice is the improvement in performance with the presence of more data.
 \image{img/performances}{Performances improves with more data.}{0.6}
-The usage of deep networks is not a current idea, it is indeed an old idea, but it has been made possible only nowadays thanks to the fact that we have more data and we have more computing power (GPUs are really good at this).\\
-The \textbf{image classification} consists in predicting a single label (or a distribution over labels as shown here to indicate our confidence) for a given image. Images are 3-dimensional arrays of integers from 0 to 255 of size Width x Height x 3. The 3 represents the three color channels Red, Green and Blue.
+The usage of deep networks is not a recent idea (indeed, these networks are fairly old), but it has been made possible only nowadays thanks to the fact that we have more data and more computing power. In particular, the advances in the field of GPUs have made using deep networks way more feasible than before.\\
+The \textbf{image classification} consists in predicting a single label (or a distribution over labels to indicate our confidence, as per the following example) for a given image. Images are 3-dimensional arrays of integers from 0 to 255 of size Width x Height x 3. The 3 represents the three color channels Red, Green and Blue.
 \image{img/image_classification}{Image classification example.}{0.5}
 In image classification, the most important challenges are:
 \image{img/challenges}{Challenges in image classification.}{0.95}
-For this reason, in order to face these challenges, what we need is a data-driven approach in which we have thousands of categories and hundreds of thousand of images for each category.\\
-As it is possible to understand, there's a difference between \textbf{traditional approach} and \textbf{deep learning}, indeed, in the first one we extract meaningful features from images through a manual process, in the second case instead, everything is automatic and there's a bunch of layers in which the final ones are useful for classification.
+In order to face these challenges, what we need is a data-driven approach in which we have thousands of categories and hundreds of thousand of images for each category.\\
+As it is possible to understand, there's a difference between \textbf{traditional approaches} and \textbf{deep learning}. Indeed, in the first one we extract meaningful features from images through a manual process, while in the second case everything happens automatically thanks to a sequence of layers in which the final ones are useful for classification.
 
-\paragraph*{Convolutional Neural Networks (CNNs).} Convolutional Neural Networks are used to solve OCR problems. A neural network can be defined as a \textbf{fully-connected network} or a \textbf{local-connected network}. A local-connected layer is much more specialized, and efficient, than a fully-connected layer. In a fully-connected layer each neuron is connected to every neuron in the previous layer, and each connection has it's own weight. This is a totally general purpose connection pattern and makes no assumptions about the features in the data. It's also very expensive in terms of memory (weights) and computations (connections).\\
-In contrast, in a local-connected layer, each neuron is only connected to a few nearby neurons in the previous layer, and the same set of weights (and local connection layout) is used for every neuron. This connection pattern only makes sense for cases where the data can be interpreted as spatial with the features to be extracted being spatially local and equally likely to occur at any input position. The typical use case for local-connected layers is for image data where, as required, the features are local (e.g. a "nose" consists of a set of nearby pixels, not spread all across the image). The fewer number of connections and weights make local-connected layers relatively cheap in terms of memory and computing power needed.
+\paragraph*{Convolutional Neural Networks (CNNs).} Convolutional Neural Networks are used to solve OCR problems. A neural network can be defined as a \textbf{fully-connected network} or a \textbf{locally-connected network}. A local-connected layer is more specialized and efficient than a fully-connected layer. In a fully-connected layer, each neuron is connected to every neuron in the previous layer, and each connection has its own weight. This is a totally general purpose connection pattern that makes no assumptions about the features in the data. It's also very expensive in terms of memory (weights) and computation (connections).\\
+Conversely, in a locally-connected layer, each neuron is only connected to a few nearby neurons in the previous layer, and the same set of weights (and local connection layout) is used for every neuron. This connection pattern only makes sense for cases where the data can be interpreted as spatial with the features to be extracted being spatially local and equally likely to occur at any input position. The typical use case for locally-connected layers is for image data where, as required, the features are local (e.g. a "nose" consists of a set of nearby pixels, which are not spread across the whole image). The smaller number of connections and weights makes local-connected layers relatively cheap in terms of memory and computing power needed.
 \image{img/fully_local}{Fully vs local-connected networks.}{0.75}
-Normally, several filters are packed together and learnt automaticaly during training.
+Normally, several filters are packed together and learned automatically during training.
 \image{img/trainableFilters}{Using Several Trainable Filters.}{0.75}
 
-\textbf{Max pooling} is a way to simplify the network architecture, by downsampling the number of neurons resulting from the filtering operations. In other words, the image is partitioned in small squares and for each square the maximum value pixel is taken.
+\textbf{Max pooling} is a way to simplify the network architecture, by downsampling the number of neurons resulting from the filtering operations. In other words, the image is partitioned in small squares and for each square the pixel with maximum value is taken.
 \image{img/max_pooling}{Max Pooling.}{0.6}
-As we can see in the next image, a deep neural network is a combination of feature extraction and classification processes. In input we have an image, then there are some initial layers locally-connected that extract features from the image. In the final part there's the classification part and it is fully-connected.
+As we can see in the next image, a deep neural network is a combination of feature extraction and classification processes. We have an image as input. The input layer is followed by some locally-connected layers that extract features from the image. In the final, fully-connected layers the classification step takes place.
 \image{img/extraction_and_classification}{Combining Feature Extraction and Classification.}{0.7}
 
-\paragraph*{AlexNet Architecture.} AlexNet presents 8 layers total that follows the following schema:
+\paragraph*{AlexNet Architecture.} AlexNet is composed of 8 layers as per the following schema:
 \imageb{img/alexNetLayers}{0.18}
-Going more in deep inside these layers, we can notice that:
+Diving deeper into these layers' characteristics, we can notice that:
 \begin{itemize}
 	\item \textbf{1st layer:} 96 kernels $(11 \times 11 \times 3)$.
 	\item \textbf{2nd layer:} 256 kernels $(5 \times 5 \times 48)$.
@@ -445,31 +465,33 @@ Going more in deep inside these layers, we can notice that:
 	\item \textbf{7th layer:} fully connected layer with 4096 neurons.
 	\item \textbf{8th layer:} 1000-way \textbf{SoftMax} layer.
 \end{itemize}
-The graphical representation of the AlexNet can be seen in the following image. There are two independent GPUs that runs in parallel and it can be noticed that there are connections between the two GPUs. The last \textit{SoftMax} layer gives as output:
+The graphical representation of the AlexNet can be seen in the following image. While training the network, two independent GPUs run in parallel. We can notice that there are connections between the two ``sub-components'' only at the end of the network's structure. The last \textit{SoftMax} layer gives as output:
 $$y_i = \frac{e^{\text{net}_i}}{\sum_j e^{\text{net}_i}}$$
 \image{img/alexNet}{AlexNet architecture.}{0.8}
 
-\paragraph*{ReLU's.} \textbf{ReLU} is an acronym that stands for \textit{Rectified Linear Units}, they are used to solve the problem that sigmoid activation takes only values in $(0,1)$. Propagating the gradient back to the initial layers, it tends to become $0$ (\textit{vanishing gradient problem}). From a practical perspective, this slows down the training procedure of the initial layers of the network. Indeed, with sigmoid the gradient will be close to 0 and the algorithm won't make progresses, in order to speed up the progress of learning, ReLU is used.
+\paragraph*{ReLU.} \textbf{ReLU} is an acronym that stands for \textit{Rectified Linear Unit}. ReLUs are used to solve the problem that sigmoid activation takes only values in $(0,1)$. While propagating the gradient back to the initial layers, it tends to get closer and closer to $0$ (\textit{vanishing gradient problem}). From a practical perspective, this slows down the training procedure of the initial layers of the network. Indeed, with sigmoid the gradient will be close to 0 and the algorithm won't learn. In order to speed up the learning phase, ReLU is used.
 \image{img/relu}{Comparison between sigmoid and ReLU functions.}{0.6}
-It is possible to notice also that ReLU reaches the same results but much faster than sigmoid function. As it can be seen in the following image, the solid line represents the convergence of a 4 layer CNN with ReLUs, the dashed line instead represents an equivalent network with $tanh$ neurons. It can be noticed that the CNN with ReLUs converges six times faster.
+It is also possible to notice that ReLU reaches the same results as sigmoid, but much faster. In the following image, the solid line represents the convergence of a 4 layer CNN with ReLUs, while the dashed line represents an equivalent network with $tanh$ neurons. It can be noticed that the CNN with ReLUs converges six times faster.
 \image{img/relu2}{Convergence of ReLU neurons.}{0.4}
 
 %TODO: specificare meglio.
-\paragraph*{Mini-batch Stochastic Gradient Descent.} We extract a random sample and we compute the gradient on it. Each time we execute it we have a different result. At each loop these steps are done:
+\paragraph*{Mini-batch Stochastic Gradient Descent.} We extract a random batch of samples (e.g. $64$) and we compute the gradient on it. Each time we execute it we have a different result. At each iteration, these steps are taken:
 \begin{enumerate}
 	\item Sample a batch of data (the dimension is an hyper parameter to choose).
-	\item Forward prop it through the graph, get loss.
-	\item Backprop to calculate the gradients.
-	\item Update the parameters using the gradient.
+	\item Run it forward through the network, get loss.
+	\item Run backpropagation to compute the gradients.
+	\item Update the weights using the gradient (minimize loss).
 \end{enumerate} 
 
-The easiest and most common method to reduce the overfitting on image data is to artificially enlarge the dataset using label-preserving transformations.\\
+The easiest and most common method to reduce overfitting on image data is to artificially enlarge the dataset using label-preserving transformations.\\
 AlexNet uses two forms of this \textbf{data augmentation}:
 \begin{itemize}
-	\item The first form consists of generating image translations and horizontal reflections (translations, scaling or rotations of the images).
-	\item The second form consists of altering the intensities of the RGB channels in training images (introduce random noise inside the images). 
+	\item The first form consists in generating image translations and horizontal reflections (translations, scaling or rotations of the images).
+	\item The second form consists in altering the intensities of the RGB channels of the training images (introduce random noise inside the images). 
 \end{itemize}
 
-\paragraph*{Dropout.} Set to 0 the output of each hidden neuron with probability $0.5$. The neurons which are \textit{"dropped out"} in this way do not contribute to the forward pass and do not participate in back-propagation. So every time an input is presented, the neural network samples a different architecture, but all these architectures share weights.\\
-Dropout reduces complex co-adaptations of neurons, since a neuron cannot rely on the presence of particular other neurons.
+\image{img/dataAugmentationBoys}{Data augmentation: translation, reflection, scaling, rotation, RGB noise.}{0.35}
+
+\paragraph*{Dropout.} Set to 0 the output of each hidden neuron with probability $0.5$. The neurons which are \textit{"dropped out"} in this way do not contribute to the forward pass and do not participate in back-propagation. Every time an input is presented, the neural network samples a different architecture, but all these architectures share weights.\\
+Dropout reduces complex co-adaptations of neurons, since a neuron cannot rely on the presence of some specific other neurons.
 \image{img/dropout}{Dropout results}{0.55}
