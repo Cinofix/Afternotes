@@ -143,6 +143,7 @@ $$\frac{\dot{x_i}}{x_i} \propto \text{payoff of pure strategy }i\text{ - average
 which yields:
 $$\dot{x_i} = x_i[(Ax)_i - x^TAx]$$
 where $(Ax)_i$ is the $i$-th component of the vector and $x^TAx$ is the average payoff for the population. If we have a result which is better than the average strategy, then there is an improvement.
+We can see $\dot{x_i}$ as the fraction of the total number of players that's using strategy $i$. As $\dot{x_i}$ increases, so does the number of players using it; conversely, if $\dot{x_i}$ decreases, the strategy will likely disappear.  
 
 \paragraph{Theorem.} A point $x\in\Delta$ is a Nash equilibrium if and only if $x$ is the limit point of a replicator dynamics trajectory starting from the interior of $\Delta$.
 Furthermore, if $x\in\Delta$ is an ESS, then it is an asymptotically stable equilibrium point for the replicator dynamics.\\
@@ -163,7 +164,7 @@ A well-known discretization of replicator dynamics, which assumes non-overlappin
 $$
 x_i(t+1) = x_i(t)\frac{A(x(t))_i}{x(t)^TAx(t)}
 $$
-which inherits most of the dynamical properties of its continuous-time counterpart.
+which inherits most of the dynamical properties of its continuous-time counterpart. The idea here is the same as above: we are evolving dominant strategies. Since $A(x(t))_i$ is the payoff for strategy $i$ and $x(t)^\top Ax(t)$ is the average payoff, if the ratio is greater than 1 then the strategy is dominant and the derivative is positive increasing.
 \image{img/rep_dynamics}{MATLAB implementation of discrete-time replicator dynamics}{0.4}
 The components of the \textbf{converged vector} give us a measure of the \textbf{participation} of the corresponding vertices in the cluster, while the value of the objective function measures the cohesiveness of the cluster.
 
