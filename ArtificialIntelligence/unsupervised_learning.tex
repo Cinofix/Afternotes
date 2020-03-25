@@ -49,42 +49,42 @@ K-means is an iterative clustering algorithm that follows these steps:
 	where $\mu_i$ is the center of cluster $i$.
 	\item It assigns data points to closest cluster center in $O(Kn)$ and it changes the cluster center to the average of its points in $O(n)$.
 \end{itemize}
-It is possible to say that K-means is a very simple and efficient method but, on the other hand, it converges to a local minimum of the error function and it needs to pick $K$ initial points and for this reason, it is sensitive to the initialization.
+It is possible to say that K-means is a very simple and efficient method but, on the other hand, it converges to a local minimum of the error function and it needs to pick $K$ initial points, hence proving to be very sensitive to the initialization step.
 
 \subsection{Images as graphs}
-It is possible to consider also images as graphs, they can be described in the following way:
+It is also possible to consider images as graphs, which can be described in the following way:
 \begin{itemize}
 	\item A node for every pixel.
 	\item An edge between every pair of pixels (or every pair of "sufficiently close" pixels).
-	\item Each edge is weighted by the affinity or similarity of the two nodes.
+	\item Each edge is weighted according to the affinity or similarity of the two nodes.
 \end{itemize}  
 \image{img/imageasgraph}{Image as a graph.}{0.7}
-If we suppose to represent each pixel by a feature vector $x$ and to define a distance function appropriate for this feature representation, then we can convert the distance between two feature vectors into an \textbf{affinity} with the help of a Guassian kernel:
+If we suppose to represent each pixel with a feature vector $x$ and to define a distance function appropriate for this feature representation, then we can convert the distance between two feature vectors into an \textbf{affinity} with the help of a Guassian kernel:
 $$exp\left(-\frac{1}{2\sigma^2} dist(x_i, x_j)^2\right)$$
 The scale affects the affinity:
 \begin{itemize}
 	\item Small $\sigma$: group only nearby points.
-	\item Large $\sigma$: group far-away points.
+	\item Large $\sigma$: group distant points.
 \end{itemize}
 
 \subsection{Eigenvector-based clustering}
 Let us represent a cluster using a vector $x$ whose $k$-th entry captures the participation of node $k$ in that cluster. If a node does not participate in a cluster, the corresponding entry is zero.\\
-We also impose the restriction that $x^Tx = 1$.\\
+We also impose the restriction that $x^Tx = 1$ in order to avoid the trivial solution $x=0$.\\
 We want to maximize:
 $$\sum_{i=1}^n \sum_{j=1}^n w_{ij} x_i x_j = x^TAx$$
 which measures the cluster's cohesiveness.\\
-This is an \textbf{eigenvalue problem}, that is choosing the eigenvector of $A$ with largest eigenvalue.\\
-We have that $A$ is the affinity matrix (square matrix) $n \times n$ where $n$ is the number of nodes. There are important theorems:
+This is an \textbf{eigenvalue problem}, which consists in choosing the eigenvector of $A$ corresponding to the largest eigenvalue.\\
+We have that $A$ is a square affinity matrix $n \times n$, where $n$ is the number of nodes. Two important theorems hold:
 \begin{enumerate}
-	\item if $A = A^T$ then $A$ is symmetric and $A$ possesses only "\textit{real}" eigenvalues.
-	\item if $A$ is symmetric then $x^TAx$ is the largest eigenvalue. 
+	\item if $A = A^T$, then $A$ is symmetric and $A$ only has "\textit{real}" eigenvalues.
+	\item if $A$ is symmetric, then $x^TAx$ is the largest eigenvalue. 
 \end{enumerate}
-$x_i$, $x_j$ represent the measure of centrality to the cluster and it is defined as:
+For each node $i$, $x_i$ represents the measure of centrality to the cluster and it is defined as:
 $$x_i = \begin{cases}
 \neq 0 \text{  if } i \in C\\
 = 0 \text{  if } i \notin C
 \end{cases}$$
-Also from the following image it is possible to understand that just looking at the eigenvectors it is possible to find clusters.
+From the following image we can see that it could be possible to find clusters by visual inspection of the eigenvectors.
 
 \begin{figure}[H]
 	\begin{minipage}[t]{0.49\linewidth} 
@@ -97,7 +97,7 @@ Also from the following image it is possible to understand that just looking at 
 		\includegraphics[width=1\textwidth]{img/eigenvectors}
 	\end{minipage}
 \end{figure}
-In case we must extract from eigenvectors more than two clusters we can recursively split each side to get a tree, continuing till the eigenvalues are too small. 
+In case we must extract more than two clusters from the eigenvectors, we can recursively split each side to get a tree, continuing till the eigenvalues are too small. 
 \paragraph*{Clustering by eigenvectors: Algorithm.} The algorithm that builds the clusters through the eigenvectors is composed by the following steps:
 \begin{enumerate}
 	\item Construct (or take as input) the affinity matrix $A$
@@ -111,10 +111,10 @@ In case we must extract from eigenvectors more than two clusters we can recursiv
 \end{enumerate}
 
 \subsubsection{Clustering as graph partitioning}
-Let $G=(V,E,w)$ is an undirected weighted graph (affinity matrix is symmetric). Given a \textit{cut} $(A,B)$, with $B=V \backslash A$, define:
+Let $G=(V,E,w)$ be an undirected weighted graph (affinity matrix is symmetric). Given a \textit{cut} $(A,B)$, with $B=V \backslash A$, define:
 $$cut(A,B) = \sum_{i \in A} \sum_{j \in B} w(i,j)$$
 \image{img/minCut}{Minimum cut problem.}{0.8}
-In the MinCut problem, the weights of the edges which cross the cut should be as small as possible.\\
+In the MinCut problem, the sum of the weights of the edges which cross the cut should be as small as possible.\\
 The MinCut clustering is advantageous because is solvable in polynomial time but, on the other hand, it favors highly unbalanced clusters (often with isolated vertices), indeed, it only measures what happens between the clusters and not what happens within the clusters.
 \image{img/minCut2}{Minimum cut disadvantage.}{0.45}
 
@@ -122,7 +122,7 @@ The MinCut clustering is advantageous because is solvable in polynomial time but
 In order to overcome the problem of unbalanced clusters, \textbf{Normalized Cut} is used and it is defined by:
 $$Ncut(A,B) = \underbrace{cut(A,B)}_{\text{Between A and B}}\left( \underbrace{\frac{1}{vol(A)} + \frac{1}{vol(B)}}_{\text{Within A and B}}\right)$$
 where $vol(A)$ is the volume of the set $A$ given by $vol(A) = \sum_{i \in A}d_i,~A \subseteq V$ and $d_i = \sum_j w_{i,j}$ is the degree of nodes (sum of weights).\\
-Normalized cut has the advantage of taking into consideration what happens within clusters, indeed, considering $vol(A)$ and $vol(B)$ it takes into account what's going on within $A$ and $B$.
+Normalized cut has the advantage of taking into consideration what happens within the clusters by considering $vol(A)$ and $vol(B)$.
 \begin{figure}[H]
 	\begin{minipage}[t]{0.46\linewidth} 
 		\centering
@@ -144,8 +144,8 @@ The main tools for spectral clustering are graph Laplacian matrices, there exist
 $$L = D - W$$
 where:
 \begin{itemize}
-	\item $D$ is a diagonal matrix where on the main diagonal there are the degrees of our nodes.
-	\item $W$ is the affinity matrix, it contains $1s$ or $0s$ and its diagonal elements are all $0s$.
+	\item $D$ is a diagonal matrix whose main diagonal is made of the degrees of the nodes in the graph.
+	\item $W$ is the affinity matrix, in which the diagonal elements are all $0s$ by definition. If the graph is unweighted (as per the following example), $W$ only contains $1s$ (adjacent nodes) and $0s$ (non-adjacent nodes).
 \end{itemize}
 This is an example of the degree matrix $D$ and the affinity matrix $W$ in relation to the graph of the next page.
 \begin{figure}[H]
@@ -220,12 +220,12 @@ $$x_i = \begin{cases}
 \end{cases}$$
 It can be shown that:
 $$min_x ~ Ncut(x) = min_y \underbrace{\frac{y'(D-W)y}{y'Dy}}_{\text{Rayleigh quotient}}$$
-subject to the constraint that $y ^ { \prime } D1 = \sum_{i} y_{i} d _ { i } = 0$ (with $y _ { i } \in \{ 1 , - b \}$ (relaxation introducing also real values), indeed $y$ is an indicator vector with 1 in the $i$-th position if the $i$-th feature point belongs to $A$, negative constant ($-b$) otherwise ). This is \textbf{NP-Hard}!\\
+subject to the constraint that $y ^ { \prime } D1 = \sum_{i} y_{i} d _ { i } = 0$ (with $y _ { i } \in \{ 1 , - b \}$ (relaxation introducing also real values). Indeed, $y$ is an indicator vector with 1 in the $i$-th position if the $i$-th feature point belongs to $A$, negative constant ($-b$) otherwise ). This is \textbf{NP-Hard}!\\
 The huge Ncut time complexity brings us to take into consideration an approximation of it. If we relax the constraint that $y$ be a discrete-valued vector and allow it to take on real values, the original problem
 $$\min _ { y } \frac { y ^ { \prime } ( D - W ) y } { y ^ { \prime } D y }$$
 will be equivalent to:
 $$\min _ { y } y ^ { \prime } ( D - W ) y \quad \text { subject to } y ^ { \prime } D y = 1$$
-This amount to solve a \textit{generalized} eigenvalue problem:
+This amounts to solve a \textit{generalized} eigenvalue problem:
 $$\underbrace{(D-W)}_{Laplacian}y=\lambda D y$$
 It is possible then, to sum up the different steps of the Normalized Cut algorithm as:
 \begin{enumerate}
@@ -235,12 +235,12 @@ It is possible then, to sum up the different steps of the Normalized Cut algorit
 \end{enumerate}
 We started from an NP-Hard problem and through relaxation we reached a feasible solution. However, we have not the guaranteed that the relaxed solution is in one to one correspondence.
 
-\paragraph*{The effect of relaxation.} Through the relaxation we loose some precision in the final solution. 
+\paragraph*{The effect of relaxation.} Through relaxation we lose some precision in the final solution. 
 \imageb{img/relaxation1}{0.8}
-Note that the original problem returns binary values $(-1,1)$, indicating the clustering membership. The relaxed version, on the right, returns continuous values of it can be the case that some points are not so clear to assign (close to the margin between the two). For that reason relaxed solution not always is in one-to-one correspondence with the original problem.
+Note that the original problem returns binary values $(-1,1)$, indicating the clustering membership. The relaxed version, on the right, returns continuous values. It can be the case that some points do not clearly belong to a specific cluster, as they are close to the margin between the two clusters. For this reason the relaxed solution is not always in a one-to-one correspondence with the original problem.
 
 \subsubsection{Random walk interpretation} 
-The Ncut problem can be formalized also in terms of random walk, since we want to find a cut that reduces probability of jumping between nodes of different clusters. It can be defined building a Markov chain where each data point is a state, connected to all other states with some probability. With our affinity $W$ and degree $D$, the stochastic matrix is:
+The Ncut problem can be also formalized in terms of random walk, since we want to find a cut that reduces the probability of jumping between nodes of different clusters. The problem can be defined as building a Markov chain where each data point is a state, connected to all other states with some probability. With our affinity $W$ and degree $D$, the stochastic matrix is:
 $$P=D^{-1}W$$
 which is the row-normalized version of $W$, so each entry $P(i,j)$ is a probability of "\textit{walking}" to state $j$ from state $i$.
 \imageb{img/randomWalk}{0.20}
@@ -249,7 +249,7 @@ $$P \left( s _ { 1 } , \ldots , s _ { 2 } \right) = P \left( s _ { 1 } \right) \
 Suppose we divide the states into two groups, and minimize the probability of jumping between the two groups. Formulate this as an eigenvector problem:
 $$P y = \lambda y$$
 where the component of vector $y$ will give the segmentation.\\
-We can precise also that:
+We can also precise that:
 \begin{itemize}
 	\item $P$ is a stochastic matrix.
 	\item The largest eigenvalue is 1, and its eigenvector is the all-one vector 1. Not very informative about segmentation.
@@ -315,7 +315,7 @@ There are two possible approaches if we desire to have more than 2 clusters:
 \end{enumerate}
 
 \subsubsection{Spectral Clustering vs $k$-means}
-First of all, let us define the \textbf{spectral clustering}, its goal is to cluster data that is connected but not necessarily compact or clustered within convex boundaries. The algorithm has in input the similarity matrix $S \in \mathbb{ R }^{n \times n}$ and the $k$ number of clusters to construct. It returns in output the $k$ clusters. It follows these steps:
+First of all, let us define the intuition behind \textbf{spectral clustering}: its goal is to cluster data that is connected but not necessarily compact or clustered within convex boundaries. The algorithm's inputs are a similarity matrix $S \in \mathbb{ R }^{n \times n}$ and a number $k$ of clusters to construct. The algorithm returns $k$ clusters. It follows these steps:
 \begin{enumerate}
 	\item Construct a similarity graph and compute the normalized graph Laplacian $L_{sym}$.
 	\item Embed data points in a low-dimensional space (spectral embedding), in which the clusters are more obvious, computing the $k$ smallest eigenvectors $v_1, \dots, v_k$ of $L_{sym}$. 
