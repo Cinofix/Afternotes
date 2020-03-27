@@ -204,9 +204,24 @@ The matrix $L$ satisfies the following properties:
 
 First relation between spectrum and clusters:
 \begin{itemize}
-	\item Multiplicity of eigenvalue $\lambda_1=0$ is the number of connected components of the graph.
-	\item Eigenspace is spanned by the characteristic function of these components (so all eigenvectors are piecewise constant).
+	\item Multiplicity of eigenvalue $\lambda_1=0$ is the number of connected components $A_1, \dots, A_k$ of the graph. Note that the multiplicity of an eigenvalue is defined as the number of eigenvectors associated with that specific eigenvalue.
+	\item The eigenspace is spanned by the characteristic function of these components, meaning that the members of a cluster share the same value ($1$) for a certain characteristic function. This is the same as stating that those eigenvectors are piecewise constant, since if we apply the characteristic function to all of them, we always get the same value.
 \end{itemize}
+
+\begin{figure}[H]
+	\begin{minipage}[t]{0.49\linewidth} 
+		\centering
+		\includegraphics[width=1\textwidth]{img/idealSolutionClustering}
+		\caption{Eigenvectors in the new space: finding the clusters is easier}
+	\end{minipage}        
+	\hspace{1cm}
+	\begin{minipage}[t]{0.49\linewidth} 
+		\centering
+		\includegraphics[width=1\textwidth]{img/eigenvectors}
+		\caption{Original representation of the eigenvectors}
+	\end{minipage}
+\end{figure}
+
 
 \paragraph{The normalized graph Laplacians.} There are two matrices which are called normalized graph Laplacians in the literature. Both matrices are closely related to each other and are defined as:
 $$\begin{array} { l } { L _ { \mathrm { sym } } = D ^ { - 1 / 2 } L D ^ { - 1 / 2 } = I - D ^ { - 1 / 2 } W D ^ { - 1 / 2 } } \\ { L _ { \mathrm { rw } } = D ^ { - 1 } L = I - D ^ { - 1 } W } \end{array}$$
@@ -236,8 +251,8 @@ It is possible then, to sum up the different steps of the Normalized Cut algorit
 We started from an NP-Hard problem and through relaxation we reached a feasible solution. However, we have not the guaranteed that the relaxed solution is in one to one correspondence.
 
 \paragraph*{The effect of relaxation.} Through relaxation we lose some precision in the final solution. 
+Note that the original Ncut problem returns binary values $(-1,1)$, indicating clustering membership. The relaxed version, on the right, returns continuous values. It may happen that some points do not clearly belong to a specific cluster, as they are close to the margin between the two clusters. For this reason the relaxed solution is not always in a one-to-one correspondence with the original problem, and choosing a ``correct'' threshold is very important.
 \imageb{img/relaxation1}{0.8}
-Note that the original problem returns binary values $(-1,1)$, indicating the clustering membership. The relaxed version, on the right, returns continuous values. It can be the case that some points do not clearly belong to a specific cluster, as they are close to the margin between the two clusters. For this reason the relaxed solution is not always in a one-to-one correspondence with the original problem.
 
 \subsubsection{Random walk interpretation} 
 The Ncut problem can be also formalized in terms of random walk, since we want to find a cut that reduces the probability of jumping between nodes of different clusters. The problem can be defined as building a Markov chain where each data point is a state, connected to all other states with some probability. With our affinity $W$ and degree $D$, the stochastic matrix is:
