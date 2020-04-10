@@ -11,7 +11,7 @@ Two key features distinguish neural networks from any other sort of computing de
 	\item \textbf{Cell body (Soma)}: 5-10 microns in diameter, it is the \textit{computational unit}.
 	\item \textbf{Axon}: Output mechanism for a neuron.
 	\item \textbf{Dendrites}: Receive incoming signals from other nerve axons via synapse.
-	\item \textbf{Synapses}: Junctions (``connecting points'') between neurons.
+	\item \textbf{Synapses}: Junctions (``connecting points'') between neurons, i.e. the point in which a neuron's axon passes the information to the "next" neuron's dendrite.
 \end{itemize}
 
 \paragraph*{The neural dynamics.} The transmission of signal in the cerebral cortex is a complex process:
@@ -20,10 +20,10 @@ Simplifying:
 \begin{enumerate}
 	\item The cellular body performs a "\textit{weighted sum}" of the incoming signals.
 	\item If the result exceeds a certain threshold value, then it produces an "action potential" which is sent down the axon (cell has "fired"), otherwise it remains in a rest state.
-	\item When the electrical signal reaches the synapse, it allows the “neuro-transmitter” to be released and these combine with the “receptors” in the post-synaptic membrane.
+	\item When the electrical signal reaches the synapse, it allows the ``neuro-transmitter'' (chemical) to be released. This combines with the ``receptors'' in the post-synaptic membrane.
 	\item The post-synaptic receptors provoke the diffusion of an electrical signal in the post-synaptic neuron. 
 \end{enumerate}
-In other words computations by neuron are performed thanks to a combination of electrical and chemical processes. 
+In summary, computations by neuron are performed thanks to a combination of electrical and chemical processes. 
 \image{img/neural_dynamics}{Neural dynamics.}{0.6}
 
 \paragraph*{Synaptic Efficacy.} It is the amount of electricity that enters into the post-synaptic neuron, compared to the action potential of the pre-synaptic neuron. The \textbf{learning step} takes place by modifying the synaptic efficacy. Two different types of synapses are present:
@@ -33,7 +33,7 @@ In other words computations by neuron are performed thanks to a combination of e
 \end{itemize}
 
 \subsection{The McCulloch and Pitts Model}
-Neural network simulations appear to be a recent development, however, this field was established before the advent of computers and the first model, which was created in 1943, is the \textbf{McCulloch and Pitts Model}.\\
+Neural network simulations appear to be a recent development; however, this field was established before the advent of computers and the first model, which was created in 1943, is the \textbf{McCulloch and Pitts Model}.\\
 The McCulloch-Pitts (MP) neuron is a simple process unit modeled as a binary threshold unit.
 \image{img/MP_neuron}{McCulloch and Pitts neuron representation.}{0.55}
 The unit fires if the \textbf{net input} $\sum_j w_jI_j$ reaches (or exceeds) the unit's threshold $T$:
@@ -160,7 +160,7 @@ $$g \rightarrow \sigma(x) = \frac{e^{f(x)} - e^{-f(x)}}{e^{f(x)} + e^ {-f(x)}} \
 
 
 \subsection{Back-propagation Learning Algorithm}
-Backpropagation is an algorithm for learning the weights in a feed-forward network, solving the learning in multilayers neural networks (with respect to the one provided by the perceptron). Let a training set $\mathcal{L} = \{(x_1, y_1), \dots, (x_n,y_n) \}$, in which each pair is an input/output tuple, be given. The algorithm is based on gradient descent and can be seen as a greedy algorithm with infinite possible solutions, in which at each step the best solution is chosen. The algorithm is guaranteed to converge only to a local maximum and during the execution we move along the gradient through a predetermined step-size. This property is due to the fact that this algorithm is just an approximation based on a greedy solution.
+Backpropagation is an algorithm for learning the weights in a feed-forward network, solving the learning in multilayers neural networks (with respect to the one provided by the perceptron). Let $\mathcal{L} = \{(x_1, y_1), \dots, (x_n,y_n) \}$, in which each pair is an input/output tuple, be a given training set. The algorithm is based on gradient descent and can be seen as a greedy algorithm with infinite possible solutions, in which at each step the best solution is chosen. The algorithm is guaranteed to converge only to a local maximum and during the execution we move along the gradient through a predetermined step-size. This property is due to the fact that this algorithm is just an approximation based on a greedy solution.
 \image{img/backpropagation}{Back-propagation schema. $W^l_{ij}$ represents the weight on connection between the $i^{th}$ unit in layer $(l-1)$ to $j^{th}$ unit in layer $l$.}{0.70}
 
 
@@ -172,7 +172,7 @@ $$y^\mu (\mu=1,\dots, p) \text{ is the desired network output vector}$$
 The learning (or training) phase consists in determining a configuration of weights such that the network output should be as close as possible to the desired output as many times as possible, for all the examples in the training set. Normally, this amounts to minimizing an \textbf{error function} such as the MSE (Mean Squared Error) function:
 $$E(w) = \frac{1}{2} \sum_{\mu} \sum_{k} \left(y_k^\mu - O_k^\mu(w)\right)^2$$
 where $O_k^\mu(w)$ is the output provided by the output unit $k$ when the network is given example $\mu$ as input. In other words, $O_k^\mu(w)$ represents the prediction of the $k^{th}$ unit when the input is $\mu$. The loss function computes the difference between the network output and the expected output and of course, our aim is to \textbf{minimize the loss function} (i.e. solve $min_w E(w)$), which means finding the set of weights that minimizes the function. The learning algorithm can thus be seen as an optimization problem. If the network is performing well, then $E(\omega)$ is close to zero.\\
-In order to minimize the error function $E$, we can use the classic \textbf{gradient-descent} algorithm. The gradient gives information about the best path to follow in order to increase/decrease our objective function. Without any kind of direction information it would be extremely complex to find the solution since we have to search along an infinite number of directions in a continuous domain. Gradient descent is a very well-known greedy algorithm. It is not guaranteed to find a globally optimal solution, but it works well in finding local optima. It is a first-order iterative optimization algorithm for finding the minimum of a function. It can be defined as:
+In order to minimize the error function $E$, we can use the classic \textbf{gradient-descent} algorithm. The gradient gives information about the best path to follow in order to increase/decrease our objective function. Without any kind of direction information it would be extremely complex to find the solution since we would have to search along an infinite number of directions in a continuous domain. Gradient descent is a very well-known greedy algorithm. It is not guaranteed to find a globally optimal solution, but it works well in finding local optima. It is a first-order iterative optimization algorithm for finding the minimum of a function. It can be defined as:
 $$w_{ji} \leftarrow w_{ji} - \eta \frac{\partial E_k}{\partial w_{ji}} \qquad \text{where } \eta \text{ is the learning rate.}$$
 In back-propagation algorithm, we have an initial configuration of the network and at each step we update the weights as:
 $$w_{new} = w_{old} - \eta \nabla E(w_{old})$$
@@ -190,7 +190,7 @@ $$h _ { j } ^ { \mu } = \sum _ { k } w _ { j k } x _ { k } ^ { \mu }$$
 and produces as output:
 $$V _ { j } ^ { \mu } = g \left( h _ { j } ^ { \mu } \right) = g \left( \sum _ { k } w _ { j k } x _ { k } ^ { \mu } \right)$$
 The output of a neuron in the output layer is defined as:
-$$O _ {i} ^ {\mu} = g(\sum _ k w_{ik} \cdot V _ {k} ^ {\mu})$$
+$$O _ {i} ^ {\mu} = g(\sum _ k W_{ik} \cdot V _ {k} ^ {\mu})$$
 \imageb{img/notations}{0.5}
 
 \paragraph*{Updating Hidden-to-Output Weights.} The updating rules of the back-propagation algorithm are nothing but a long series of chain rules. For this reason, the objective function is not linear, hence the output is highly non linear. Indeed, the output is a chain of products of non-linear functions.\\
@@ -239,12 +239,12 @@ $\sum_{i} \delta_{i}^{\mu} W_{ij}$ is the average error performed by the output 
 In the following image it is possible to understand the error back-propagation. The black lines correspond to the forwarded signals, while the red lines indicate the error that is back-propagated.
 \image{img/error_backpropagation}{Error Back-propagation representation.}{0.6}
 
-\paragraph*{Locality of Back-Propagation.} Another important aspect is the locality of the back-propagation.
+\paragraph*{Locality of Back-Propagation.} Another important aspect is the locality of the back-propagation algorithm.
 \image{img/locality_backpropagation}{Locality of back-propagation}{0.2}
-\textbf{Off-line:} In this way we compute the gradient exactly. We compute a sum over all the possible $\mu$. This procedure is not generally used because it is computationally expensive and because cannot escape ``bad'' regions in which we may start the search procedure.
+\textbf{Off-line:} In this way we compute the gradient exactly. We compute a sum over all the possible $\mu$. This procedure is not generally used because it is computationally expensive and because it cannot escape ``bad'' regions in which we may start the search procedure.
 $$\Delta \omega_{pq} = \eta \sum_{\mu} \delta_{p}^{\mu} V_{q}^{\mu} \qquad \qquad \text{off-line}$$
 $$\delta_{p}^{\mu} = \text{Error} \quad V_{q}^{\mu} = \text{Output of neurons}$$
-\textbf{On-line:} In this situation some noise is introduced. The noise allows escaping from bad regions and reaching better solutions through the exploration of regions that otherwise we would not visit.
+\textbf{On-line:} In this situation some noise is introduced. The noise allows for escaping from bad regions and reaching better solutions through the exploration of regions that we would not visit otherwise.
 $$\Delta \omega_{pq} = \eta\delta_ {p}^{\mu} V_{q}^{\mu} \qquad \qquad \text{on-line}$$
 A possible compromise between the two techniques is to use the first technique with a small training set; this third option is called (\textbf{stochastic gradient descent}).
 
@@ -295,14 +295,14 @@ $$w_{ij} \simeq 1/\sqrt{K_i} \qquad \text{Where } k_i \text{ is the number of un
 \subsection{Theoretical / Practical Questions}
 \begin{itemize}
 	\item How many layers are needed for a given task?
-	\item How many units should per layer should we use?
+	\item How many units per layer should we use?
 	\item To what extent does representation matter?
 	\item What do we mean by generalization?
 	\item What can we expect from a network as far as generalization is concerned?
 	\begin{itemize}
 		\item \textbf{Generalization:} performance of the network on data not included in the training set. One of the major advantages of neural nets is their ability to generalize. This means that a trained net could classify data (belonging to the same class as the learning data) that it has never seen before. In real world applications, developers usually have a small part of all the possible patterns for the generation of a neural network. To reach the best generalization, the dataset should be split into three parts: training set, validation set and test set.\\
 		The learning should be stopped when the minimum of the validation set error is reached. At this point the net should be generalizing in the best possible way. When learning is not stopped, ``overtraining'' occurs and the performance of the net on the dataset as a whole decreases, despite the fact that the error on the training data still gets smaller. In this case, we say the network is \textit{overfitting}. As a matter of fact, after finishing the learning phase the net should be evaluated on the third data set, the test set.
-		\item Size of the training set: how large a training set should be for "good" generalization?
+		\item Size of the training set: how large should a training set be for "good" generalization?
 		\item Size of the network: too many weights in a network may result in poor generalization.
 	\end{itemize}
 \end{itemize}
@@ -343,11 +343,11 @@ The learning algorithm is stopped when the fit starts deteriorating.
 \paragraph*{The size of a Neural Network} 
 The size of a NN (the number of hidden neurons) affects both its functional capabilities and its generalization performance.
 \begin{itemize}
-	\item A \textbf{big network} leads to poor generalization performance. It has a many parameters and may prove to be an overly complex model.
+	\item A \textbf{big network} leads to poor generalization performance. It has many parameters and may prove to be an overly complex model.
 	\item A \textbf{small network} could not be able to model the desired input/output mapping and for this reason it would not actually learn anything.
 \end{itemize}
 
-In general, it is hard to tell when the algorithm should stop because it is impossible to foresee if increasing the number of neurons would significantly decrease the error. This problem is known as the \textbf{horizon effect}. A common strategy is called \textbf{growing}: the procedure starts with one neuron and trains it. Going on, it will iteratively adds neurons until satisfying results are obtained.
+In general, it is hard to tell when the algorithm should stop because it is impossible to foresee if increasing the number of neurons would significantly decrease the error. This problem is known as the \textbf{horizon effect}. A common strategy is called \textbf{growing}: the procedure starts with one neuron and trains it. Going on, it will iteratively add neurons until satisfying results are obtained.
 
 \paragraph*{The Pruning Approach.} This approach is based on the idea of training an over-dimensioned network and then removing \textbf{redundant} nodes and connections. The idea of pruning is to start with a large number of neurons and reduce it as much as possible. Pruning reduces the final complexity of the classifier, hence improving the network's predictive accuracy by avoiding overfitting.\\
 The most important advantages of this technique are:
@@ -378,7 +378,7 @@ We can observe that $\sum_{j \neq h} \delta_{ij} y_{j}^{(\mu)}$ is a linear syst
 & = \sum_{j=1 \atop j\neq h}^{n_{h}} w_{ij}y_{j}^{ (\mu)} + \sum_{j=1 \atop j\neq h}^{n_{h}}\delta_{ij}  y_{j}^{ (\mu)}
 \end{split}
 \end{equation*}
-In order to satisfy this equation is necessary that $\sum_{j \neq h} \delta_{ij} y_{j}^{(\mu)} = w_{ih} y_{h}^{(\mu)}$ since the rest of the weights remains the same, the unique contribution that was deleted is the one provided by the neuron $h$.\\
+In order to satisfy this equation is necessary that $\sum_{j \neq h} \delta_{ij} y_{j}^{(\mu)} = w_{ih} y_{h}^{(\mu)}$ since the rest of the weights remains the same, as the unique contribution that was deleted is the one provided by the neuron $h$.\\
 
 In a more compact notation, it is possible to write the previous linear system as:
 $$Ax = b \qquad \text{where } A \in \mathbb { R } ^ { P n _ { o } \times n _ { o } \left( n _ { h } - 1 \right) }$$
@@ -425,16 +425,16 @@ $$\min_x \vert\vert Ax + b \vert\vert$$
 
 
 \subsection{Deep Neural Networks}
-The philosophy on which Deep Learning relies is to learn a feature hierarchy from the initial pixel image in order to obtain a classifier. Each layer extracts features from the output of previous layer. The training phase involves all the layers, jointly.
+The philosophy on which Deep Learning relies is to learn a feature hierarchy from the initial pixel image in order to obtain a classifier. Each layer extracts features from the output of the previous layer. The training phase involves all the layers, jointly.
 \image{img/deep_learning}{Example of deep learning process.}{0.75}
 
-\paragraph*{Shallow vs Deep Networks.} Shallow architectures are inefficient at representing deep functions. A shallow network, indeed, has less number of hidden layers. A shallow network with a large enough single hidden layer can fit any function (universal approximator), but on the other hand this produces a very large hidden layer and increases significantly the number of parameters. A deep network can fit functions better with less parameters than a shallow network, increasing the number of hidden layers but decreasing the number of required parameters. Deep networks try to simulate the brain's behavior, in which the electric signals propagate across different layers.
+\paragraph*{Shallow vs Deep Networks.} Shallow architectures are inefficient at representing deep functions. A shallow network, indeed, has a lower number of hidden layers. A shallow network with a large enough single hidden layer can fit any function (universal approximator), but on the other hand this produces a very large hidden layer and increases significantly the number of parameters. A deep network can fit functions better with less parameters than a shallow network, increasing the number of hidden layers but decreasing the number of required parameters. Deep networks try to simulate the brain's behavior, in which the electric signals propagate across different layers.
 \image{img/shallow_vs_deep}{Shallow vs Deep Networks.}{0.78}
 
 Another important aspect to notice is the improvement in performance with the presence of more data.
 \image{img/performances}{Performances improves with more data.}{0.6}
 The usage of deep networks is not a recent idea (indeed, these networks are fairly old), but it has been made possible only nowadays thanks to the fact that we have more data and more computing power. In particular, the advances in the field of GPUs have made using deep networks way more feasible than before.\\
-The \textbf{image classification} consists in predicting a single label (or a distribution over labels to indicate our confidence, as per the following example) for a given image. Images are 3-dimensional arrays of integers from 0 to 255 of size Width x Height x 3. The 3 represents the three color channels Red, Green and Blue.
+The \textbf{image classification} problem consists in predicting a single label (or a distribution over labels to indicate our confidence, as per the following example) for a given image. Images are 3-dimensional arrays of integers from 0 to 255 of size Width x Height x 3. The 3 represents the three color channels Red, Green and Blue.
 \image{img/image_classification}{Image classification example.}{0.5}
 In image classification, the most important challenges are:
 \image{img/challenges}{Challenges in image classification.}{0.95}
@@ -442,7 +442,7 @@ In order to face these challenges, what we need is a data-driven approach in whi
 As it is possible to understand, there's a difference between \textbf{traditional approaches} and \textbf{deep learning}. Indeed, in the first one we extract meaningful features from images through a manual process, while in the second case everything happens automatically thanks to a sequence of layers in which the final ones are useful for classification.
 
 \paragraph*{Convolutional Neural Networks (CNNs).} Convolutional Neural Networks are used to solve OCR problems. A neural network can be defined as a \textbf{fully-connected network} or a \textbf{locally-connected network}. A local-connected layer is more specialized and efficient than a fully-connected layer. In a fully-connected layer, each neuron is connected to every neuron in the previous layer, and each connection has its own weight. This is a totally general purpose connection pattern that makes no assumptions about the features in the data. It's also very expensive in terms of memory (weights) and computation (connections).\\
-Conversely, in a locally-connected layer, each neuron is only connected to a few nearby neurons in the previous layer, and the same set of weights (and local connection layout) is used for every neuron. This connection pattern only makes sense for cases where the data can be interpreted as spatial with the features to be extracted being spatially local and equally likely to occur at any input position. The typical use case for locally-connected layers is for image data where, as required, the features are local (e.g. a "nose" consists of a set of nearby pixels, which are not spread across the whole image). The smaller number of connections and weights makes local-connected layers relatively cheap in terms of memory and computing power needed.
+Conversely, in a locally-connected layer, each neuron is only connected to a few nearby neurons in the previous layer, and the same set of weights (and local connection layout) is used for each neuron. This connection pattern only makes sense in cases where the data can be interpreted as spatial with the features to be extracted being spatially local and equally likely to occur at any input position. The typical use case for locally-connected layers is for image data where, as required, the features are local (e.g. a "nose" consists of a set of nearby pixels, which are not spread across the whole image). The smaller number of connections and weights makes local-connected layers relatively cheap in terms of memory and computing power needed.
 \image{img/fully_local}{Fully vs local-connected networks.}{0.75}
 Normally, several filters are packed together and learned automatically during training.
 \image{img/trainableFilters}{Using Several Trainable Filters.}{0.75}
