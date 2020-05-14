@@ -171,7 +171,21 @@ Given two random variables $X$ and $Y$, it is possible to consider:
 	$$p(x,y) = p(x)\cdot p(y)$$
 	\item \textbf{Chain rule:} it defines a relationship between joint entropy, marginal entropy and condition entropy. It is defined as:
 	$$H(X,Y) = H(X) + H(Y|X) = H(Y) + H(X|Y)$$
-	%TODO: da rivedere
+	
+	Indeed:
+
+	\begin{equation*}
+		\begin{array}{rcl}
+			H(X, Y) & = & -\sum_{x \in \mathcal{X}} \sum_{y \in \mathcal{Y}} p(x,y) \log p(x,y)\\[8pt]
+			& = & - \sum_{x \in \mathcal{X}} \sum_{y \in \mathcal{Y}} p(x,y) \log p(x)p(y|x)\\[8pt]
+			& = & - \sum_{x \in \mathcal{X}} \sum_{y \in \mathcal{Y}} p(x,y) \log p(x) - \sum_{x \in \mathcal{X}} \sum_{y \in \mathcal{Y}} p(x,y)\log p(y|x)\\[8pt]
+			& = & - \sum_{x \in \mathcal{X}} \left(\sum_{y \in \mathcal{Y}} p(x, y)\right) \log{p(x)} - \sum_{x \in \mathcal{X}} \sum_{y \in \mathcal{Y}} p(x)p(y|x) \log{p(y|x)}\\[8pt]
+			& = & - \sum_{x \in \mathcal{X}} p(x) \log{p(x)} - \sum_{x \in \mathcal{X}} p(x) \sum_{y \in \mathcal{Y}} p(y|x) \log{p(y|x)}\\[8pt]
+			& = & H(X) - \sum_{x \in \mathcal{X}} p(x) (-H(Y|X=x))\\[8pt]
+			& = & H(X) + H(Y|X).\\
+		\end{array}
+	\end{equation*}
+
 	This chain rule is derived from the fact that:
 	$$p(x,y) = p(x) \cdot p(y|x) = p(y) \cdot p(x|y)$$
 	and by applying the $\log(\cdots)$ function, products become sums. 
@@ -225,6 +239,39 @@ On the other hand \textit{KLD} doesn't hold other properties as:
 \end{enumerate}
 \par \bigskip \noindent
 
+It is possible to prove that. $D(\bar{p} || \bar{q}) \geq 0$ using the Gibb's inequality:
+
+Knowing that: $\log \frac{a}{b} = \log a - \log b $, the Kullback-Leiber divergence can be written as
+
+\begin{equation*}
+    -\sum_{i=1}^n p_i \log p_i \leq - \sum_{i=1}^n p_i \log q_i
+\end{equation*}
+
+with equality if and only if: $p_i = q_i, \forall i = 1, \dots, n$.\\
+Let $I$ denote the set of all $i$ for which $p_i$ is non-zero. Then, since $\ln x \leq x-1 \forall x > 0$ , with equality if and only if $x=1$, we have:
+
+\begin{equation*}
+    - \sum_{i \in I} p_i \ln \frac{q_i}{p_i} \geq  - \sum_{i \in I} p_i \left( \frac{q_i}{p_i} - 1 \right) = - \sum_{i \in I} q_i + \sum_{i \in I} p_i = - \sum_{i \in I} q_i + 1 \geq 0
+\end{equation*}
+
+The last inequality is a consequence of the $p_i$ and $q_i$ being part of a probability distribution. Specifically, the sum of all non-zero values is 1. 
+Some non-zero $q_i$, however, may have been excluded since the choice of indices is conditioned upon the $p_i$ being non-zero. 
+Therefore the sum of the $q_i$ may be less than 1.\\
+Over the set $I$ we have that:
+
+\begin{equation*}
+    - \sum_{i \in I} p_i \ln \frac{q_i}{p_i} \geq 0
+\end{equation*}
+
+or equivalently
+
+\begin{equation*}
+    - \sum_{i \in I} p_i \ln q_i \geq - \sum_{i \in I} p_i \ln p_i
+\end{equation*}
+ 
+Both sums can be extended to all $i=1, \ldots, n$, i.e. including $p_i=0$, by recalling that the expression $p \ln p$ tends to 0 as $p$ 
+(using the Hôpital rule: $\lim_{p \to 0}\frac{\ln p}{p}$) tends to 0, and $(-\ln q)$ tends to $\infty$ as $q$ tends to 0.
+
 \subsubsection{Compute Mutual Information}
 Through the computation of mutual information between $X$ and $Y$, we can have access to different interpretations. One of them is surely understanding if two random variables are dependent or not. 
 \begin{equation*}
@@ -233,6 +280,7 @@ I(x;y) &= D(p(x,y)||p(x)p(y))\\
 &=\sum_x \sum_y p(x,y) \cdot \log\left(\frac{p(x,y)}{p(x)p(y)} \right)
 \end{split}
 \end{equation*}
+
 As seen above, it is possible to compute the mutual information applying the concept of \textit{Kullback-Leibler divergence}. Paying attention at the ending part of the computed formula we can understand an important property: the lower $\log\left(\frac{p(x,y)}{p(x)p(y)} \right)$ is, the more independent the two random variables are.\\
 The mutual information of two random variables is 0 if and only if the two random variables are independent.
 
@@ -248,7 +296,24 @@ When we deal with the transmission of information, it is important to take into 
 	\item \textbf{After:} uncertainty of the receiver given the channel output $Y$. It is $H(X|Y)$. It could be 0 if we don't consider noise on the channel.
 \end{itemize}
 By computing the difference between $before$ and $after$ it is possible to obtain the mutual information that travels in the channel.
-$$I(X,Y) = H(X) - H(X|Y)$$
+$$I(X,Y) = H(X) - H(X|Y) = H(Y) - H(Y|X)$$
+
+Indeed:
+
+\begin{equation*}
+    \begin{array}{rcl}
+    	I(X;Y) & = & \sum_{x \in \mathcal{X}} \sum_{y \in \mathcal{Y}} p(x,y) \log \frac{p(x,y)}{p(x)p(y)}\\[8pt]
+    	& = & \sum_{x \in \mathcal{X}} \sum_{y \in \mathcal{Y}} p(x,y) \log \frac{p(x)p(y|x)}{p(x)p(y)}\\[8pt]
+    	& = & \sum_{x \in \mathcal{X}} \sum_{y \in \mathcal{Y}} p(x,y) \log \frac{p(y|x)}{p(y)}\\[8pt]
+    	& = & \sum_{x \in \mathcal{X}} \sum_{y \in \mathcal{Y}} p(x,y) \log{p(y|x)} - \sum_{x \in \mathcal{X}} \sum_{y \in \mathcal{Y}} p(x,y)\log{p(y)}\\[8pt]
+    	& = & \sum_{x \in \mathcal{X}} \sum_{y \in \mathcal{Y}} p(x)p(y|x) \log{p(y|x)} - \sum_{y \in \mathcal{Y}} \left(\sum_{x \in \mathcal{X}} p(x, y)\right) \log{p(y)}\\[8pt]
+    	& = & \sum_{x \in \mathcal{X}} p(x) \sum_{y \in \mathcal{Y}} p(y|x) \log{p(y|x)} - \sum_{y \in \mathcal{Y}} p(y) \log{p(y)}\\[8pt]
+    	& = & \sum_{x \in \mathcal{X}} p(x) H(Y|X=x) + H(Y)\\[8pt]
+    	& = & -H(Y|X) + H(Y)\\[8pt]
+    	& = & H(Y) - H(Y|X).\\
+	\end{array}
+\end{equation*}
+
 If $X \perp Y$ we have $H(X|Y) = H(X)$ so $I(X,Y) = 0$. 
 \begin{thm}[Before - After information] Taking into account the before and after information, it is possible to define the mutual information as:
 	$$I(X,Y) = H(X) - H(X|Y) \qquad \text{if we consider the role of the receiver}$$
