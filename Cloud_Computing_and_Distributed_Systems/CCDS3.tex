@@ -1,0 +1,79 @@
+\section{Distributed System}
+\subsection{Communication}
+When we talk about \textit{"communication"}, we can separately talk about communication entities and communication paradigms. \textbf{Communication entities} can answer to the question "What is communicating?", instead, \textbf{communication paradigm} concerns "How they communicate?". Entities can be called: nodes or processes (\textit{system-oriented entities}) or components, objects or web services (\textit{problem-oriented entities}).
+These entities can communicate using different paradigms: 
+\begin{itemize}
+    \item \textbf{Interprocess communication}, refers to the relatively low-level support for communication between processes in distributed systems, including message-passing primitives, direct access to the API offered by Internet protocols (socket programming) and support for multicast communication.
+    \item \textbf{Remote Invocation} covers a range of techniques based on a two-way exchange between communicating entities in a distributed system and resulting in the calling of a remote operation, procedure, or method. In other words, it is based on the idea of ask/use methods implemented by a remote process. Some techniques: \textit{Request-reply} protocols (client-server), \textit{Remote procedure calls} (calling procedures in remote processes), \textit{Remote method invocation} (invoke a method in a remote object).
+    \item \textbf{Indirect communication}, allows a strong degree of decoupling between senders and receivers. In particular, senders don't need to know who they are sending to, furthermore, senders and receivers don't need to exist at the same time. Some techniques are: \textit{group communication}, \textit{publish-subscribe}.
+\end{itemize}
+
+\subsection{HW Organization}
+The main goal of the hardware organization is to improve the performance maintaining the cost as low as possible. There can be developed Centralized System, that increases the CPU speed but has some physical constraints, or \textit{Distributed Systems}, for which there can be different various models divided according to the \textbf{Flynn classification}:
+\image{img/flynnClassification}{Flynn Classification}{0.6}
+\begin{itemize}
+    \item \textbf{SISD}, it corresponds to the Von Neuman model with a single program executed by a CPU, and data are stored inside a memory. CPUs apply FETCH, DECODE, and EXECUTE operations for each instruction of the program. In order to improve the performance of the system some techniques are adopted like: parallelism, use different ALU to execute more instruction at the same time, pipelining, simultaneously execute more operations for different instructions, or usage of hierarchies of memory (cache levels).
+    \image{img/sisd}{SISD}{0.3}
+    \item \textbf{SIMD}, typical of parallel execution in which there's a unique program executed on a set of data. This system is implemented inside a single PC, so there is a unique program counter that decides which is the next instruction to be executed of the program. Also, in this case, there can be different architectures that determine how to organize the system, like A vector of ALU working on a vector of data and produce a vector of output.
+    \image{img/simd}{SIMD}{0.3}
+    \item \textbf{MISD}, Multiple Instructions Single Data.
+    \image{img/misd}{MISD}{0.3}
+    \item \textbf{MIMD}, typical of a distributed system in which different CPU executes different programs on different data streams. Each CPU is associated with his Program Counter, memory, data, and programs and they cooperate to execute and provide a common service.
+    \image{img/mimd}{MIMD}{0.3}
+\end{itemize}
+
+A \textbf{MIMD} system, implemented by a distributed system, can be organized in different ways, Multiprocessor or Multicomputer.
+
+\subsubsection{Multiprocessor}
+\textbf{Multiprocessor}, is characterized by a set of CPUs connected in a communication network in which there is a shared memory. The advantage of this design is that it reduces transmission delay since CPUs are strictly coupled. Some architectures are proposed:
+\begin{itemize}
+    \item \textbf{Bus}, CPUs are connected in a bus and they share a memory. They have to interact to decide who can access the shared memory. Each time that a process needs a resource it asks the shared memory. We can imagine that it is necessary to implement a synchronization system to access the memory.
+    \image{img/busArchitecture}{Multiprocessor - Bus architecture}{0.55}
+     An improvement of this architecture is based on the usage of private memory, in which each CPU has also a private cache memory where is stored the most recently used words. If the required word is stored inside the \textbf{cache} so there is a hit and it is not necessary to access the shared memory. The greater is the hit rate the better are the performance. Data are written to the cache and inside the shared memory.
+    \image{img/multiprocessorBusCache}{Multiprocessor - Bus with cache memory usage}{0.55}
+    \item \textbf{Switch}, the shared memory is subdivided into n modules and a particular element, called switch, is used to decide the right path. With this implementation different CPU can access different memory modules at the same time. The disadvantage of this solution is the cost of the switches. N memory modules and N CPUs require $N^2$ switches.
+    \image{img/multiprocessorSwitch}{Multiprocessor - Switch}{0.55}
+    \item \textbf{Omega Network}, respect to switch architecture switches are organized as a binary tree, with the advantage of decreasing the number of required switches (n/2 log n). The drawback is given by the communication delay of each switch.
+    \item \textbf{NUMA} (\textit{Not Uniform Memory Access}), each CPU has a local memory that is shared with all the other computing units, this brings an increase of performance since CPU save most of the data of shared memory inside local memory. The choice of the right allocation algorithm can make a huge difference in this architecture. 
+\end{itemize}
+
+\subsubsection{Multicomputer}
+Each computer system is composed of a private local memory and they can be local at different positions, loosely coupled, this brings some transmission delay and loss of transmission speed. The computer systems are autonomous but they are connected by a network and they interact using it. Also here there can be different architectures:
+\begin{itemize}
+    \item \textbf{Bus}, computer systems are connected by a bus line but there is no shared memory. They can access remote resources (like printer or file server). It is necessary to implement a system to reduce traffic and some communication network protocols. It is expansible.
+    \image{img/multicomputerBus}{Multicomputer - Bus}{0.7}
+    \item \textbf{Switch}, computer systems can be organized as a grid of switch or a hypercube, that reduces the number of steps and switch necessary to connect all the nodes.
+    \image{img/multicomputerSwitch}{Multicomputer - Switch}{0.7}
+    \item Massive parallelism, supercomputers with thousands of CPU.
+    \item Clusters of workstations, computer systems connected with available components and there is a particular design to optimize performance and reliability. 
+\end{itemize}
+
+\subsection{SW Architecture}
+A distributed system can be classified also based on the software architecture adopted:
+\begin{itemize}
+    \item \textbf{loosely-coupled}, machines are completely independent and they share resources. Each computer system can be identified and it is able to operate independently of others in such a way that a network fault does not block the operation of a single computer system.  
+    \item \textbf{tightly-coupled},  machines are independent but there is a controller that coordinates them. We can say that there exists a hierarchy structure.
+\end{itemize}
+The coupling can deal with both software and hardware viewpoints: a loosely coupled software provides its application running independently, and several applications can interact if installed in several machines; a loosely coupled hardware is going to indicate the physical machines and their numbers, their independence and how they interact among each other. A distributed system is obtained by combining these features, so it can have independent applications on independent machines and so on.\\
+We can distinguish several Operating Systems depending on the type of the system we are dealing with:
+\begin{itemize}
+    \item \textit{Uniprocessor system}: for a single central system the OS provides the virtualization of the machine and manages the resources and processes, in particular using a so-called ready queue, the queue of ready processes. The model for the OS can be classified in three categories: \textbf{microkernel} model which is made by layered components, in such a way that upper components provide functionalities to the lower parts and most of them run in the user space; \textbf{monolithic} model in which all the components work in the kernel space, and \textbf{hybrid} that are a mixture of the two. 
+    
+    \item \textit{Network Operating System}\textbf{NOS} has loosely coupled software on a loosely coupled hardware. It’s a network of machines each with its own memory, CPU, OS, and devices. The remote execution requires that the job can see the resource location.
+    \image{img/nos}{NOS architecture}{0.6}
+    
+    \item \textit{Distributed Operating System} \textbf{DOS} has a tightly coupled software on a loosely coupled hardware. Everything is managed by a global manager, without sharing memory.\\
+    It is an operating system that produces a single system image for all the resources, in other words, it represents the implementation of the abstraction of a single time-sharing system (system image) on a set of machines, possibly heterogeneous, interconnected and with the same operating system. 
+    A DOS is an operating system that runs on several machines whose purpose is to provide a useful set of services, generally to make the collection of machines behave more like a single machine. The distributed operating system plays the same role in making the collective resources of the machines more usable than a typical single-machine operating system plays in making that machine's resources do. Usually, the machines controlled by a distributed operating system are connected by a relatively high-quality network, such as a high-speed local area network. Most commonly, the participating nodes of the system are in a relatively small geographical area, something between an office and a campus.
+    A DOS should provide:
+    \begin{itemize}
+        \item Common IPC (Inter-Process Communication), provides mechanisms to allow the processes to manage shared data. 
+        \item Global protection, provides protection mechanisms to maintain the system and the data protected.
+        \item Process management, provides mechanisms to manage processes. For instance, adopt a load balancing to schedule possible requests.
+        \item File system, allows a unique view and access way to the file system.
+        \item System interface, gives a unique and homogeneous interface to give the maximum transparency.  
+    \end{itemize}
+    \image{img/dos}{DOS architecture}{0.6}
+    \item \textit{Multiprocessor Operating System} \textbf{MOS} has a tightly coupled software on a tightly coupled hardware with global shared memory. In this OS, there’s a unique global execution queue and several CPUs that execute ready processes. In order to have an advantage from the presence of the cache, the scheduler must consider also in which CPU has already run processes ready for the execution. This will lead to a higher \textbf{hit rate}.
+    \image{img/mos}{MOS architecture}{0.6}
+\end{itemize}
