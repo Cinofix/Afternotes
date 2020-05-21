@@ -1,0 +1,81 @@
+\section{Client-Server communication}
+There are some issues to design a communication system for client-server architecture, such as \textbf{addressing}, \textbf{primitive}, \textbf{protocols} and \textbf{reliability}.
+\subsection{Addressing}
+Addressing refers to the ability of a client to understand where is the server (\textit{server localization}). There can be different solutions to solve these problems and answer to a question like "Where is the server?". \\
+The first one is based on the usage of \textbf{LAN}, in which there is the assumption that the client knows the address of the server and server gets also the address of the client when it receives a request.
+\image{img/lan}{Lan}{0.8}
+The problem of this solution is that there is \textit{no location transparency} and in case of relocating the server it is necessary to apply \textit{modification on the client}.
+\par \medskip \noindent
+The second strategy is based on the use of \textbf{broadcast} strategy. The client sends via broadcast a special packet \verb!locate! to identify the server and discover where it is located. Only the server answers with a message in which it is specified its physical location. This solution offers \textit{location transparency}.
+\image{img/broadcast}{Broadcast}{0.8}
+Here the problem regards the usage of the channel since now there is an increasing amount of messages due to the broadcast flooding.
+\par \medskip \noindent
+The last solution is given by the usage of a particular entity called \textbf{Name Server}, which provides to the client the physical address of the server. The client sends to \textit{NS} a request to get the server address and \textit{NS} answers replying with a message containing the physical address of the server.
+\image{img/nameServer}{Name server}{0.8}
+This solution provides location transparency for the server but not for the NS and for each communication the client must contact the NS, that could be a bottleneck.
+
+\subsection{Primitives}
+Primitives can be different considering asynchronous and synchronous systems or if the receiver use or not a buffer. The classic type of primitives are \verb!send! and \verb!receive!.
+\subsubsection{Synchronous}
+Processes are blocked when they use primitive. In \textit{synchronous} system with the different primitives we have the following behavior:
+\begin{itemize}
+    \item \verb!send! the sender specifies the send buffer and destination address. The process remains blocked until the buffer has been sent. 
+    \item \verb!receive! the invocation doesn't return control to the calling process until the message has been received and stored into a destination buffer.
+\end{itemize}
+\subsubsection{Asynchronous}
+Processes can go on, primitives do not block the execution of other processes. Therefore, the primitives will behave in the following way:  
+\begin{itemize}
+    \item \verb!send!, the control returns to the process as soon as the buffer to be sent is copied into the buffer of the kernel (local). The process is blocked just the time needed to copy the message inside the buffer. 
+    \item \verb!receive! indicates to the kernel the local base address and the size of the buffer where data will be received and it returns control to the calling process.
+\end{itemize}
+The advantage of an \textit{asynchronous} system is that caller continues the computations concurrently to the communication, but the drawback is that it is difficult to recognize when communication is terminated.
+\subsubsection{Primitives with buffer}
+The receiver has a buffer in which it can store messages sent by the sender. It can be introduced for \textit{asynchronous} and \textit{synchronous} systems. The procedure is described as the following:
+\begin{itemize}
+    \item The process that invokes the receive, asks the kernel to create the mailbox and specifies its local address (ex: port number).
+    \item The kernel keeps the mailbox in the kernel space.
+    \item Messages arrived with the process address, are put in the mailbox. If there's a pending receive the message is passed to the process, eventually unblocking it, otherwise the message is kept until an invocation doesn't arrive.
+    \item If the mailbox is full the kernel could discard the message. 
+\end{itemize}
+
+\subsubsection{Primitives without buffer}
+If there's no buffer, communications must be synchronous, the sender is blocked until it receives an unblock. The procedure is so defined:
+\begin{itemize}
+    \item The caller is blocked when it invokes the \verb!receive(addr, &m)!, where \verb!addr! is the address of the sending process and \verb!&m! is the memory space of the invoking process.
+    \item Kernel unblocks the caller when the message is received and copied into the buffer.
+    \item If the message is received and there are no more pending \verb!receive!, kernel cancels the message and the client tries again.
+    \item If the \verb!receive! is from a server that is executing operations for a client and another client sends a message, there is a \verb!race condition! since the new client has to wait for a new \verb!receive! from the server.
+\end{itemize}
+   
+\subsection{Protocols}
+\textbf{Fragmentation} and \textbf{re-composition} of messages might be needed at application level if the message is too long. Messages will be split in \textbf{packets}.
+In addition, typical types of messages used in the most used protocols are presented in \autoref{table:type-of-message}.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{ |p{1cm}||p{3cm}|p{2cm}|p{6cm}|  }
+    \hline
+    \textbf{Code} & \textbf{Type} & \textbf{From - To} & \textbf{Description}\\
+    \hline
+    &&&\\
+    REQ& Request &C $\rightarrow$ S& The client ask for a service\\
+    REP& Reply & S $\rightarrow$ C & The server sends a reply\\
+    ACK& Ack & C/S $\rightarrow$ S/C & The previous message arrived\\
+    AYA& Are you alive? & C $\rightarrow$ S & Send to the server when it doesn't answer\\
+    IAA& I'm alive! & S $\rightarrow$ C & Server reply to a AYA message\\
+    TA& Try again & S $\rightarrow$ C & Server is busy, no space. Server is overloaded\\
+    AU& Address unknown & S $\rightarrow$ C & No process uses this address\\
+    &&&\\
+    \hline
+\end{tabular}
+\caption{Type of Messages}
+\label{table:type-of-message}
+\end{table}
+\verb!Ack! from server to client can be useful to get some information about the communication or execution performance and it allows the client to send another request. Instead \verb!ack! from client to server can be useful to distinguish request and discard copy of reply.\\
+Some examples of the \textit{client-server} interaction can be found in the following image: 
+\image{img/interactionClientServer}{Examples of interaction Client-Server}{0.7}
+
+\subsection{Networks/Reliability}
+Communication in distributed systems depends on the usage of a network that connects computer systems. Networks can be distinguished considering their size (LAN, MAN, WAN) or transmission technology (wired, wireless), and the different levels of \textbf{QoS} offered. In this case the \textbf{QoS} provided by a network takes care of its performances (transmission speed, latency, band), reliability, and security. The implementation of a distributed system has to consider also this aspect, for instance latency is useful for the development of synchronous systems.
+Distributed Systems are mainly implemented on the application level.
+\image{img/osiLevels.png}{TCP/IP layers}{1}
