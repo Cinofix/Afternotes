@@ -1,0 +1,89 @@
+\section{Introduction to Distributed system}
+A \textbf{distributed system} is one in which components located as networking computers
+communicate and coordinate their actions only by passing messages. It is a set of autonomous nodes that interact and collaborate in order to reach a particular goal. Computers that are connected by a network may be spatially separated by any distance, and they communicate by exchanging information through a communication network. They may be on separate continents, in the same building or in the same room.
+Another definition can be the following one: a \textbf{distributed system} is composed by more than one autonomous computer systems that interact to reach a given goal. Nodes are autonomous since they can work alone, maintaining processes and data.
+The distributed systems are different from parallel systems, in which the main focus is the execution of a single application using several cores.
+  
+\subsection{Advantages}
+Possible advantages of having a distributed system are:
+\begin{itemize}
+    \item \textbf{Resource Sharing}, is one of the first and important advantages of a distributed system. Sharing of hardware and software resources. 
+    \item \textbf{Heterogeneity}, it can be composed of different components, O.S., hardware, applications, etc.
+    \item \textbf{Reliability}, if there is a crash the system is still alive. The system is fault-tolerant up to some crash, so it can be measured.
+    \item \textbf{Extendibility/Scalability}, extendibility refers to the possibility to include another node in the system, while scalability refers to the possibility of including a new node of the same type.
+    \item \textbf{Performance}, they offer results in an efficient way and optimum values of throughput and response time.
+    \item \textbf{Transparency}, is defined as the concealment from the user and the application programmer of the separation of components in a distributed system, so that system is perceived as a whole rather than as a collection of independent components. In a simpler way: \textit{It appears to the customer as a single system.}
+\end{itemize}
+
+\subsection{Characteristics}
+A distributed system has particular characteristics, listed up in the following section:
+\begin{itemize}
+    \item \textbf{Concurrency}, nodes can work in parallel.
+    \item \textbf{Autonomous and asynchronous}, a node can survive alone and each machine has its own clock. There isn't a unique global clock.
+    \item \textbf{Resource sharing} - coordination - access, resources can be shared and so a distributed system implements a strategy to manage them. 
+    \item \textbf{Lack of global time}, when processes need to cooperate they coordinate their actions by exchanging messages. Since each machine uses its own clock, they are not able to coordinate their clock. A solution is to consider \textit{timestamp.}
+    \item \textbf{Faults independent}, all computer systems can fail, and the system designers are responsible to plan for the consequences of possible failures. Distributed systems can fail in new ways. Possible faults of nodes don't affect other nodes in the network. We can consider in fact, nodes independent to each other in terms of faults. Processes
+    on them may not be able to detect whether the network has failed or has become
+    unusually slow.
+\end{itemize}
+All these characteristics are offered by the Internet.
+\image{img/internet_as_DS.png}{Internet as Distributed System}{0.8}
+
+\subsection{Goals}
+\begin{itemize}
+    \item \textbf{economy}, since data can be shared is not necessary to replicate them.
+    \item \textbf{software}, their implementation follows particular standard and also application based on them.
+    \item \textbf{flexibility}, gives a clear interface to use the system.
+    \item \textbf{availability}, system detects fault and applies recover operations.
+    \item \textbf{performance}, optimal performance in terms of response time, throughput, parallelism and bottleneck reduction.
+    \item \textbf{locality} and control distribution, security and efficiency.
+    \item \textbf{transparency}.
+\end{itemize}
+
+\subsection{Computer System vs Distributed System}
+A computer system is characterized by single hardware, system software, and application software for data or control. A distributed system, instead, is composed of distributed hardware, can have or not distributed software/application to manage data or control.
+Distributed hardware means that the system is composed of more than two computer systems, interconnected by a communication network and each computer system is independent of the others but can interact with them.
+Control is essential to manage physical or logical resources on the system, it can be:
+\begin{itemize}
+    \item \textbf{centralized}, unique entity responsible to manager resources.
+    \item \textbf{distributed}, computer systems on the net cooperate to reach the solution.
+    \item \textbf{hierarchical}, the system is more scalable since all the functions are subdivided into different modules.
+\end{itemize}
+Manage data means that is necessary that the system implements some strategies to administrate resources and provide them when they are required. Data can be replicated, multiple copies in different locations, or partitioned: portions of data are stored in various locations.
+
+\subsection{Open problems}
+The development of a DS deals with some particular issues:
+\begin{itemize}
+    \item \textbf{data sharing}, understands how and what resources must be shared and it provides a system to retrieve them efficiently.
+    \item \textbf{heterogeneity}, enables users to access services and run applications over a heterogeneous collection of computers and networks. Heterogeneity must consider different networks, computer HW, operating system (SW), programming languages, and applications.
+    \item \textbf{Concurrency}, there is the possibility that several clients will attempt to access a shared resource at the same time. A process that administrates shared resources could take one client request at a time. Processes have to communicate in order to synchronize their access to shared resources.
+    \item \textbf{Openness}, the system is not completely defined but it is possible to extend it, for instance including a new machine. Open distributed systems are based on the provision of a uniform communication mechanism and published interfaces for access to shared resources. Open distributed systems can be constructed from heterogeneous hardware and software, possibly from different vendors.
+    \item \textbf{Middleware}, is an intermediate layer that provides a unique public interface. It defines a public and clear interface to use the features provided by the system.
+    \item \textbf{Mobility}, the term mobile code is used to refer program code that can be transferred from one computer to another and run at the destination. For instance, Java application can be executed in different systems, since they create a virtual environment to run the code.
+    \item \textbf{Security}, is necessary to develop a secure system that doesn't allow unauthorized users to read/write data. Security for information resources has three components: \textit{confidentiality} (protection against disclosure to unauthorized individuals), \textit{integrity} (protection against alteration or corruption), and \textit{availability} (protection against interference with the means to access the resources).
+    \item \textbf{Scalability}, a system is defined scalable if it will remain effective when there is a significant increase in the number of resources and the number of users. The system works well independently on the number of customers and adding components doesn't change the way in which resources are managed.
+    \item \textbf{Quality of Service (QoS)}, provides a good QoS, which is the main nonfunctional properties of systems that affect the quality of services experienced by clients and users. \textit{QoS} considers the reliability, security, and performance of the entire system.
+    \item \textbf{Fault management}, faults need to be transparent to the user. The three main steps are identification, masking, and recovery. One of the most common recovery algorithms is "checkpoint and rollback" in which we go back to the last checkpoint to recover the last consistent state. Notice that the global clock does not exists, meaning that time for checkpoints can be different. Moreover, we define \textit{"availability"} the probability of having the system working.
+    \item \textbf{Transparency}, the system is perceived as a whole rather than as a collection of independent components.
+\end{itemize}
+
+\subsection{Transparencies}
+A system can provide different levels of transparencies:
+\begin{itemize}
+    \item \textbf{Access} transparency, enables local and remote resources to be accessed using identical operations.
+    \item \textbf{Location} transparency, enables resources to be accessed without knowledge of their location.
+    \item \textbf{Concurrency} transparency, enables several processes to operate concurrently using shared resources without interference between them. 
+    \item \textbf{Replication} transparency, enables multiple instances of resources to be used to increase reliability and performance without knowledge of the replicas by users or application programmers.
+    \item \textbf{Failure} transparency, enables the concealment of faults, allowing users and application programs to complete their tasks despite the failure of hardware or software components.
+    \item \textbf{Mobility} transparency, allows the movement of resources and clients within a system without affecting the operation of users or programs.
+    \item \textbf{Performance} transparency, allows the system to be reconfigured to improve performance as loads vary.
+    \item \textbf{Scaling} transparency, the system, and applications can expand in scale without change to the system structure or the application algorithms.
+\end{itemize}
+
+\subsection{WWW as Example}
+The World Wide Web, also called WWW, can be seen as a large distributed system based on the Internet and its characteristics are:
+\begin{itemize}
+    \item \textbf{open system}, it can be extended and implemented in new ways without disturbing its existing functionality. Operations are based on communication standards and document or content standards that are freely published and widely implemented. It is open with respect to the types of resources that can be published and shared on it.
+    \item \textbf{Client-Server architecture}, it is based on client-server architecture using standard rules for interaction (HTTP).
+    \item \textbf{Transparency}, using DNS (Domain Name System) it reaches the location transparency. With the usage of a symbolic server name, it is not necessary for the client to know the exact physical address IP of the server. If the server is replicated the user does not know, so we also have the replication transparency. However, it doesn't provide location transparency since the structure of the file system should be known in order to construct the resource URL.
+\end{itemize}

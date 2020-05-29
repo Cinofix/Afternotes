@@ -1,0 +1,96 @@
+\section{Models of Systems}
+The architecture of a system is its structure in terms of separately specified components and their interrelationships. The overall goal is to ensure that the structure will meet its present and future load.
+\subsection{Architectural Model}
+An architectural model provides the definition of what are components, structures of the system, and functions associated with them. There are different types of processes: \textit{client} (it requires resources), \textit{server} (it provides resources), or \textit{peer} (it is both client and server). These processes are connected by a communication network in which they can communicate and interact. 
+Architectural models can be classified in \textbf{client-server} or \textbf{peer processes}. The choice of one of these possible architectures affects performance, reliability, scalability, cost, and security of the system.
+A \textbf{client-server} architecture can be based on \textit{layers} or tiers.
+A layered architecture splits complex systems into a number of layers, in which each level uses functions of the below layer and in turn, it will offer other services to the upper levels. Each level offers an abstraction of its implementation of the below layers to the upper layers.
+Tiered architectures are complementary to layering. On one hand layered layout deals with the vertical organization of services into layers of abstraction, on the other hand, a tiered layout is useful to organize functionality of a given layer and place this functionality into physical nodes. This technique is most commonly associated with the organization of applications and services. Each tier level is used as a level of abstraction.
+\subsubsection{Client-Server}
+\textit{Client-server} architecture is the most common and based on the idea that there are some processes, called \textbf{clients}, that ask for resources and special processes, called \textbf{servers}, that serves requests and replies to them. In a client-server model there can be different clients that apply a request to the server, and in order to satisfy all the requests the server maintains a queue in which stores them. When the client submits a request it waits until it receives the result. The time between send a request and receive the corresponding response is called \textit{response time}.
+\image{img/clientServerOneTier}{Client-Server single-tier architecture}{0.5}
+Considering a more complicated architecture with two tiers response time can be greater, since also the server has to wait for the required resource.
+\image{img/clientServerMultiTier}{Client-Server multi-tier architecture}{0.65}
+Client-Server architecture can be composed of a set of servers that provide the same services and they can interact to reduce the load of each server. The lower a load of a server the lower the response time will be. Respect to the previous simple model, with only one server, these kinds of architectures are also fault-tolerant, since if at least one is up the system can provide a response.
+Some of these architectures introduce a new component called \textbf{proxy}, used to reduce the traffic and provide cache functionalities. The proxy pattern is a commonly recurring pattern in distributed systems designed particularly to support location transparency in remote procedure calls or remote method invocation.
+
+\subsubsection{Peer-To-Peer}
+\textbf{Peer-to-peer} systems represent a paradigm for the construction of distributed systems and applications in which data and computational resources are contributed by many hosts on a network, all of which participate in the provision of a uniform service.
+Processes can be everywhere, but they have to cooperate in order to solve problems of consistency of the resources and to synchronize their actions.\\
+In this architecture, all the processes involved in a task or in a activity play similar roles, interacting cooperatively as peers without any distinction between client and server processes or the computers on which they run. Practically, all participating processes run the same program and offer the same set of interfaces to each other. While the client-server model offers a direct and relatively simple approach to the sharing of data and other resources, it scales poorly compared to this architecture.
+\image{img/peerToPeer}{Peer-to-peer architecture}{0.85}
+A key problem for peer-to-peer systems is the placement of data objects across many hosts and subsequent provision for access to them in a manner that balances the workload and ensures availability without adding excessive overheads.
+
+\subsubsection{Variants of Client-Server Model}
+There are some variants of the client-server model, for example there could be \textbf{mobility} of the node, of the code (program can be moved) or data.
+\textit{Applets} are a well-known and widely used example of mobile code – the user running a browser selects a link to an applet whose code is stored on a web server; the code is downloaded to the browser and runs there. An advantage of running the downloaded code locally is that it can give a good interactive response since it does not suffer from the delays or variability of bandwidth associated with communication networks. When a client requests something to the server, the reply given by the server is an applet code that will be executed from the client hardware.
+A \textit{mobile agent} is a running program (including both code and data) that travels from one computer to another in a network carrying out a task on someone’s behalf, such as collecting information, and eventually returning with the results. Mobile agents might be used to install and maintain software on the computers within an organization or to compare the prices of products from a number of vendors by visiting each vendor’s site and performing a series of database operations.
+
+
+\subsection{Fundamental models}
+All of the previous models are composed of processes that communicate with one another by sending messages over a computer network. All of the models share the design requirements of achieving their taking into account the performance, correctness, and reliability of the processes and networks and ensuring the security of resources in the system. Therefore, we can specify a set of ``fundamental models'' that are useful to focus on some particular aspects of a distributed system:
+\begin{itemize}
+    \item \textbf{Interaction models}, how processes interact. In the analysis and design of distributed systems they are concerned especially in how processes communicate (message passing). The interaction model must reflect the fact that communication takes place with delays.
+    \item \textbf{Fault models}, focus the attention on the problem of possible faults of the system. They define and classify faults, providing a basis for the analysis of their potential effects and for the design of systems that are able to tolerate faults of each type while continuing to run correctly.
+    \item \textbf{Security model}, a distributed systems can be exposed to attack by both external and internal agents. Security model defines and classifies the forms that such attacks may take, providing a basis for the analysis of threats to a system and for the design of systems that are able to resist them.
+    \item \textbf{Performance models}, focus their attention on the performance of a distributed system emphasizing the maximum workload that it can support, the maximum throughput, and possibly other metrics specific of a particular case study. 
+\end{itemize}
+
+\subsection{Interaction models}
+The behavior and state of a distributed system can be described by a distributed algorithm – a definition of the steps to do by each process of which the system is composed, including the transmission of messages between them. Messages are transmitted between processes to transfer information between them and to coordinate their activities.
+Each process has its own state, consisting of the set of data that can access and update, including the variables in its program. The state belonging to each process is completely private – that is, it cannot be accessed or updated by any other process.
+There are some factors that affect the performance and reliability of an interaction system:
+\begin{itemize}
+    \item \textbf{latency}, the transmission delay between two components of a service, i.e. the difference in time between the first transmission and the first reception. It is also defined as the time to obtain a service.
+    \item \textbf{band}, the total amount of information that can be transmitted in the network in a given time.
+    \item \textbf{jitter}, variation in the time taken to deliver a series of messages. \textit{Jitter} is relevant to multimedia data. For example, if consecutive samples of audio data are played with differing time intervals, the sound will be badly distorted.
+    \item \textbf{Lack of global time}, since there isn't a unique clock but each process has its own clock and they are usually not synchronized. One solution can be to implement a virtual clock used by each process to verify the current state of the system.
+    \item A distributed system can be also classified as \textbf{synchronous} or \textbf{asynchronous}. In \textit{synchronous} system processes are synchronized and so it is easier to develop communication protocols since there is a bound on execution, transmission, and clock. Instead, \textit{asynchronous} system are not time-bounded, so it is necessary to develop a different strategy to provide communication protocols.
+\end{itemize}
+
+\subsection{Fault models}
+In a distributed system both processes and communication channels may fail. The failure model defines the ways in which failure may occur in order to provide an understanding of the effects of failures.
+\image{img/processesChannels}{Communication channels can suffer from arbitrary failures}{0.8}
+There are different types of failure:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{| c | p{1.7cm} | p{9.5cm} |}
+        \hline
+        \textbf{Class of failure} & \textbf{Affects} & \textbf{Description} \\ \hline
+        \textbf{Fail-stop} & \textit{Process} & Process is blocked, it can't execute and provide nothing. Other processes think that it is available and they are not able to detect that it is blocked. \\
+        \hline
+        \textbf{Crash} & \textit{Process} & Process halts and remains halted. Other processes may not be able to detect this state. \\
+        \hline
+        \textbf{Omission} & \textit{Channel} & A message inserted in an outgoing message buffer never arrives at the other end's incoming message buffer.\\
+        \hline
+        \textbf{Send-omission} & \textit{Process} & A process completes a send, but the message is not put in its outgoing message buffer. \\
+        \hline
+        \textbf{Receive-omission} & \textit{Process} & A message is put in a process's incoming message buffer, but that process does not receive it.\\
+        \hline
+        \textbf{Arbitrary} & \textit{Process} or \textit{channel} & Process/channel exhibits arbitrary behavior: it may send/transmit arbitrary messages at arbitrary times, commit omissions; a process may stop or take an incorrect step. The term arbitrary or Byzantine failure is used to describe the worst possible failure semantics, in which any type of error may occur. For example, a process may set wrong values in its data items, or it may return a wrong value in response to an invocation.\\
+        \hline
+    \end{tabular}
+    \caption{Omission and arbitrary failures.}
+\end{table}
+\par
+Other kinds of failure are called \textbf{timing failures} and they are associated only to \textit{synchronous systems}, that have the constraint of time bounds.
+\begin{table}[H]
+    \centering
+    \begin{tabular}{| c | p{1.7cm} | p{9.5cm} |}
+        \hline
+        \textbf{Class of failure} & \textbf{Affects} & \textbf{Description} \\ \hline
+        \textbf{Clock} & \textit{Process} & Process's local clock exceed the bounds on its rate of drift from real time. \\
+        \hline
+        \textbf{Performance} & \textit{Process} & Process exceeds the bounds on the interval between two steps.\\
+        \hline
+        \textbf{Performance} & \textit{Channel} & A message's transmission takes longer than the stated bound.\\
+        \hline
+    \end{tabular}
+    \caption{Timing failures.}
+\end{table}
+\par
+A communication is considered reliable when there is \textbf{validity} (messages are delivered) and \textbf{integrity} (delivered messages are ordered and correct).
+
+\subsection{Security model}
+A distributed system can be interested in possible attacks, so it is necessary to develop systems and strategies for authentication, cryptography, and for maintaining integrity and security of the entire system and resources.
